@@ -2,127 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>OMNI-OS | v76 Event Horizon</title>
+    <title>OMNI-OS | v80 REM'S CORNER</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --bg: #0d0d0d; 
-            --panel: #1a1a1a;
-            --orange: #ff8c00; 
-            --red: #ff3e3e;
-            --lcd: #121512;
-            --glow-o: 0 0 15px #ff8c00;
-            --glow-r: 0 0 15px #ff3e3e;
+            --bg: #050705; --white: #ffffff; --green: #00ff41; 
+            --glass: rgba(255, 255, 255, 0.03); --glow: 0 0 20px rgba(0, 255, 65, 0.6);
         }
-
         body, html { 
-            margin: 0; padding: 0; height: 100vh; 
-            background: radial-gradient(circle at center, #1a0a00 0%, #000 100%);
-            font-family: 'JetBrains Mono', monospace; 
-            overflow: hidden; perspective: 1200px;
+            margin: 0; padding: 0; height: 100vh; background: var(--bg);
+            font-family: 'Space Grotesk', sans-serif; overflow: hidden; perspective: 1500px;
         }
 
-        /* 3D KINETIC AUREOLA */
-        .halo-anchor {
-            position: absolute; top: 12%; left: 50%;
-            transform: translateX(-50%); width: 220px; height: 80px;
-            z-index: 5; pointer-events: none;
+        /* 3D QUANTUM HALO */
+        .halo-anchor { position: absolute; top: 15%; left: 50%; transform: translateX(-50%); width: 260px; height: 90px; z-index: 5; pointer-events: none; }
+        .ring { 
+            position: absolute; inset: 0; border: 2px solid var(--white); border-radius: 50%; 
+            opacity: 0; filter: blur(1px) drop-shadow(0 0 10px var(--green)); transition: 1s;
         }
-        .halo-ring {
-            width: 100%; height: 100%;
-            border: 6px solid var(--orange);
-            border-radius: 50%; opacity: 0;
-            filter: blur(2px) drop-shadow(0 0 25px var(--orange));
-            transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-        .halo-active {
-            opacity: 0.9;
-            animation: orbitalAxis 5s linear infinite;
-        }
-        @keyframes orbitalAxis {
-            0% { transform: rotateX(75deg) rotateY(15deg) rotateZ(0deg); }
-            100% { transform: rotateX(75deg) rotateY(15deg) rotateZ(360deg); }
+        .ring-inner { border-color: var(--green); transform: scale(0.8); }
+        .halo-active .ring { opacity: 0.8; animation: orbit 4s linear infinite; }
+        @keyframes orbit {
+            0% { transform: rotateX(75deg) rotateY(10deg) rotateZ(0deg); }
+            100% { transform: rotateX(75deg) rotateY(10deg) rotateZ(360deg); }
         }
 
-        /* CYBER-CALC CHASSIS */
-        .chassis {
-            background: var(--panel);
-            border: 1px solid #333;
-            width: 420px; padding: 35px;
-            border-radius: 20px;
-            position: absolute; top: 55%; left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            box-shadow: 0 50px 100px rgba(0,0,0,1), inset 0 0 20px rgba(255,140,0,0.05);
+        /* QUANTUM CHASSIS (WHITE & GREEN) */
+        .calc-body {
+            background: var(--white); width: 380px; padding: 30px; border-radius: 4px;
+            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 10; box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        .screen-container {
-            background: var(--lcd);
-            border: 2px solid #333;
-            border-radius: 8px;
-            height: 100px; margin-bottom: 30px;
-            padding: 20px; display: flex;
-            flex-direction: column; justify-content: flex-end;
-            align-items: flex-end;
-            box-shadow: inset 0 0 15px #000;
+        .screen {
+            background: #000; height: 90px; margin-bottom: 25px; padding: 20px;
+            display: flex; align-items: flex-end; justify-content: flex-end;
+            border-bottom: 5px solid var(--green);
         }
-        .lcd-text {
-            color: var(--orange);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.4rem; text-shadow: var(--glow-o);
-        }
+        .screen-text { color: var(--green); font-size: 2.5rem; font-weight: 700; text-shadow: var(--glow); font-family: 'Syncopate', sans-serif; }
 
-        /* BUTTON ENGINE */
-        .key-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        /* BUTTONS */
+        .key-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .key {
-            background: #222; color: #777;
-            border: 1px solid #333;
-            padding: 18px 0; border-radius: 8px;
-            font-weight: 900; cursor: pointer;
-            transition: 0.2s; text-align: center;
-            user-select: none;
+            background: #f8f8f8; color: #111; padding: 18px 0; font-weight: 800;
+            text-align: center; cursor: pointer; transition: 0.15s; border: 1px solid #ddd;
         }
-        .key:hover { color: #fff; border-color: #555; background: #2a2a2a; }
-        .key-o { color: var(--orange) !important; border-color: var(--orange) !important; box-shadow: inset 0 0 10px rgba(255,140,0,0.2); }
-        .key-o:active { background: var(--orange); color: #000; box-shadow: var(--glow-o); }
-        .key-r { color: var(--red) !important; border-color: var(--red) !important; }
-        .key-r:active { background: var(--red); color: #000; box-shadow: var(--glow-r); }
+        .key:hover { background: #000; color: var(--green); border-color: var(--green); box-shadow: var(--glow); }
+        .key-prime { background: #111; color: #fff; border: none; }
 
-        /* DEEP-STATE SIDEBAR */
-        #hub {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.95); z-index: 10000;
-            backdrop-filter: blur(30px);
+        /* REM'S CORNER HUB */
+        #ghost-hub {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            z-index: 10000; backdrop-filter: blur(40px);
         }
-        .sidebar {
-            width: 380px; height: 100%;
-            background: linear-gradient(to bottom, #0a0a0a, #000);
-            border-right: 1px solid #222;
-            display: flex; flex-direction: column; padding: 60px 0;
+        .ghost-side {
+            width: 550px; height: 100%; background: var(--glass);
+            border-right: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; padding: 60px 40px;
+            overflow-y: auto;
         }
-        .brand { padding: 0 50px 50px; }
-        .nav-link {
-            padding: 22px 50px; color: #444;
-            font-size: 14px; font-weight: 900;
-            letter-spacing: 2px; cursor: pointer;
-            transition: 0.3s; border-left: 5px solid transparent;
+        .ascii-brand {
+            font-family: monospace; font-size: 8px; line-height: 8px;
+            color: var(--green); white-space: pre; margin-bottom: 40px;
+            text-shadow: 0 0 5px var(--green);
         }
-        .nav-link:hover { color: var(--orange); background: #0f0f0f; padding-left: 60px; }
-        .nav-link.danger:hover { color: var(--red); }
-        .active-glitch { border-left-color: var(--orange); color: #fff !important; background: #111; }
+        .nav-item {
+            padding: 20px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer; transition: 0.3s; letter-spacing: 2px; font-weight: 700;
+        }
+        .nav-item:hover { color: var(--green); background: rgba(0,255,65,0.05); padding-left: 50px; }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
 
-    <div class="chassis">
-        <div class="halo-anchor"><div class="halo-ring" id="halo"></div></div>
-        <div class="screen-container">
-            <div id="display" class="lcd-text">0.00</div>
-        </div>
+    <div class="calc-body">
+        <div class="halo-anchor" id="halo-box"><div class="ring"></div><div class="ring ring-inner"></div></div>
+        <div class="screen"><div id="disp" class="screen-text">0</div></div>
         <div class="key-grid">
-            <div class="key key-o" onclick="press('2nd')">SYSTEM</div>
-            <div class="key key-r" onclick="panic()">PANIC</div>
+            <div class="key key-prime" onclick="cmd('2nd')">2nd</div>
+            <div class="key" onclick="cmd('AC')">CLR</div>
             <div class="key" onclick="press('/')">/</div>
             <div class="key" onclick="press('*')">×</div>
             <div class="key" onclick="press('7')">7</div>
@@ -136,106 +94,84 @@
             <div class="key" onclick="press('1')">1</div>
             <div class="key" onclick="press('2')">2</div>
             <div class="key" onclick="press('3')">3</div>
-            <div class="key key-o" onclick="press('EXE')">EXECUTE</div>
+            <div class="key key-prime" onclick="cmd('EXE')">EXE</div>
         </div>
     </div>
 
-    <div id="hub">
-        <div class="sidebar">
-            <div class="brand">
-                <h1 style="color:white; font-size: 2rem; font-family: 'Orbitron';">EVENT_HORIZON</h1>
-                <p style="color:var(--orange); font-size: 10px; tracking: 5px;">SOVEREIGN v76.0</p>
-            </div>
-            <div class="nav-link" onclick="deepLaunch('https://eaglercraft.q13x.com/', 'My Drive - Google Drive')">GHOST_MINECRAFT</div>
-            <div class="nav-item-divider h-px bg-zinc-900 my-2 mx-10"></div>
-            <div class="nav-link" onclick="deepLaunch('https://takaiwebsite.neocities.org/brotato', 'Student Portal')">BROTATO_CORE</div>
-            <div class="nav-link" onclick="deepLaunch('https://www.google.com/search?igu=1', 'Canvas | Dashboard')">STEALTH_SEARCH</div>
-            <div class="nav-link" onclick="spawnAI()">REM_AI_LOCAL</div>
-            <div class="mt-auto nav-link danger" onclick="panic()">TERMINATE_ALL</div>
+    <div id="ghost-hub">
+        <div class="ghost-side">
+            <div class="ascii-brand">
+++++++   +++++++  ++      ++   +++++++  
+++   ++  ++       +++    +++  ++        
+++   ++  +++++    ++ +  + ++  +++++++   
+++++++   ++       ++  ++  ++        ++  
+++  ++   ++       ++      ++        ++  
+++   ++  +++++++  ++      ++   +++++++  
+
++++++++   ++++++   +++++++   ++   ++  +++++++  ++++++  
+++       ++    ++  ++    ++  +++  ++  ++       ++   ++ 
+++       ++    ++  +++++++   ++ + ++  +++++    ++++++  
+++       ++    ++  ++  ++    ++  +++  ++       ++  ++  
++++++++   ++++++   ++   ++   ++   ++  +++++++  ++   ++
+</div>
+            <p class="text-green-500 text-[10px] tracking-[5px] mb-8">SECURE ACCESS GRANTED // v80.0</p>
+            
+            <div class="nav-item" onclick="ghostLaunch('https://eaglercraft.q13x.com/', 'Assignment - Dashboard')">ACCESS: GHOST MINECRAFT</div>
+            <div class="nav-item" onclick="ghostLaunch('https://takaiwebsite.neocities.org/brotato', 'Physics Simulation')">ACCESS: BROTATO CORE</div>
+            <div class="nav-item" onclick="ghostLaunch('https://www.google.com/search?igu=1', 'Academic Search')">ACCESS: STEALTH GOOGLE</div>
+            <div class="nav-item" onclick="spawnAI()">ACCESS: REM_AI_QUANTUM</div>
+            
+            <div class="mt-auto nav-item text-red-500" onclick="panic()">SYSTEM DISCONNECT (~)</div>
         </div>
     </div>
 
     <script>
-        let cur = "0"; 
-        let is2nd = false;
-        let activeWins = [];
+        let val = "0"; let is2nd = false; let activeWins = [];
 
-        function press(k) {
-            if (k === '2nd') { 
-                is2nd = !is2nd; 
-                document.getElementById('halo').classList.toggle('halo-active', is2nd); 
-                return; 
-            }
-            if (is2nd && k === 'EXE') { 
-                document.getElementById('hub').style.display = 'flex'; 
-                return; 
-            }
-            if (k === 'EXE') {
-                try { cur = eval(cur.replace('×','*').replace('÷','/')) + ""; } catch { cur = "SYNTAX ERR"; }
-            } else {
-                cur = (cur === "0" ? k : cur + k);
-            }
-            document.getElementById('display').innerText = cur;
+        function press(n) {
+            val = (val === "0" ? n : val + n);
+            document.getElementById('disp').innerText = val;
         }
 
-        // v76 DEEP-STATE BLOB INJECTION
-        function deepLaunch(url, fakeTitle) {
-            const win = window.open('about:blank', '_blank');
-            if (!win) return alert("System Error: Popup Shield Active.");
+        function cmd(k) {
+            if (k === '2nd') { 
+                is2nd = !is2nd; 
+                document.getElementById('halo-box').classList.toggle('halo-active', is2nd); 
+            }
+            if (is2nd && k === 'EXE') { document.getElementById('ghost-hub').style.display = 'flex'; }
+            if (k === 'AC') { val = "0"; document.getElementById('disp').innerText = "0"; }
+            if (k === 'EXE' && !is2nd) {
+                try { val = eval(val.replace('×','*').replace('÷','/')) + ""; } catch { val = "ERR"; }
+                document.getElementById('disp').innerText = val;
+            }
+        }
 
-            const blobContent = `
-                <html>
-                <head>
-                    <title>${fakeTitle}</title>
-                    <link rel="icon" href="https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png">
-                    <style>
-                        body, html { margin:0; padding:0; height:100vh; background:#000; overflow:hidden; }
-                        iframe { width:100%; height:100%; border:none; background:#000; }
-                    </style>
-                </head>
-                <body>
-                    <iframe src="${url}" referrerpolicy="no-referrer" allow="fullscreen; autoplay" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
-                </body>
-                </html>
-            `;
-
-            const blob = new Blob([blobContent], { type: 'text/html' });
-            const blobUrl = URL.createObjectURL(blob);
-            win.location.href = blobUrl;
-
-            activeWins.push(win);
-            document.getElementById('hub').style.display = 'none';
+        function ghostLaunch(url, mask) {
+            const w = window.open('about:blank', '_blank');
+            if(!w) return alert("Allow Popups.");
+            const blob = new Blob([`
+                <html><head><title>${mask}</title>
+                <style>body,html,iframe{margin:0;padding:0;height:100%;width:100%;overflow:hidden;background:#000;border:none;}</style>
+                </head><body><iframe src="${url}" referrerpolicy="no-referrer"></iframe></body></html>
+            `], {type: 'text/html'});
+            w.location.href = URL.createObjectURL(blob);
+            activeWins.push(w);
+            document.getElementById('ghost-hub').style.display = 'none';
         }
 
         function spawnAI() {
-            const win = window.open('about:blank', '_blank');
-            win.document.write(\`
-                <body style="background:#050505;color:orange;font-family:monospace;padding:40px;">
-                    <h1 style="border-bottom: 2px solid orange;">REMAI_CORE</h1>
-                    <div id="log" style="height:300px; color:#555; overflow-y:auto; margin-top:20px;">SYSTEM READY.</div>
-                    <input id="in" style="width:100%; background:#000; border:1px solid #333; color:#fff; padding:15px; margin-top:30px; outline:none;" placeholder="Command...">
-                    <script>
-                        document.getElementById('in').onkeydown = (e) => {
-                            if(e.key==='Enter'){
-                                document.getElementById('log').innerHTML += '<div>> '+e.target.value+'</div>';
-                                setTimeout(()=>{document.getElementById('log').innerHTML += '<div style="color:white">REMAI: Processing. Blob encryption stable.</div>';}, 300);
-                                e.target.value = '';
-                            }
-                        }
-                    <\/script>
-                </body>
-            \`);
-            activeWins.push(win);
+            const w = window.open('','','width=500,height=600');
+            w.document.write('<body style="background:#000;color:#00ff41;font-family:monospace;padding:30px;"><h2>REMAI_QUANTUM_CORE</h2><p>Handshake confirmed. Signature: REMS_CORNER.</p></body>');
+            activeWins.push(w);
         }
 
         function panic() {
             activeWins.forEach(w => { if(!w.closed) w.close(); });
             activeWins = [];
-            document.getElementById('hub').style.display = 'none';
-            document.getElementById('halo').classList.remove('halo-active');
-            is2nd = false; cur = "0";
-            document.getElementById('display').innerText = "0.00";
-            location.reload();
+            document.getElementById('ghost-hub').style.display = 'none';
+            document.getElementById('halo-box').classList.remove('halo-active');
+            is2nd = false; val = "0";
+            document.getElementById('disp').innerText = "0";
         }
     </script>
 </body>
