@@ -3,49 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rem's Corner | Research Hub</title>
+    <title>Rem's Corner | Potato Core v12</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/dist/skinview3d.bundle.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #09090b; --accent: #f97316; --mc-green: #3c8527; }
-        body { background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #09090b 100%); color: #f1f5f9; font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; overflow: hidden; margin: 0; }
+        :root { --red: #dc2626; --orange: #f97316; }
+        body { background: radial-gradient(circle at top left, #450a0a 0%, #09090b 100%); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; overflow: hidden; margin: 0; }
         
         /* Stealth UI */
-        .widget { background: #111114; padding: 1.5rem; border-radius: 40px; border: 1px solid rgba(255,255,255,0.05); }
-        .screen { background: #000; border-radius: 20px; padding: 1rem; margin-bottom: 1rem; text-align: right; font-family: 'JetBrains Mono'; color: var(--accent); font-size: 1.6rem; border: 1px solid #222; }
-        .key { height: 44px; border-radius: 22px; background: rgba(255,255,255,0.05); font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 0.75rem; }
-        .key:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); }
-        .key-active { background: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+        .widget { background: rgba(20, 20, 25, 0.9); padding: 2rem; border-radius: 50px; border: 1px solid rgba(220, 38, 38, 0.3); }
+        .screen { background: #000; border-radius: 25px; padding: 1.2rem; margin-bottom: 1.2rem; text-align: right; font-family: 'JetBrains Mono'; color: var(--orange); font-size: 2rem; border: 1px solid var(--red); }
+        .key { height: 50px; border-radius: 25px; background: rgba(255, 255, 255, 0.03); font-weight: 800; cursor: pointer; transition: 0.2s; color: #fecaca; }
+        .key:hover { background: var(--red); color: white; transform: translateY(-2px); }
+        .key-active { background: var(--orange); box-shadow: 0 0 20px var(--orange); }
 
-        /* Proxy Doc Style */
-        .proxy-doc { background: white; color: #333; padding: 40px; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 80vh; font-family: 'Times New Roman', serif; overflow-y: auto; }
-        .doc-link { color: #1a73e8; text-decoration: underline; cursor: pointer; font-size: 14px; word-break: break-all; display: block; margin-bottom: 4px; }
-        .doc-link:hover { color: #d93025; }
-
-        /* MC Skin Previewer */
-        #skin-container { width: 100%; height: 300px; background: #111; border-radius: 12px; border: 2px solid #3c3f41; }
+        /* MULTI-LAUNCHER UI */
+        .os-window { display: flex; height: 550px; background: #1a1b1e; border-radius: 12px; overflow: hidden; border: 1px solid #333; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .os-sidebar { width: 220px; background: #000; padding: 20px 10px; display: flex; flex-direction: column; gap: 8px; border-right: 1px solid #222; }
+        .os-nav-item { padding: 12px 15px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #888; cursor: pointer; transition: 0.2s; }
+        .os-nav-item:hover { background: rgba(220, 38, 38, 0.1); color: #fff; }
+        .os-nav-item.active { background: var(--red); color: #fff; }
         
-        #rem-os { position: fixed; inset: 0; background: #0a0a0c; z-index: 5000; display: none; flex-direction: column; }
+        .os-main { flex: 1; position: relative; background: #111; }
+        .os-footer { position: absolute; bottom: 0; width: 100%; height: 90px; background: rgba(0,0,0,0.85); display: flex; align-items: center; padding: 0 30px; justify-content: space-between; border-top: 1px solid #333; }
+        
+        .play-btn { background: #3c8527; padding: 12px 60px; color: white; font-weight: 900; font-size: 24px; border-radius: 4px; border-bottom: 4px solid #2a5d1b; cursor: pointer; transition: 0.1s; }
+        .play-btn:active { transform: translateY(2px); border-bottom-width: 0; }
+        .play-btn.brotato-theme { background: #f97316; border-bottom-color: #c2410c; }
+
+        #rem-os { position: fixed; inset: 0; background: #0a0a0c; z-index: 5000; display: none; flex-direction: column; border-top: 4px solid var(--red); }
+        #skin-container { width: 100%; height: 350px; background: rgba(0,0,0,0.5); border-radius: 12px; }
     </style>
 </head>
 <body>
 
-    <nav class="p-4 px-10 flex justify-between items-center bg-black/20 backdrop-blur-md">
-        <div class="font-black text-xl text-orange-500 tracking-tighter">REMS CORNER v9.0</div>
-        <button onclick="downloadSelf()" class="text-[10px] bg-orange-600/10 border border-orange-500/20 px-4 py-2 rounded-full hover:bg-orange-600 transition font-bold text-orange-500 uppercase">Export v9.html</button>
+    <nav class="p-6 px-12 flex justify-between items-center border-b border-red-900/30">
+        <div class="font-black text-2xl tracking-tighter text-white">REMS<span class="text-orange-500">CORNER</span></div>
+        <div class="flex gap-4">
+            <button onclick="downloadSelf()" class="bg-red-600 text-white px-6 py-2 rounded-full font-bold text-[10px] uppercase">Export v12</button>
+        </div>
     </nav>
 
-    <div class="grid grid-cols-[1fr_350px] gap-6 p-8 h-[calc(100vh-80px)]">
-        <div class="bg-white/2 border border-white/5 p-8 rounded-[40px] overflow-y-auto">
-            <h1 class="text-2xl font-black mb-4 italic opacity-80">Research Log: 2026</h1>
-            <p class="text-slate-500 text-sm leading-relaxed mb-4">Minecraft "Forge Wrapper" initialized. 74 Cloudflare nodes verified. 3D Skin system ready for .png injection.</p>
-            <div class="grid grid-cols-3 gap-4">
-                <div class="p-4 bg-white/5 rounded-2xl border border-white/5"><div class="text-[9px] text-orange-500 font-bold">WRAPPERS</div><div class="text-xl font-mono text-green-500">READY</div></div>
-                <div class="p-4 bg-white/5 rounded-2xl border border-white/5"><div class="text-[9px] text-blue-500 font-bold">ENGINE</div><div class="text-xl font-mono">3D.PRO</div></div>
-                <div class="p-4 bg-white/5 rounded-2xl border border-white/5"><div class="text-[9px] text-green-500 font-bold">LOCAL</div><div class="text-xl font-mono">SAVE.OK</div></div>
-            </div>
+    <div class="grid grid-cols-[1fr_380px] gap-8 p-12 h-[calc(100vh-100px)]">
+        <div class="bg-red-950/10 border border-red-500/20 p-10 rounded-[50px] backdrop-blur-md">
+            <h1 class="text-5xl font-black mb-4 italic text-white uppercase tracking-tighter">Potato <span class="text-orange-500">Core</span></h1>
+            <p class="text-red-100/60 leading-relaxed text-lg mb-8">Brotato Web Engine v1.0 Integrated. Multi-game focus injection enabled. Enter code to unlock the Arena.</p>
         </div>
 
         <div class="widget">
@@ -54,136 +58,98 @@
                 <button id="btn-2nd" class="key" onclick="toggle2nd()">2nd</button>
                 <button class="key" onclick="deleteChar()">DEL</button>
                 <button class="key" onclick="handleClear()">AC</button>
-                <button class="key text-orange-500 font-black" onclick="handleTuff()">÷</button>
+                <button class="key text-orange-500" onclick="handleTuff()">÷</button>
                 <button class="key" onclick="append('7')">7</button>
                 <button class="key" onclick="append('8')">8</button>
                 <button class="key" onclick="append('9')">9</button>
-                <button class="key" onclick="append('*')">×</button>
+                <button class="key text-orange-500" onclick="append('*')">×</button>
                 <button class="key" onclick="append('4')">4</button>
                 <button class="key" onclick="append('5')">5</button>
                 <button class="key" onclick="append('6')">6</button>
-                <button class="key" onclick="append('-')">-</button>
+                <button class="key text-orange-500" onclick="append('-')">-</button>
                 <button class="key" onclick="append('1')">1</button>
                 <button class="key" onclick="append('2')">2</button>
                 <button class="key" onclick="append('3')">3</button>
-                <button class="key" onclick="append('+')">+</button>
+                <button class="key text-orange-500" onclick="append('+')">+</button>
                 <button class="key col-span-2" onclick="append('0')">0</button>
                 <button class="key" onclick="append('.')">.</button>
-                <button class="key bg-orange-600 text-white" onclick="handleEnter()">=</button>
+                <button class="key bg-gradient-to-br from-red-600 to-orange-600 text-white border-none" onclick="handleEnter()">=</button>
             </div>
         </div>
     </div>
 
     <div id="rem-os">
         <div class="flex flex-1">
-            <div class="w-60 bg-black border-r border-white/5 p-6 flex flex-col gap-2">
-                <button onclick="showTab('mc')" class="text-left p-3 rounded-xl hover:bg-white/5 font-bold transition text-sm">🎮 Minecraft</button>
-                <button onclick="showTab('prox')" class="text-left p-3 rounded-xl hover:bg-white/5 font-bold transition text-sm">📄 Proxy Vault</button>
-                <button onclick="showTab('ai')" class="text-left p-3 rounded-xl hover:bg-white/5 font-bold transition text-sm">🤖 Rem-AI</button>
-                <button onclick="closeOS()" class="mt-auto text-red-500 font-black uppercase tracking-widest text-[9px] p-4">[TERMINATE]</button>
+            <div class="w-64 bg-black p-8 border-r border-red-900/30 flex flex-col gap-2">
+                <div class="text-[10px] font-black text-red-600 mb-6 tracking-widest uppercase">Select Environment</div>
+                <button onclick="showTab('mc')" class="text-left p-4 rounded-xl hover:bg-red-900/20 font-bold transition">🎮 Minecraft</button>
+                <button onclick="showTab('bt')" class="text-left p-4 rounded-xl hover:bg-orange-900/20 font-bold transition text-orange-500">🥔 Brotato</button>
+                <button onclick="showTab('prox')" class="text-left p-4 rounded-xl hover:bg-red-900/20 font-bold transition">📄 Proxy Vault</button>
+                <button onclick="closeOS()" class="mt-auto text-red-500 font-black text-[10px] text-center p-4 hover:text-white transition">[TERMINATE]</button>
             </div>
 
-            <div class="flex-1 p-8 overflow-y-auto bg-[#0a0a0c]">
+            <div class="flex-1 p-10 bg-[#09090b] overflow-y-auto">
                 
-                <div id="tab-prox" class="os-tab hidden">
-                    <div class="max-w-3xl mx-auto proxy-doc">
-                        <h1 style="font-size: 28px; text-decoration: underline; margin-bottom: 20px;">Asset Directory: March 2026</h1>
-                        <div class="mb-6 p-4 bg-green-50 border border-green-200 text-xs text-green-700">Status Checker: Nodes 1-74 are Currently Online.</div>
-                        <div id="cloudflare-grid" class="grid grid-cols-2 gap-x-8"></div>
-                    </div>
-                </div>
-
                 <div id="tab-mc" class="os-tab">
-                    <div class="grid grid-cols-[300px_1fr] gap-8">
-                        <div class="bg-[#1a1b1e] p-6 rounded-3xl border border-white/5">
-                            <h2 class="text-lg font-bold mb-4">3D Skin Editor</h2>
-                            <div id="skin-container"></div>
-                            <input type="file" id="skin-upload" class="hidden" onchange="loadSkin(this)">
-                            <button onclick="document.getElementById('skin-upload').click()" class="w-full mt-4 py-3 bg-blue-600 rounded-lg font-bold text-[10px] uppercase">Upload Skin PNG</button>
+                    <div class="os-window">
+                        <div class="os-sidebar">
+                            <div class="os-nav-item active">Launcher</div>
+                            <div class="os-nav-item" onclick="toggleSkins()">Skins</div>
                         </div>
-                        <div class="bg-[#1a1b1e] p-8 rounded-3xl border border-white/5 flex flex-col justify-center text-center">
-                            <h2 class="text-4xl font-black mb-2 tracking-tighter">JAVA EDITION</h2>
-                            <p class="text-xs text-slate-500 mb-8 font-mono">INJECTOR: FORGE_TAKAI_v4</p>
-                            <button onclick="launchForgeMinecraft()" class="w-full py-8 bg-[#3c8527] hover:bg-[#47a02e] text-white font-black text-4xl rounded-xl shadow-[0_8px_0_0_#2a5d1b] transition-all">PLAY</button>
+                        <div class="os-main" style="background: url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg') center/cover;">
+                            <div id="skin-overlay" class="hidden absolute inset-0 bg-[#2b2b2b] p-8 flex flex-col items-center">
+                                <div id="skin-container"></div>
+                                <button onclick="document.getElementById('skin-upload').click()" class="mt-4 px-6 py-2 bg-white text-black font-bold text-xs rounded">UPLOAD PNG</button>
+                                <input type="file" id="skin-upload" class="hidden" onchange="loadSkin(this)">
+                            </div>
+                            <div class="os-footer">
+                                <div><div class="text-white font-bold text-sm uppercase">Java Edition</div><div class="text-gray-400 text-[10px]">Ver: Forge 1.12.2</div></div>
+                                <button class="play-btn" onclick="launchGame('https://takaiwebsite.neocities.org/minecraft')">PLAY</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="tab-ai" class="os-tab hidden">
-                    <div id="ai-chat" class="h-[400px] bg-black/60 rounded-3xl border border-white/5 p-8 overflow-y-auto mb-4 font-mono text-xs">
-                        <p class="text-orange-500 opacity-50">// REM-AI v9: FORGE INJECTION SUCCESSFUL.</p>
-                    </div>
-                    <div class="flex gap-4">
-                        <input type="text" id="ai-input" class="flex-1 bg-white/5 border border-white/10 rounded-full px-8 py-4 outline-none focus:border-orange-500" placeholder="Ask Rem-AI...">
-                        <button onclick="sendAI()" class="bg-orange-600 px-10 rounded-full font-black uppercase text-xs">Send</button>
+                <div id="tab-bt" class="os-tab hidden">
+                    <div class="os-window" style="border-color: var(--orange);">
+                        <div class="os-sidebar" style="border-right-color: #431407;">
+                            <div class="os-nav-item active" style="color: var(--orange);">Brotato Arena</div>
+                            <div class="os-nav-item">Character Planner</div>
+                        </div>
+                        <div class="os-main" style="background: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1942280/ss_49339e1451f1624c80330058e5793083f2a11b66.1920x1080.jpg?t=1706692807') center/cover;">
+                            <div class="os-footer" style="border-top-color: #431407;">
+                                <div><div class="text-orange-500 font-bold text-sm uppercase">Potato Core v1.0</div><div class="text-gray-400 text-[10px]">Arena: Web High-Performance</div></div>
+                                <button class="play-btn brotato-theme" onclick="launchGame('https://6499806e57922d0d0879624d--unrivaled-sable-516a7c.netlify.app/')">START WAVE</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script>
         let is2nd = false; let input = "0"; let skinViewer;
-        const cfNodes = ["045wwgoi","0k2aq83m","0v4ffm91","17vd83q0","191ueiki","1he940rv","1gm57tu0","3j26uvxp","3fgdkmb8","2u8v69a7","2s8jwz7h","2i4b3tzs","4p7xpg4h","4ar3nodk","4adakz10","455ovzcg","5g6bjf46","5fk5q8tq","60","61","68","6ftqrdo9","6ha5kfkf","7e7cwkqe","7pr9rptc","848abfs5","815moniquelanebluds","8fqaenzi","aaaa","8jdzq41j","8rqa25te","9fxes0mc","academicdishonesty","ajh","ajhforthedub","ak19ni63","at7r43xz","b4af5p64","bcw2yqhy","dvdqqx9k","ds2js27b","eddiemadethis","endisthegoat","f63kktxh","fashfk","fbi1ly4y","freeschlepp","fx60h3gk","g58he4q6","galvestoncounty","gd5cd5b1","gh12346767","gobastou","goo","gug3y4ed","gtqmsj8k","harrychiraboga","harryhenrypot","hcqlxdvv","hehe","hey","hoo7dgfy","huntrix","htnir4a6","hxangzas","i0arjh6m","i76wqs0b","illevp40","ir811wjg","isrelay-config-production","iyhxg1ch","j434quh2"];
 
         window.onload = () => {
-            skinViewer = new skinview3d.SkinViewer({ canvas: document.getElementById("skin-container"), width: 250, height: 300, skin: "https://minotar.net/skin/char" });
+            skinViewer = new skinview3d.SkinViewer({ canvas: document.getElementById("skin-container"), width: 300, height: 350, skin: "https://minotar.net/skin/char" });
             skinViewer.autoRotate = true; skinViewer.animation = new skinview3d.WalkingAnimation();
-            const grid = document.getElementById('cloudflare-grid');
-            cfNodes.forEach(node => {
-                const span = document.createElement('span'); span.className = 'doc-link';
-                span.innerText = node;
-                span.onclick = () => ghostLaunch(`https://${node}${node.includes('.')?'':'.webauth.win.cdn.cloudflare.net/'}`);
-                grid.appendChild(span);
-            });
         };
 
-        function launchForgeMinecraft() {
+        function launchGame(url) {
             const win = window.open("about:blank", "_blank");
             win.document.write(`
-                <html>
-                <head><title>System.IO.Main</title><style>
-                    body, html { margin:0; padding:0; height:100%; overflow:hidden; background:#000; font-family: sans-serif; }
-                    #wrapper { position:relative; width:100vw; height:100vh; }
-                    iframe { width:100%; height:100%; border:none; }
-                    #mod-btn { position:absolute; top:10px; right:10px; background:#3c8527; color:white; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer; z-index:100; border:2px solid #2a5d1b; font-size:12px; }
-                    #mod-menu { display:none; position:absolute; top:50px; right:10px; width:200px; background:rgba(0,0,0,0.9); border:1px solid #444; color:white; padding:15px; z-index:101; border-radius:8px; }
-                </style></head>
-                <body>
-                    <div id="wrapper">
-                        <div id="mod-btn" onclick="document.getElementById('mod-menu').style.display = document.getElementById('mod-menu').style.display === 'block' ? 'none' : 'block'">MODS</div>
-                        <div id="mod-menu">
-                            <h4 style="margin:0 0 10px 0; color:#f97316;">Forge Mod Loader</h4>
-                            <div style="font-size:11px; color:#aaa; margin-bottom:5px;">• Optifine (Active)</div>
-                            <div style="font-size:11px; color:#aaa; margin-bottom:5px;">• JourneyMap (Active)</div>
-                            <div style="font-size:11px; color:#aaa; margin-bottom:10px;">• X-Ray (Ready)</div>
-                            <button style="width:100%; background:#444; color:white; border:none; padding:5px; font-size:10px; cursor:pointer;">BROWSE .JAR FILES</button>
-                        </div>
-                        <iframe src="https://takaiwebsite.neocities.org/minecraft" allowfullscreen allow="gamepad"></iframe>
-                    </div>
-                </body>
-                </html>
+                <html><head><title>System.Execute</title><style>body,html{margin:0;padding:0;height:100%;background:#000;overflow:hidden;}iframe{width:100vw;height:100vh;border:none;}</style></head>
+                <body><iframe id="game-frame" src="${url}" allow="autoplay; fullscreen; gamepad; pointer-lock" sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts"></iframe>
+                <script>window.onload = () => { const f = document.getElementById('game-frame'); f.focus(); document.body.onclick = () => f.focus(); };<\/script>
+                </body></html>
             `);
         }
 
-        function loadSkin(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => { skinViewer.loadSkin(e.target.result); };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function downloadSelf() {
-            const blob = new Blob([document.documentElement.outerHTML], {type: "text/html"});
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob); a.download = "Rems_Corner_v9.html"; a.click();
-        }
-
-        function ghostLaunch(url) {
-            const win = window.open("about:blank", "_blank");
-            win.document.write(`<html><body style="margin:0;overflow:hidden;"><iframe src="${url}" style="width:100vw;height:100vh;border:none;" allowfullscreen allow="gamepad"></iframe></body></html>`);
-        }
+        function toggleSkins() { document.getElementById('skin-overlay').classList.toggle('hidden'); }
+        function loadSkin(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = (e) => skinViewer.loadSkin(e.target.result); r.readAsDataURL(input.files[0]); } }
+        function downloadSelf() { const b = new Blob([document.documentElement.outerHTML], {type: "text/html"}); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "Rems_Corner_v12_PotatoCore.html"; a.click(); }
 
         function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').classList.toggle('key-active', is2nd); }
         function append(v) { input = input === "0" ? v : input + v; document.getElementById('calc-val').innerText = input; }
@@ -194,13 +160,6 @@
         function openOS() { document.getElementById('rem-os').style.display = 'flex'; }
         function closeOS() { document.getElementById('rem-os').style.display = 'none'; }
         function showTab(t) { document.querySelectorAll('.os-tab').forEach(x => x.classList.add('hidden')); document.getElementById('tab-'+t).classList.remove('hidden'); }
-        
-        function sendAI() {
-            const inp = document.getElementById('ai-input'); const chat = document.getElementById('ai-chat'); if(!inp.value) return;
-            chat.innerHTML += `<div class="mb-2 text-white font-bold">USER > ${inp.value}</div>`;
-            setTimeout(() => { chat.innerHTML += `<div class="mb-4 text-orange-400">REM > Forge Wrapper v4 injected successfully. Mods button added to target environment. Cloudflare node array checked: 74/74 active.</div>`; chat.scrollTop = chat.scrollHeight; }, 600);
-            inp.value = '';
-        }
     </script>
 </body>
 </html>
