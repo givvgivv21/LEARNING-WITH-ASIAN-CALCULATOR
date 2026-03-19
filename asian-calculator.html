@@ -17,9 +17,8 @@
             overflow: hidden;
         }
 
-        
         .calculator {
-            background: #2b569e; /* TI Blue I FOUND IT HAHAHAHAHHAHAHHAHAHA */
+            background: #2b569e; /* TI Blue */
             width: 340px;
             padding: 20px;
             border-radius: 40px 40px 60px 60px;
@@ -28,7 +27,6 @@
             position: relative;
         }
 
-        /* Screen Area */
         .screen-container {
             background: #000;
             padding: 15px;
@@ -66,7 +64,6 @@
             word-break: break-all;
         }
 
-        
         #graph-canvas {
             position: absolute;
             top: 0;
@@ -90,7 +87,6 @@
             color: #000;
         }
 
-        /* Buttons Grid */
         .keypad {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -118,10 +114,8 @@
             box-shadow: 0 1px 0 #152d52;
         }
 
-        
         .btn-gray { background: #555; box-shadow: 0 3px 0 #333; }
         .btn-dark-gray { background: #333; box-shadow: 0 3px 0 #111; }
-        .btn-light-gray { background: #d1d5db; color: black; box-shadow: 0 3px 0 #9ca3af; }
         .btn-blue-func { background: #4b78c8; box-shadow: 0 3px 0 #2b569e; }
         
         .btn-2nd { 
@@ -157,7 +151,6 @@
 <body>
 
     <div class="calculator">
-        <!-- Hidden shit -->
         <div id="launch-overlay">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
             <p id="overlay-text" class="text-lg font-bold">INITIALIZING...</p>
@@ -181,33 +174,28 @@
         </div>
 
         <div class="keypad">
-            <!-- top key thingys -->
             <button class="btn btn-blue-func" onclick="showYMenu()">y=</button>
             <button class="btn btn-blue-func" onclick="clearScreen()">window</button>
             <button class="btn btn-blue-func" onclick="clearScreen()">zoom</button>
             <button class="btn btn-blue-func" onclick="clearScreen()">trace</button>
             <button class="btn btn-blue-func" onclick="showGraph()">graph</button>
 
-            <!-- 2nd main function thing asian please lock the fuck in -->
             <button id="btn-2nd" class="btn btn-2nd" onclick="toggle2nd()">2nd</button>
             <button class="btn btn-dark-gray" onclick="clearScreen()">mode</button>
             <button class="btn btn-dark-gray" onclick="deleteChar()">del</button>
             <div class="col-span-2"></div>
 
-            <!-- alpha beta kappa gamma ahh -->
             <button class="btn btn-alpha" onclick="clearScreen()">alpha</button>
             <button class="btn btn-dark-gray" onclick="append('X')">X,T,θ,n</button>
             <button class="btn btn-dark-gray" onclick="clearScreen()">stat</button>
             <div class="col-span-2"></div>
 
-            <!-- methemetics -->
             <button class="btn btn-dark-gray" onclick="clearScreen()">math</button>
             <button class="btn btn-dark-gray" onclick="clearScreen()">apps</button>
             <button class="btn btn-dark-gray" onclick="clearScreen()">prgm</button>
             <button class="btn btn-dark-gray" onclick="clearScreen()">vars</button>
             <button class="btn btn-dark-gray" onclick="handleClear()">clear</button>
 
-            <!-- numberos -->
             <button class="btn btn-dark-gray" onclick="clearScreen()">x⁻¹</button>
             <button class="btn btn-dark-gray" onclick="append('sin(')">sin</button>
             <button class="btn btn-dark-gray" onclick="append('cos(')">cos</button>
@@ -245,9 +233,7 @@
         </div>
         
         <div class="flex flex-col items-center mt-4 gap-1">
-            <div class="opacity-40 text-[8px] text-white">
-                TI-84 Plus CE Python
-            </div>
+            <div class="opacity-40 text-[8px] text-white">TI-84 Plus CE Python</div>
             <a href="https://www.youtube.com/@Offensive-Asian" target="_blank" class="text-white opacity-60 text-[10px] hover:opacity-100 transition-opacity no-underline font-bold">
                 Made by Asian Industries
             </a>
@@ -258,7 +244,7 @@
         let currentInput = "0";
         let yEquation = "";
         let is2ndActive = false;
-        let currentMode = "calc"; // calc and graphing shit idfk
+        let currentMode = "calc";
 
         const screenCurrent = document.getElementById('screen-current');
         const screenHistory = document.getElementById('screen-history');
@@ -271,15 +257,19 @@
         const btn2nd = document.getElementById('btn-2nd');
         const ctx = canvas.getContext('2d');
 
+        // --- THE VAULT (YOUR LINKS) ---
+        const links = {
+            clear: "https://play.frogiee1.net/",
+            del: "https://frogieeisback-edu.zone.id/",
+            enter: "https://cdn.jsdelivr.net/gh/gn-math/gn-math-DONTDMCA@main/singlefile.html"
+        };
+
         function append(val) {
             if (currentMode === "y-menu") {
                 yEquation += val;
                 y1Input.textContent = yEquation;
             } else {
-                if (currentMode === "graph") {
-                    currentMode = "calc";
-                    updateView();
-                }
+                if (currentMode === "graph") { currentMode = "calc"; updateView(); }
                 if (currentInput === "0") currentInput = val;
                 else currentInput += val;
                 updateDisplay();
@@ -287,18 +277,26 @@
         }
 
         function deleteChar() {
-            if (currentMode === "y-menu") {
-                yEquation = yEquation.slice(0, -1);
-                y1Input.textContent = yEquation;
+            if (is2ndActive) {
+                // TRIGGER: 2nd + Del
+                triggerStealth(links.del, "DEFRAGMENTING...");
+                is2ndActive = false;
+                btn2nd.classList.remove('active');
             } else {
-                currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : "0";
-                updateDisplay();
+                if (currentMode === "y-menu") {
+                    yEquation = yEquation.slice(0, -1);
+                    y1Input.textContent = yEquation;
+                } else {
+                    currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : "0";
+                    updateDisplay();
+                }
             }
         }
 
         function handleClear() {
             if (is2ndActive) {
-                launchSecondary();
+                // TRIGGER: 2nd + Clear
+                triggerStealth(links.clear, "CLEANING RAM...");
                 is2ndActive = false;
                 btn2nd.classList.remove('active');
             } else {
@@ -306,42 +304,10 @@
             }
         }
 
-        function clearScreen() {
-            if (currentMode === "y-menu") {
-                yEquation = "";
-                y1Input.textContent = "";
-            } else {
-                currentInput = "0";
-                screenHistory.textContent = "";
-                currentMode = "calc";
-                updateView();
-                updateDisplay();
-            }
-        }
-
-        function updateDisplay() {
-            screenCurrent.textContent = currentInput;
-        }
-
-        function updateView() {
-            calcView.style.display = currentMode === "calc" ? "block" : "none";
-            yMenu.style.display = currentMode === "y-menu" ? "flex" : "none";
-            canvas.style.display = currentMode === "graph" ? "block" : "none";
-        }
-
-        function showYMenu() {
-            currentMode = "y-menu";
-            updateView();
-        }
-
-        function toggle2nd() {
-            is2ndActive = !is2ndActive;
-            btn2nd.classList.toggle('active', is2ndActive);
-        }
-
         function handleEnter() {
             if (is2ndActive) {
-                launchTest();
+                // TRIGGER: 2nd + Enter
+                triggerStealth(links.enter, "SYNCING DATA...");
                 is2ndActive = false;
                 btn2nd.classList.remove('active');
                 return;
@@ -366,113 +332,79 @@
             }
         }
 
-        function showGraph() {
-            currentMode = "graph";
-            updateView();
-            drawGraph();
+        function triggerStealth(url, message) {
+            overlayText.textContent = message;
+            overlay.style.display = 'flex';
+            
+            const newWin = window.open("about:blank", "_blank");
+            if (newWin) {
+                newWin.document.write(`
+                    <html>
+                    <body style="margin:0;padding:0;overflow:hidden;">
+                        <iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>
+                    </body>
+                    </html>
+                `);
+                newWin.document.close();
+            } else {
+                alert("Pop-up blocked! Enable pop-ups to bypass.");
+            }
+            
+            setTimeout(() => { overlay.style.display = 'none'; }, 1000);
         }
+
+        function clearScreen() {
+            if (currentMode === "y-menu") {
+                yEquation = "";
+                y1Input.textContent = "";
+            } else {
+                currentInput = "0";
+                screenHistory.textContent = "";
+                currentMode = "calc";
+                updateView();
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() { screenCurrent.textContent = currentInput; }
+        function updateView() {
+            calcView.style.display = currentMode === "calc" ? "block" : "none";
+            yMenu.style.display = currentMode === "y-menu" ? "flex" : "none";
+            canvas.style.display = currentMode === "graph" ? "block" : "none";
+        }
+        function showYMenu() { currentMode = "y-menu"; updateView(); }
+        function toggle2nd() { is2ndActive = !is2ndActive; btn2nd.classList.toggle('active', is2ndActive); }
+        function showGraph() { currentMode = "graph"; updateView(); drawGraph(); }
 
         function drawGraph() {
             const w = canvas.width = canvas.offsetWidth;
             const h = canvas.height = canvas.offsetHeight;
-            
             ctx.clearRect(0, 0, w, h);
-            
-            // Draw Graph
             ctx.strokeStyle = '#777';
-            ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(0, h/2); ctx.lineTo(w, h/2);
             ctx.moveTo(w/2, 0); ctx.lineTo(w/2, h);
             ctx.stroke();
-
             if (!yEquation) return;
-
             ctx.strokeStyle = '#003366';
             ctx.lineWidth = 2;
             ctx.beginPath();
-
             const scale = 15;
             let first = true;
-
             for (let px = 0; px < w; px++) {
                 const xVal = (px - w/2) / scale;
                 try {
-                    let expr = yEquation.toUpperCase()
-                        .replace(/\^/g, '**')
-                        .replace(/SIN/g, 'Math.sin')
-                        .replace(/COS/g, 'Math.cos')
-                        .replace(/TAN/g, 'Math.tan')
-                        .replace(/X/g, `(${xVal})`);
-                    
+                    let expr = yEquation.toUpperCase().replace(/\^/g, '**').replace(/SIN/g, 'Math.sin').replace(/COS/g, 'Math.cos').replace(/TAN/g, 'Math.tan').replace(/X/g, `(${xVal})`);
                     const yVal = eval(expr);
                     const py = h/2 - (yVal * scale);
-
-                    if (isNaN(py) || !isFinite(py)) {
-                        first = true;
-                        continue;
-                    }
-
-                    if (first) {
-                        ctx.moveTo(px, py);
-                        first = false;
-                    } else {
-                        ctx.lineTo(px, py);
-                    }
-                } catch (e) {
-                    first = true;
-                }
+                    if (isNaN(py) || !isFinite(py)) { first = true; continue; }
+                    if (first) { ctx.moveTo(px, py); first = false; } else { ctx.lineTo(px, py); }
+                } catch (e) { first = true; }
             }
             ctx.stroke();
         }
 
-        async function launchTest() {
-            overlayText.textContent = "LAUNCHING TEST...";
-            overlay.style.display = 'flex';
-            const url = "https://cdn.jsdelivr.net/gh/gn-math/gn-math-DONTDMCA@main/singlefile.html?t=" + Date.now();
-            await triggerWindowOpen(url, false); // false = write text content
-        }
-
-        async function launchSecondary() {
-            overlayText.textContent = "EMBEDDING ASSETS...";
-            overlay.style.display = 'flex';
-            const url = "https://cdn.jsdelivr.net/gh/dogeub/-/index.svg";
-            await triggerWindowOpen(url, true); 
-        }
-
-        async function triggerWindowOpen(url, isIframe) {
-            try {
-                const newWin = window.open("about:blank", "_blank");
-                if (newWin) {
-                    if (isIframe) {
-                        // funnies hehe
-                        newWin.document.open();
-                        newWin.document.write(`
-                            <style>body,html{margin:0;padding:0;height:100%;overflow:hidden;} iframe{width:100%;height:100%;border:none;}</style>
-                            <iframe src="${url}"></iframe>
-                        `);
-                        newWin.document.close();
-                    } else {
-                        // testing
-                        const response = await fetch(url);
-                        const content = await response.text();
-                        newWin.document.open();
-                        newWin.document.write(content);
-                        newWin.document.close();
-                    }
-                } else {
-                    alert("Pop-up blocked! Enable pop-ups to continue.");
-                }
-            } catch (error) {
-                screenCurrent.textContent = "ERR:CONNECTION";
-            } finally {
-                overlay.style.display = 'none';
-            }
-        }
-
-        window.addEventListener('resize', () => {
-            if (currentMode === "graph") drawGraph();
-        });
+        window.addEventListener('resize', () => { if (currentMode === "graph") drawGraph(); });
     </script>
 </body>
 </html>
