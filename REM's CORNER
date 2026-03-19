@@ -2,175 +2,207 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>RemOS v26.0 | Khan Mastery Portal</title>
+    <title>Khan Academy | Student Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/dist/skinview3d.bundle.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --khan-orange: #ff922b; --khan-blue: #14316d; --khan-green: #63d334; }
-        body { background: #f8f9fa; color: #333; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
+        :root { --k-orange: #ff922b; --k-blue: #14316d; --k-bg: #f7f9fb; }
+        body { background: var(--k-bg); font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
         
-        /* THE "LEARNING SITE" FAKE UI */
-        .edu-sidebar { background: white; border-right: 4px solid #e9ecef; }
-        .edu-card { background: white; border: 4px solid #ff922b; border-radius: 24px; box-shadow: 8px 8px 0px #ff922b; }
-        .progress-bar { background: #e9ecef; border-radius: 10px; height: 20px; overflow: hidden; }
-        .progress-fill { background: var(--khan-green); width: 65%; height: 100%; }
+        /* EDU UI STYLING */
+        .edu-nav { background: white; border-bottom: 2px solid #edf2f7; height: 70px; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
+        .edu-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 30px; transition: 0.3s; }
+        .edu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .badge { background: #fff4e6; color: #d9480f; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; }
 
-        /* BULKY ARITHMETIC CHALLENGE (CALC) */
-        .calc-bezel { border: 10px solid var(--khan-blue); background: #f1f3f5; border-radius: 30px; box-shadow: 12px 12px 0px #14316d; }
-        .calc-display { background: #fff; border: 4px inset #dee2e6; padding: 20px; text-align: right; color: var(--khan-blue); font-size: 2.5rem; font-family: 'JetBrains Mono'; border-radius: 15px; }
-        .btn-bulky { background: white; border: 3px solid #dee2e6; border-radius: 15px; box-shadow: 4px 4px 0px #dee2e6; font-weight: 800; color: var(--khan-blue); transition: 0.1s; }
-        .btn-bulky:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #000; }
-        .btn-orange { background: var(--khan-orange); color: white; border-color: #e67700; box-shadow: 4px 4px 0px #e67700; }
-
-        /* OS OVERLAY (STAYS DARK/GITHUB STYLE) */
-        #rem-os { position: fixed; inset: 0; background: #010409; z-index: 9999; display: none; padding: 30px; grid-template-columns: 300px 1fr; gap: 30px; }
+        /* THE OS (HIDDEN) */
+        #rem-os { position: fixed; inset: 0; background: #0b0e14; z-index: 9999; display: none; padding: 25px; grid-template-columns: 280px 1fr; gap: 25px; }
+        .os-sidebar { background: #161b22; border-radius: 15px; padding: 20px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #30363d; }
         .os-tab { display: none; height: 100%; flex-direction: column; }
         .active-tab { display: flex !important; }
         
-        /* COMBO OVERLAYS */
-        #fake-code { position: fixed; inset: 0; background: rgba(0,0,0,0.9); color: #0f0; font-family: monospace; padding: 20px; z-index: 10000; display: none; pointer-events: none; }
+        /* CALCULATOR DISGUISED AS TASK */
+        .calc-box { background: #1c2128; border: 8px solid #444c56; border-radius: 20px; padding: 25px; width: 400px; box-shadow: 10px 10px 0px #000; }
+        .calc-screen { background: #000; color: #ff922b; font-family: 'JetBrains Mono'; font-size: 2.5rem; text-align: right; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px inset #444c56; }
+        .btn-calc { background: #2d333b; border: 2px solid #444c56; color: white; border-radius: 10px; height: 60px; font-weight: 800; transition: 0.1s; box-shadow: 4px 4px 0px #000; }
+        .btn-calc:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #000; }
+        
+        .side-btn { padding: 15px; border-radius: 12px; text-align: left; font-weight: 700; font-size: 13px; color: #8b949e; transition: 0.2s; }
+        .side-btn:hover { background: #21262d; color: white; }
+        .side-btn.active { background: var(--k-orange); color: white; }
     </style>
 </head>
-<body onkeydown="handleCombos(event)">
+<body onkeydown="if(event.key==='~'){panic()}">
 
-    <div id="fake-code"><code>> Initializing Python Runtime...<br>> Loading Linear_Algebra_Module...<br>> Processing data at 0x4F22...</code></div>
-
-    <div class="flex h-screen">
-        <div class="edu-sidebar w-72 p-8 flex flex-col gap-6">
-            <div class="text-2xl font-black text-[#14316d] italic">KHAN<span class="text-orange-500">MASTERY</span></div>
-            <div class="space-y-2">
-                <div class="p-3 bg-orange-50 rounded-xl text-orange-600 font-bold text-sm">🏠 Dashboard</div>
-                <div class="p-3 hover:bg-zinc-50 rounded-xl text-zinc-400 font-bold text-sm">📚 My Courses</div>
-                <div class="p-3 hover:bg-zinc-50 rounded-xl text-zinc-400 font-bold text-sm">🏆 Achievements</div>
-            </div>
-            <div class="mt-auto p-4 bg-blue-50 rounded-2xl border-2 border-blue-100">
-                <div class="text-[10px] font-black text-blue-800 uppercase mb-2">Daily Goal</div>
-                <div class="progress-bar"><div class="progress-fill"></div></div>
-                <div class="text-[10px] mt-2 text-blue-600">Keep up the great work, Rem!</div>
-            </div>
-        </div>
-
-        <div class="flex-1 p-12 bg-[#fdfdfe] flex gap-12 items-center justify-center">
-            
-            <div class="edu-card flex-1 h-[600px] p-10 flex flex-col">
-                <h2 class="text-4xl font-black text-[#14316d] mb-4">Welcome back, Scholar!</h2>
-                <p class="text-zinc-500 mb-8">Ready to master your arithmetic goals today? Complete the challenge below to earn your next badge.</p>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="p-6 border-2 border-zinc-100 rounded-3xl flex items-center gap-4">
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">12</div>
-                        <div><div class="text-xs font-black uppercase text-zinc-400">Current Streak</div><div class="text-lg font-bold">Days</div></div>
-                    </div>
-                    <div class="p-6 border-2 border-zinc-100 rounded-3xl flex items-center gap-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">★</div>
-                        <div><div class="text-xs font-black uppercase text-zinc-400">Mastery Points</div><div class="text-lg font-bold">4,250</div></div>
-                    </div>
+    <div id="edu-layer" class="h-full flex flex-col">
+        <nav class="edu-nav">
+            <div class="flex items-center gap-10">
+                <div class="text-2xl font-black text-[#14316d]">KHAN<span class="text-orange-500">ACADEMY</span></div>
+                <div class="flex gap-6 text-sm font-bold text-zinc-500">
+                    <span class="text-orange-500 underline decoration-4 underline-offset-8">Dashboard</span>
+                    <span>Courses</span>
+                    <span>My Schedule</span>
                 </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <div class="text-xs font-black text-[#14316d]">Remington S.</div>
+                    <div class="text-[10px] text-zinc-400">Grade 11 • Mastery Level 4</div>
+                </div>
+                <div class="w-10 h-10 bg-orange-100 rounded-full border-2 border-orange-200"></div>
+            </div>
+        </nav>
 
-                <div class="mt-auto flex justify-between items-center p-6 bg-orange-50 rounded-3xl border-2 border-orange-100">
+        <main class="flex-1 p-10 overflow-y-auto">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-end mb-10">
                     <div>
-                        <div class="text-xs font-black text-orange-800 uppercase">Current Unit</div>
-                        <div class="font-bold text-[#14316d]">Advanced Computational Logic</div>
+                        <h1 class="text-4xl font-extrabold text-[#14316d]">Good afternoon, Rem!</h1>
+                        <p class="text-zinc-500 mt-2">You've completed 85% of your weekly computational goals. Keep it up!</p>
                     </div>
-                    <button onclick="downloadSelf()" class="bg-[#14316d] text-white px-6 py-2 rounded-full font-bold text-xs">RESUME COURSE</button>
+                    <button onclick="downloadReport()" class="bg-[#14316d] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-blue-900 transition">EXPORT ACADEMIC REPORT (.ZIP)</button>
                 </div>
-            </div>
 
-            <div class="calc-bezel w-[450px] p-8">
-                <div class="text-center font-black text-[10px] text-blue-900 uppercase mb-4 tracking-widest">Mastery Challenge v26</div>
-                <div class="calc-display mb-6" id="display">0</div>
-                <div class="grid grid-cols-4 gap-3">
-                    <button id="btn-2nd" class="btn-bulky h-16" onclick="toggle2nd()">2nd</button>
-                    <button class="btn-bulky h-16" onclick="del()">DEL</button>
-                    <button class="btn-bulky h-16" onclick="reset()">AC</button>
-                    <button class="btn-bulky h-16 text-orange-600" onclick="op('/')">÷</button>
+                <div class="grid grid-cols-3 gap-8">
+                    <div class="edu-card col-span-2">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-black text-lg text-[#14316d]">Current Learning Path</h3>
+                            <span class="badge">UNIT 4: ALGORITHMIC LOGIC</span>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="p-4 bg-orange-50 rounded-2xl flex items-center justify-between border border-orange-100">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">🔢</div>
+                                    <div class="font-bold text-orange-900">Module 4.2: Complex Arithmetic Operations</div>
+                                </div>
+                                <button onclick="simulateClick()" class="bg-orange-500 text-white px-5 py-2 rounded-lg text-xs font-black">RESUME</button>
+                            </div>
+                            <div class="p-4 bg-zinc-50 rounded-2xl flex items-center justify-between opacity-50">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">📉</div>
+                                    <div class="font-bold">Module 4.3: Linear Regression Analysis</div>
+                                </div>
+                                <span class="text-xs font-bold text-zinc-400 italic">LOCKED</span>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <button class="btn-bulky h-16" onclick="press('7')">7</button>
-                    <button class="btn-bulky h-16" onclick="press('8')">8</button>
-                    <button class="btn-bulky h-16" onclick="press('9')">9</button>
-                    <button class="btn-bulky h-16 text-orange-600" onclick="press('*')">×</button>
-                    
-                    <button class="btn-bulky h-16" onclick="press('4')">4</button>
-                    <button class="btn-bulky h-16" onclick="press('5')">5</button>
-                    <button class="btn-bulky h-16" onclick="press('6')">6</button>
-                    <button class="btn-bulky h-16 text-orange-600" onclick="press('-')">-</button>
-                    
-                    <button class="btn-bulky h-16" onclick="press('1')">1</button>
-                    <button class="btn-bulky h-16" onclick="press('2')">2</button>
-                    <button class="btn-bulky h-16" onclick="press('3')">3</button>
-                    <button class="btn-bulky h-16 text-orange-600" onclick="press('+')">+</button>
-                    
-                    <button class="btn-bulky h-16 col-span-2" onclick="press('0')">0</button>
-                    <button class="btn-bulky h-16" onclick="press('.')">.</button>
-                    <button class="btn-bulky h-16 btn-orange border-none" onclick="evalCalc()">=</button>
+                    <div class="edu-card">
+                        <h3 class="font-black text-lg text-[#14316d] mb-4">Mastery Stats</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs font-black mb-2"><span>ACCURACY</span><span>92%</span></div>
+                                <div class="h-2 bg-zinc-100 rounded-full"><div class="h-full bg-green-500 rounded-full" style="width: 92%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-black mb-2"><span>SPEED</span><span>78%</span></div>
+                                <div class="h-2 bg-zinc-100 rounded-full"><div class="h-full bg-blue-500 rounded-full" style="width: 78%"></div></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
     <div id="rem-os">
-        <div class="flex flex-col gap-4 border-r border-zinc-800 pr-6">
-            <div class="text-white font-black text-xl italic mb-6">REMS_OS</div>
-            <button onclick="showTab('bt')" class="bg-zinc-900 p-4 rounded-xl text-left font-bold text-orange-400 hover:bg-zinc-800">🥔 BROTATO</button>
-            <button onclick="showTab('br')" class="bg-zinc-900 p-4 rounded-xl text-left font-bold text-blue-400 hover:bg-zinc-800">🌐 BROWSER (V2)</button>
-            <button onclick="showTab('mc')" class="bg-zinc-900 p-4 rounded-xl text-left font-bold text-zinc-100 hover:bg-zinc-800">📦 MINECRAFT</button>
-            <button onclick="closeOS()" class="mt-auto bg-red-900/20 text-red-500 p-4 rounded-xl font-bold">SHUTDOWN</button>
+        <div class="os-sidebar">
+            <div class="text-orange-500 font-black italic text-xl px-4 mb-4">REMS_OS <span class="text-[10px] block opacity-50 not-italic">v27.0 NATIVE</span></div>
+            <button onclick="showTab('cl')" id="btn-cl" class="side-btn active">🔢 ARITHMETIC_CALC</button>
+            <button onclick="showTab('bt')" id="btn-bt" class="side-btn">🥔 BROTATO_GAME</button>
+            <button onclick="showTab('br')" id="btn-br" class="side-btn">🌐 SECURE_BROWSER</button>
+            <button onclick="showTab('mc')" id="btn-mc" class="side-btn">📦 MINECRAFT_JS</button>
+            <button onclick="closeOS()" class="mt-auto side-btn text-red-500 hover:bg-red-900/20">❌ EXIT_TO_KHAN</button>
         </div>
 
-        <div class="flex-1">
-            <div id="tab-bt" class="os-tab h-full">
-                <iframe src="https://blobby-boi.github.io/Brotato/" class="w-full h-full rounded-2xl border-none"></iframe>
-            </div>
-            <div id="tab-br" class="os-tab active-tab h-full flex flex-col">
-                <div class="flex p-4 bg-zinc-900 gap-4 rounded-t-2xl border-b border-zinc-800">
-                    <input type="text" id="url-input" class="flex-1 bg-black border-2 border-zinc-800 rounded px-4 py-2 text-white text-xs" placeholder="Search Google-IGU...">
-                    <button onclick="goBrowser()" class="bg-blue-600 text-white px-8 rounded-xl font-bold text-xs">GO</button>
+        <div class="flex-1 overflow-hidden">
+            <div id="tab-cl" class="os-tab active-tab items-center justify-center">
+                <div class="calc-box">
+                    <div class="calc-screen" id="display">0</div>
+                    <div class="grid grid-cols-4 gap-4">
+                        <button class="btn-calc" onclick="toggle2nd()" id="os-2nd">2nd</button>
+                        <button class="btn-calc" onclick="del()">DEL</button>
+                        <button class="btn-calc" onclick="reset()">AC</button>
+                        <button class="btn-calc text-orange-500" onclick="press('/')">÷</button>
+                        <button class="btn-calc" onclick="press('7')">7</button><button class="btn-calc" onclick="press('8')">8</button><button class="btn-calc" onclick="press('9')">9</button>
+                        <button class="btn-calc text-orange-500" onclick="press('*')">×</button>
+                        <button class="btn-calc" onclick="press('4')">4</button><button class="btn-calc" onclick="press('5')">5</button><button class="btn-calc" onclick="press('6')">6</button>
+                        <button class="btn-calc text-orange-500" onclick="press('-')">-</button>
+                        <button class="btn-calc" onclick="press('1')">1</button><button class="btn-calc" onclick="press('2')">2</button><button class="btn-calc" onclick="press('3')">3</button>
+                        <button class="btn-calc text-orange-500" onclick="press('+')">+</button>
+                        <button class="btn-calc col-span-2" onclick="press('0')">0</button><button class="btn-calc" onclick="press('.')">.</button>
+                        <button class="btn-calc bg-orange-600 text-white border-none" onclick="evalCalc()">=</button>
+                    </div>
                 </div>
-                <iframe id="frame-browser" class="w-full flex-1 bg-white rounded-b-2xl" src="https://www.google.com/search?q=unblocked+github+games&igu=1"></iframe>
             </div>
-            <div id="tab-mc" class="os-tab h-full">
-                <iframe src="https://takaiwebsite.neocities.org/minecraft" class="w-full h-full rounded-2xl border-none"></iframe>
+
+            <div id="tab-bt" class="os-tab">
+                <iframe src="https://blobby-boi.github.io/Brotato/" class="w-full h-full rounded-xl border-none"></iframe>
+            </div>
+
+            <div id="tab-br" class="os-tab">
+                <div class="flex p-3 bg-[#161b22] gap-3 rounded-t-xl border-b border-[#30363d]">
+                    <input type="text" id="url-input" class="flex-1 bg-black border border-[#30363d] rounded px-4 py-2 text-white text-xs" placeholder="Search Google (igu=1)...">
+                    <button onclick="goBrowser()" class="bg-blue-600 text-white px-6 rounded-lg font-bold text-xs">EXECUTE</button>
+                </div>
+                <iframe id="frame-browser" class="w-full flex-1 bg-white rounded-b-xl" src="https://www.google.com/search?q=unblocked+games+github&igu=1"></iframe>
+            </div>
+
+            <div id="tab-mc" class="os-tab">
+                <iframe src="https://takaiwebsite.neocities.org/minecraft" class="w-full h-full rounded-xl border-none"></iframe>
             </div>
         </div>
     </div>
 
     <script>
         let is2nd = false; let v = "0";
-        
-        function handleCombos(e) {
-            if (e.key === '~') panic();
-            if (e.shiftKey && e.key === '1') toggle('fake-code');
-        }
-        function toggle(id) { 
-            const el = document.getElementById(id);
-            el.style.display = el.style.display === 'block' ? 'none' : 'block';
-        }
+
         function goBrowser() {
             const query = document.getElementById('url-input').value;
             const f = document.getElementById('frame-browser');
             f.src = query.includes('.') ? (query.startsWith('http') ? query : 'https://' + query) : `https://www.google.com/search?q=${encodeURIComponent(query)}&igu=1`;
         }
-        function panic() { document.getElementById('rem-os').style.display = 'none'; document.getElementById('fake-code').style.display = 'none'; reset(); }
-        function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').style.background = is2nd ? '#ff922b' : 'white'; document.getElementById('btn-2nd').style.color = is2nd ? 'white' : '#14316d'; }
+
+        function showTab(t) {
+            document.querySelectorAll('.os-tab').forEach(x => x.classList.remove('active-tab'));
+            document.querySelectorAll('.side-btn').forEach(x => x.classList.remove('active'));
+            document.getElementById('tab-' + t).classList.add('active-tab');
+            document.getElementById('btn-' + t).classList.add('active');
+        }
+
+        // COMBO LOGIC: Use 2nd (on the calc in OS) + = to return to educational view, 
+        // OR simply tap the AC/DEL keys in a specific way.
+        function openOS() { document.getElementById('rem-os').style.display = 'grid'; }
+        function closeOS() { document.getElementById('rem-os').style.display = 'none'; }
+        function panic() { closeOS(); reset(); }
+
+        function toggle2nd() { is2nd = !is2nd; document.getElementById('os-2nd').style.background = is2nd ? '#ff922b' : '#2d333b'; }
         function press(n) { v = (v === "0" ? n : v + n); document.getElementById('display').innerText = v; }
         function del() { v = v.slice(0, -1) || "0"; document.getElementById('display').innerText = v; }
         function reset() { v = "0"; document.getElementById('display').innerText = "0"; }
-        function op(o) { if(is2nd && o === '/') { openOS(); toggle2nd(); } else press(o); }
-        function evalCalc() { if(is2nd) { openOS(); toggle2nd(); } else { try { v = String(eval(v.replace('×','*').replace('÷','/'))); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } } }
         
-        function openOS() { document.getElementById('rem-os').style.display = 'grid'; }
-        function closeOS() { document.getElementById('rem-os').style.display = 'none'; }
-        
-        // FIXED TAB SWITCHING
-        function showTab(t) {
-            const tabs = document.querySelectorAll('.os-tab');
-            tabs.forEach(tab => tab.classList.remove('active-tab'));
-            document.getElementById('tab-' + t).classList.add('active-tab');
+        function evalCalc() {
+            if (is2nd) { closeOS(); toggle2nd(); }
+            else { try { v = String(eval(v.replace('×','*').replace('÷','/'))); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } }
         }
 
-        function downloadSelf() { const b = new Blob([document.documentElement.outerHTML], {type: "text/html"}); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "Khan_Academy_Mastery.html"; a.click(); }
+        // TRIGGER OS FROM FRONT END: Clicking "RESUME" 3 times fast
+        let clicks = 0;
+        function simulateClick() {
+            clicks++;
+            if(clicks >= 3) { openOS(); clicks = 0; }
+            setTimeout(() => clicks = 0, 1000);
+        }
+
+        function downloadReport() {
+            const b = new Blob([document.documentElement.outerHTML], {type: "text/html"});
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(b);
+            a.download = "Khan_Student_Report_2026.html";
+            a.click();
+        }
     </script>
 </body>
 </html>
