@@ -2,52 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TI-84 Plus 2nd Edition | Unified</title>
+    <title>TI-84 Plus 2nd Edition | Tuff Client Build</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #2d2d2d; --lcd: #8b9a84; --orange: #f0810f; --red: #d32f2f; --grey: #4a4a4a; }
         body, html { margin: 0; padding: 0; height: 100vh; background: #000; display: flex; justify-content: center; align-items: center; font-family: 'JetBrains Mono', monospace; overflow: hidden; }
 
-        /* THE OG CASING */
+        /* CALC UI */
         .calc-case { background: var(--bg); border: 2px solid #111; width: 400px; padding: 30px; border-radius: 4px; box-shadow: 10px 10px 0px #1a1a1a; position: relative; z-index: 10; }
-        .calc-lcd { background: var(--lcd); border: 4px solid #111; height: 85px; margin-bottom: 25px; padding: 10px; font-size: 2.2rem; text-align: right; color: #1a1a1a; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.2); line-height: 65px; overflow: hidden; }
-
+        .calc-lcd { background: var(--lcd); border: 4px solid #111; height: 85px; margin-bottom: 25px; padding: 10px; font-size: 2.2rem; text-align: right; color: #1a1a1a; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.2); line-height: 65px; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn { background: var(--grey); color: #fff; border: none; border-bottom: 4px solid #1a1a1a; font-size: 1.1rem; font-weight: 800; padding: 15px 0; text-align: center; cursor: pointer; user-select: none; }
+        .btn { background: var(--grey); color: #fff; border-bottom: 4px solid #1a1a1a; font-size: 1.1rem; font-weight: 800; padding: 15px 0; text-align: center; cursor: pointer; user-select: none; }
         .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
-        
         .orange { background: var(--orange) !important; color: #000 !important; }
         .red { background: var(--red) !important; }
-        .led { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; background: #1a1a1a; transition: 0.1s; }
-        .led-on { background: #ff0000; box-shadow: 0 0 5px #ff0000; }
 
-        /* THE INTERNAL LAYER */
+        /* DASHBOARD */
         #dash { display: none; position: fixed; inset: 0; background: #121212; z-index: 100; flex-direction: column; color: white; }
-        .tab-bar { background: #1a1a1a; height: 55px; display: flex; align-items: center; padding: 0 20px; gap: 15px; border-bottom: 1px solid #333; }
-        .tab { padding: 8px 16px; color: #555; font-size: 11px; cursor: pointer; font-weight: bold; border-radius: 2px; }
-        .tab.active { color: white; background: #222; border: 1px solid #444; }
-        .view { flex: 1; position: relative; }
-        iframe { width: 100%; height: 100%; border: none; }
+        .tab-bar { background: #1a1a1a; height: 50px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid #333; }
         
-        .mc-view { background: linear-gradient(rgba(0,0,0,0.7), #121212), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; background-position: center; height: 100%; padding: 50px; display: flex; flex-direction: column; justify-content: flex-end; }
-        .expert-btn { background: #1a3a7a; border: 1px solid #2a4d9a; padding: 12px 20px; font-size: 10px; font-weight: bold; margin-left: 10px; cursor: pointer; }
+        /* MC VIEW */
+        .mc-view { background: linear-gradient(rgba(0,0,0,0.85), #121212), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; height: 100%; padding: 40px; display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
+        .mod-sidebar { background: rgba(0,0,0,0.7); border: 1px solid #333; padding: 20px; display: flex; flex-direction: column; }
+        .tuff-link { color: #f0810f; font-size: 10px; text-decoration: underline; margin-top: 5px; cursor: pointer; display: block; }
+        
+        /* ORANGE BOOT */
+        #boot-screen { display: none; position: absolute; inset: 0; background: var(--orange); z-index: 200; flex-direction: column; align-items: center; justify-content: center; }
+        .progress-bar { width: 0%; height: 100%; background: white; transition: width 0.1s linear; }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
 
     <div class="calc-case">
-        <div class="led" id="led"></div>
-        <div class="calc-lcd" id="display">0</div>
+        <div id="display" class="calc-lcd">0</div>
         <div class="calc-grid">
             <div class="btn orange" onclick="press('2nd')">2nd</div>
             <div class="btn red" onclick="press('AC')">AC</div>
             <div class="btn red" onclick="press('DEL')">DEL</div>
-            <div class="btn" onclick="press('/')">÷</div>
+            <div class="btn" onclick="press('/')">/</div>
             <div class="btn" onclick="press('7')">7</div>
             <div class="btn" onclick="press('8')">8</div>
             <div class="btn" onclick="press('9')">9</div>
-            <div class="btn" onclick="press('*')">×</div>
+            <div class="btn" onclick="press('*')">*</div>
             <div class="btn" onclick="press('4')">4</div>
             <div class="btn" onclick="press('5')">5</div>
             <div class="btn" onclick="press('6')">6</div>
@@ -64,27 +63,50 @@
 
     <div id="dash">
         <div class="tab-bar">
-            <div class="tab active" onclick="setTab(0)">LAUNCHER</div>
-            <div class="tab" onclick="setTab(1)">BROTATO</div>
-            <div class="tab" onclick="setTab(2)">HUB</div>
-            <div class="ml-auto text-zinc-600 text-[10px] font-bold cursor-pointer hover:text-red-500" onclick="panic()">EXIT [AC]</div>
+            <span class="text-[10px] font-black tracking-widest text-zinc-500">REMS CORNER // TUFF_EDITION</span>
+            <div class="ml-auto text-red-600 font-bold cursor-pointer" onclick="panic()">PANIC [AC]</div>
         </div>
-        <div class="view">
-            <div class="panel h-full" id="p0">
-                <div class="mc-view">
-                    <h1 class="text-6xl font-black italic mb-2 tracking-tighter">MINECRAFT</h1>
-                    <div class="flex items-center">
-                        <button class="bg-[#3c8527] px-14 py-4 text-2xl font-black shadow-[0_5px_0_#1a3d11] active:translate-y-1 active:shadow-none" onclick="location.href='https://takaiwebsite.neocities.org/minecraft'">PLAY</button>
-                        <button class="expert-btn" onclick="alert('Exporting Session Data...')">EXPERT EXPORT ↓</button>
-                        <label class="ml-4 bg-zinc-800 p-3 text-[9px] font-bold cursor-pointer border border-zinc-700">IMPORT SKIN<input type="file" style="display:none"></label>
+        <div class="flex-1 relative">
+            
+            <div id="boot-screen">
+                <div class="w-20 h-20 border-4 border-white mb-8"></div>
+                <div id="boot-text" class="text-xs font-bold mb-4 tracking-widest uppercase">Initializing...</div>
+                <div class="w-64 h-1 bg-white/20"><div id="boot-bar" class="progress-bar"></div></div>
+            </div>
+
+            <div id="p0" class="mc-view">
+                <div class="flex flex-col justify-end pb-10">
+                    <h1 class="text-7xl font-black italic mb-2 tracking-tighter">MINECRAFT</h1>
+                    <input type="text" id="user" class="bg-black/40 border border-zinc-700 p-3 mb-4 text-orange-500 outline-none w-64" value="RemPlayer_1">
+                    <div class="flex gap-4">
+                        <button class="bg-white text-black px-12 py-4 text-2xl font-black" onclick="startBoot()">PLAY</button>
+                        <button class="bg-zinc-800 border border-zinc-700 px-6 text-[10px] font-bold uppercase" onclick="window.open('https://www.mediafire.com/folder/mzsqrk6tat9wl/tuff_client_stuff')">GET TUFF ASSETS</button>
+                    </div>
+                </div>
+
+                <div class="mod-sidebar">
+                    <h3 class="text-[10px] font-bold border-b border-zinc-800 pb-2 text-zinc-500">TEXTURE PACKS</h3>
+                    <div class="py-4 flex-1">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-8 h-8 bg-orange-600 rounded"></div>
+                            <div>
+                                <p class="text-[10px] font-bold">TUFF_CLIENT_V1</p>
+                                <a href="https://www.mediafire.com/folder/mzsqrk6tat9wl/tuff_client_stuff" target="_blank" class="tuff-link">MediaFire Folder Source</a>
+                            </div>
+                        </div>
+                        <div class="text-[9px] text-zinc-600 bg-black/40 p-2 border border-dashed border-zinc-800">
+                            Drag PNGs here to override Tuff_Client default textures.
+                        </div>
+                    </div>
+                    <div class="border-t border-zinc-800 pt-4 text-[10px]">
+                        <p class="text-zinc-500 mb-2 uppercase">Active Profile:</p>
+                        <p class="text-orange-500 font-bold" id="profile-display">RemPlayer_1</p>
                     </div>
                 </div>
             </div>
-            <div class="panel hidden h-full" id="p1">
-                <iframe src="https://brotato.io/"></iframe>
-            </div>
-            <div class="panel hidden h-full" id="p2">
-                <iframe src="https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR"></iframe>
+
+            <div id="game-frame" class="hidden h-full">
+                <iframe id="game-src" class="w-full h-full border-none"></iframe>
             </div>
         </div>
     </div>
@@ -93,50 +115,37 @@
         let cur = "0"; let is2nd = false;
 
         function press(k) {
-            if (k === '2nd') {
-                is2nd = !is2nd;
-                document.getElementById('led').classList.toggle('led-on', is2nd);
-                return;
-            }
-
-            // THE MASTER UNIFIED SHORTCUT
-            if (is2nd && k === 'ENTER') {
-                document.getElementById('dash').style.display = 'flex';
-                resetShift();
-                return;
-            }
-
-            if (k === 'AC') {
-                cur = "0";
-                panic();
-            } else if (k === 'DEL') {
-                cur = cur.slice(0, -1) || "0";
-            } else if (k === 'ENTER') {
-                try { cur = String(eval(cur.replace('×','*').replace('÷','/'))); } catch { cur = "ERR"; }
-            } else {
-                cur = (cur === "0" ? k : cur + k);
-            }
-            
+            if (k === '2nd') { is2nd = !is2nd; return; }
+            if (is2nd && k === 'ENTER') { document.getElementById('dash').style.display = 'flex'; is2nd = false; return; }
+            if (k === 'AC') panic();
+            else if (k === 'ENTER') try { cur = eval(cur.replace('×','*').replace('÷','/')) + ""; } catch { cur = "ERR"; }
+            else cur = (cur === "0" ? k : cur + k);
             document.getElementById('display').innerText = cur;
-            resetShift();
         }
 
-        function resetShift() {
-            is2nd = false;
-            document.getElementById('led').classList.remove('led-on');
+        function startBoot() {
+            const boot = document.getElementById('boot-screen');
+            const bar = document.getElementById('boot-bar');
+            const text = document.getElementById('boot-text');
+            boot.style.display = 'flex';
+            let p = 0;
+            let int = setInterval(() => {
+                p += Math.random() * 4;
+                if (p >= 100) {
+                    p = 100; clearInterval(int);
+                    document.getElementById('p0').classList.add('hidden');
+                    boot.classList.add('hidden');
+                    document.getElementById('game-frame').classList.remove('hidden');
+                    document.getElementById('game-src').src = "https://takaiwebsite.neocities.org/minecraft?user=" + document.getElementById('user').value;
+                }
+                bar.style.width = p + '%';
+                if (p > 20) text.innerText = "Injecting Mods...";
+                if (p > 60) text.innerText = "Applying Tuff_Client Textures...";
+            }, 50);
         }
 
-        function setTab(idx) {
-            document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
-            document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('hidden', i !== idx));
-        }
-
-        function panic() {
-            document.getElementById('dash').style.display = 'none';
-            cur = "0";
-            document.getElementById('display').innerText = "0";
-            resetShift();
-        }
+        document.getElementById('user').oninput = (e) => document.getElementById('profile-display').innerText = e.target.value;
+        function panic() { location.reload(); }
     </script>
 </body>
 </html>
