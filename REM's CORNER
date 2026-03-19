@@ -2,18 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TI-84 Plus 2nd Edition | v70 Orbital Sync</title>
+    <title>TI-84 Plus 2nd Edition | v71 Black-Site</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #2d2d2d; --lcd: #8b9a84; --orange: #f0810f; --mc-green: #3c8527; }
+        :root { --bg: #2d2d2d; --lcd: #8b9a84; --orange: #f0810f; }
         body, html { margin: 0; padding: 0; height: 100vh; background: #000; font-family: 'JetBrains Mono', monospace; overflow: hidden; perspective: 1000px; }
 
         /* 3D KINETIC HALO */
         .halo-container { position: absolute; top: -55px; left: 50%; transform: translateX(-50%); width: 180px; height: 60px; z-index: 5; pointer-events: none; }
         .halo { width: 100%; height: 100%; border: 4px solid #fff; border-radius: 50%; opacity: 0; filter: blur(1px) drop-shadow(0 0 20px #fff); transition: 0.8s; }
         .halo-active { opacity: 1; animation: orbitalSpin 4s linear infinite; }
-        
         @keyframes orbitalSpin {
             0% { transform: rotateX(75deg) rotateY(10deg) rotateZ(0deg); }
             100% { transform: rotateX(75deg) rotateY(10deg) rotateZ(360deg); }
@@ -27,22 +26,12 @@
         .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
         .orange { background: var(--orange) !important; color: #000 !important; }
 
-        /* SOVEREIGN SIDEBAR HUB */
-        #dash { display: none; position: fixed; inset: 0; background: rgba(5,5,5,0.95); z-index: 10000; flex-direction: row; backdrop-filter: blur(20px); }
+        /* SIDEBAR HUB */
+        #dash { display: none; position: fixed; inset: 0; background: rgba(5,5,5,0.98); z-index: 10000; flex-direction: row; backdrop-filter: blur(25px); }
         .sidebar { width: 320px; height: 100%; background: #000; border-right: 1px solid #222; display: flex; flex-direction: column; padding: 50px 0; }
-        .sidebar-header { padding: 0 40px 40px 40px; }
-        .nav-item { padding: 18px 40px; color: #444; font-size: 13px; font-weight: 900; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; border-right: 4px solid transparent; }
-        .nav-item:hover { color: #fff; background: #0a0a0a; }
-        .nav-item.active-nav { color: var(--orange); border-right-color: var(--orange); background: #111; }
-        .dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
-
-        /* PREVIEW AREA */
-        .viewer { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.1; font-size: 100px; font-weight: 900; color: white; letter-spacing: -5px; }
-
-        /* BOOT MODAL */
-        #boot-screen { display: none; position: fixed; inset: 0; background: var(--orange); z-index: 30000; flex-direction: column; align-items: center; justify-content: center; }
-        .bar-wrap { width: 250px; height: 3px; background: rgba(255,255,255,0.2); margin-top: 30px; }
-        .bar-fill { width: 0%; height: 100%; background: #fff; }
+        .nav-item { padding: 20px 40px; color: #444; font-size: 13px; font-weight: 900; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
+        .nav-item:hover { color: #fff; background: #111; }
+        .nav-item.active-nav { color: var(--orange); background: #111; border-right: 4px solid var(--orange); }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
@@ -75,100 +64,79 @@
 
     <div id="dash">
         <div class="sidebar">
-            <div class="sidebar-header">
-                <h2 class="text-white text-2xl font-black italic tracking-tighter">OMNI-OS</h2>
-                <div class="h-1 w-12 bg-orange-500 mt-2"></div>
-            </div>
-            <div class="nav-item" onclick="spawn('mc')"><div class="dot"></div> TAKAI MINECRAFT</div>
-            <div class="nav-item" onclick="spawn('git')"><div class="dot"></div> GITHUB SOURCE</div>
-            <div class="nav-item" onclick="spawn('brt')"><div class="dot"></div> BROTATO ENGINE</div>
-            <div class="nav-item" onclick="spawn('ai')"><div class="dot"></div> SOVEREIGN AI</div>
-            <div class="nav-item" onclick="spawn('web')"><div class="dot"></div> CLEAN_BROWSER</div>
-            <div class="mt-auto nav-item text-red-600" onclick="panic()"><div class="dot"></div> TERMINATE ALL</div>
+            <div class="px-10 mb-10"><h2 class="text-white text-2xl font-black italic">OMNI-OS</h2></div>
+            <div class="nav-item" onclick="cloak('https://eaglercraft.q13x.com/')"><span>TAKAI MC (CLOAKED)</span></div>
+            <div class="nav-item" onclick="cloak('https://www.google.com/search?igu=1')"><span>GOOGLE (CLOAKED)</span></div>
+            <div class="nav-item" onclick="spawnLocalAI()"><span>SOVEREIGN AI</span></div>
+            <div class="mt-auto nav-item text-red-600" onclick="panic()"><span>TERMINATE</span></div>
         </div>
-        <div class="viewer">TI-84</div>
-    </div>
-
-    <div id="boot-screen">
-        <div class="text-white text-6xl font-black italic tracking-tighter">MOJANG</div>
-        <div class="bar-wrap"><div id="boot-fill" class="bar-fill"></div></div>
     </div>
 
     <script>
         let cur = "0"; 
         let is2nd = false;
-        let activeWindows = [];
+        let activeWins = [];
 
         function press(k) {
-            if (k === '2nd') { 
-                is2nd = !is2nd; 
-                document.getElementById('halo').classList.toggle('halo-active', is2nd); 
-                return; 
-            }
-            if (is2nd && k === 'ENTER') { 
-                document.getElementById('dash').style.display = 'flex'; 
-                return; 
-            }
+            if (k === '2nd') { is2nd = !is2nd; document.getElementById('halo').classList.toggle('halo-active', is2nd); return; }
+            if (is2nd && k === 'ENTER') { document.getElementById('dash').style.display = 'flex'; return; }
             if (k === 'AC') panic();
             else if (k === 'ENTER') try { cur = eval(cur.replace('×','*').replace('÷','/')) + ""; } catch { cur = "ERR"; }
             else cur = (cur === "0" ? k : cur + k);
             document.getElementById('display').innerText = cur;
         }
 
-        function spawn(type) {
-            const boot = document.getElementById('boot-screen');
-            const fill = document.getElementById('boot-fill');
-            boot.style.display = 'flex';
-            fill.style.width = '0%';
-            
-            let p = 0;
-            let int = setInterval(() => {
-                p += 10; fill.style.width = p + '%';
-                if (p >= 100) {
-                    clearInterval(int);
-                    boot.style.display = 'none';
-                    launch(type);
-                }
-            }, 30);
+        // THE ABOUT:BLANK CLOAKING ENGINE
+        function cloak(url) {
+            const win = window.open('about:blank', '_blank');
+            if (win) {
+                const doc = win.document;
+                doc.title = "Classes"; // Fake title for taskbar
+                const iframe = doc.createElement('iframe');
+                const style = iframe.style;
+                
+                style.position = "fixed";
+                style.top = style.left = style.bottom = style.right = "0";
+                style.width = style.height = "100%";
+                style.border = "none";
+                
+                iframe.src = url;
+                doc.body.appendChild(iframe);
+                doc.body.style.margin = "0";
+                
+                activeWins.push(win);
+                document.getElementById('dash').style.display = 'none';
+            } else {
+                alert("POPUP BLOCKED! Allow popups to enable Stealth Mode.");
+            }
         }
 
-        function launch(type) {
-            let url = "";
-            switch(type) {
-                case 'mc': url = "https://takaiwebsite.neocities.org/minecraft"; break;
-                case 'git': url = "https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR"; break;
-                case 'brt': url = "https://takaiwebsite.neocities.org/brotato"; break;
-                case 'ai': 
-                    const aiWin = window.open("", "_blank", "width=800,height=850");
-                    aiWin.document.write(`
-                        <body style="background:#000;color:#fff;font-family:monospace;padding:30px;">
-                            <h2 style="color:#f0810f">SOVEREIGN_AI v70</h2>
-                            <div id="log" style="height:650px;overflow:auto;background:#050505;border:1px solid #222;padding:20px;margin-top:20px;font-size:13px;line-height:1.6;">AI CORE DEPLOYED LOCALLY. STANDING BY...</div>
-                            <input id="in" style="width:100%;background:#111;border:1px solid #333;color:#fff;padding:15px;margin-top:20px;outline:none;" placeholder="Request logic stream...">
-                            <script>
-                                document.getElementById('in').onkeydown = (e) => {
-                                    if(e.key==='Enter') {
-                                        const log = document.getElementById('log');
-                                        log.innerHTML += '<div>[USER]: '+e.target.value+'</div>';
-                                        setTimeout(()=> { log.innerHTML += '<div style="color:#f0810f">[REM]: Internal logic applied. Result verified in local sector.</div>'; log.scrollTop = log.scrollHeight; }, 300);
-                                        e.target.value = "";
-                                    }
-                                }
-                            <\/script>
-                        </body>
-                    `);
-                    activeWindows.push(aiWin);
-                    return;
-                case 'web': url = "https://www.google.com/search?igu=1"; break;
-            }
-            const win = window.open(url, "_blank", "width=1200,height=800");
-            if(win) activeWindows.push(win);
-            document.getElementById('dash').style.display = 'none';
+        function spawnLocalAI() {
+            const win = window.open('about:blank', '_blank');
+            const doc = win.document;
+            doc.title = "System Update";
+            doc.body.style.background = "#000";
+            doc.body.innerHTML = `
+                <div style="color:#f0810f;font-family:monospace;padding:30px;">
+                    <h2>REM_AI v71 (AIR-GAPPED)</h2>
+                    <div id="l" style="height:70vh;overflow:auto;border:1px solid #222;padding:10px;margin-top:10px;">CORE ACTIVE.</div>
+                    <input id="i" style="width:100%;background:#111;color:#fff;border:1px solid #333;padding:15px;margin-top:20px;" placeholder="Input logic stream...">
+                </div>
+                <script>
+                    document.getElementById('i').onkeydown = (e) => {
+                        if(e.key === 'Enter') {
+                            document.getElementById('l').innerHTML += '<div>> ' + e.target.value + '</div>';
+                            setTimeout(()=> { document.getElementById('l').innerHTML += '<div style="color:#fff">REM: Analytical Logic Stable. Cloak Engaged.</div>'; }, 200);
+                            e.target.value = "";
+                        }
+                    }
+                <\/script>`;
+            activeWins.push(win);
         }
 
         function panic() {
-            activeWindows.forEach(w => { if(!w.closed) w.close(); });
-            activeWindows = [];
+            activeWins.forEach(w => { if(!w.closed) w.close(); });
+            activeWins = [];
             document.getElementById('dash').style.display = 'none';
             document.getElementById('halo').classList.remove('halo-active');
             is2nd = false; cur = "0";
