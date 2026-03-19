@@ -2,51 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TI-84 Plus 2nd Edition | Graphing Calculator</title>
+    <title>TI-84 Plus 2nd Edition | Unified</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --block-bg: #2d2d2d; --block-lcd: #8b9a84; --block-orange: #f0810f; 
-            --block-red: #d32f2f; --block-grey: #4a4a4a; --mc-green: #3c8527;
-        }
+        :root { --bg: #2d2d2d; --lcd: #8b9a84; --orange: #f0810f; --red: #d32f2f; --grey: #4a4a4a; }
         body, html { margin: 0; padding: 0; height: 100vh; background: #000; display: flex; justify-content: center; align-items: center; font-family: 'JetBrains Mono', monospace; overflow: hidden; }
 
-        /* CALCULATOR SHELL */
-        .calc-case { background: var(--block-bg); border: 3px solid #111; width: 420px; padding: 35px; border-radius: 4px; box-shadow: 15px 15px 0px #111; position: relative; z-index: 10; }
-        .calc-lcd { background: var(--block-lcd); border: 5px solid #111; height: 90px; margin-bottom: 30px; padding: 12px; font-size: 2.4rem; text-align: right; color: #1a1a1a; box-shadow: inset 3px 3px 0px rgba(0,0,0,0.2); line-height: 70px; }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .btn { background: var(--block-grey); color: #fff; border-bottom: 5px solid #111; font-size: 1.1rem; font-weight: 800; padding: 18px 0; text-align: center; cursor: pointer; user-select: none; }
-        .btn:active { transform: translateY(3px); border-bottom-width: 2px; }
-        .orange { background: var(--block-orange) !important; color: #000 !important; }
-        .red { background: var(--block-red) !important; }
-        .led { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; background: #111; }
-        .led-on { background: #ff0000; box-shadow: 0 0 6px #ff0000; }
+        /* THE OG CASING */
+        .calc-case { background: var(--bg); border: 2px solid #111; width: 400px; padding: 30px; border-radius: 4px; box-shadow: 10px 10px 0px #1a1a1a; position: relative; z-index: 10; }
+        .calc-lcd { background: var(--lcd); border: 4px solid #111; height: 85px; margin-bottom: 25px; padding: 10px; font-size: 2.2rem; text-align: right; color: #1a1a1a; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.2); line-height: 65px; overflow: hidden; }
 
-        /* THE DASHBOARD OVERLAY */
-        #dash { position: fixed; inset: 0; background: #121212; z-index: 100; display: none; flex-direction: column; }
-        .tab-bar { background: #1a1a1a; height: 60px; display: flex; align-items: center; padding: 0 20px; gap: 10px; border-bottom: 1px solid #333; }
-        .tab { padding: 10px 20px; color: #888; font-size: 12px; cursor: pointer; font-weight: bold; border-radius: 4px; }
-        .tab.active { background: #333; color: #fff; }
-        .tab:hover { color: #fff; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .btn { background: var(--grey); color: #fff; border: none; border-bottom: 4px solid #1a1a1a; font-size: 1.1rem; font-weight: 800; padding: 15px 0; text-align: center; cursor: pointer; user-select: none; }
+        .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
         
-        .dash-content { flex: 1; position: relative; }
-        .panel { display: none; width: 100%; height: 100%; }
-        .panel.active { display: block; }
+        .orange { background: var(--orange) !important; color: #000 !important; }
+        .red { background: var(--red) !important; }
+        .led { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; background: #1a1a1a; transition: 0.1s; }
+        .led-on { background: #ff0000; box-shadow: 0 0 5px #ff0000; }
 
-        /* MC LAUNCHER PANEL */
-        .mc-hero { height: 100%; background: linear-gradient(rgba(0,0,0,0.5), #121212), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; display: flex; flex-direction: column; justify-content: flex-end; padding: 60px; }
-        .play-btn { background: var(--mc-green); width: 250px; height: 60px; border-radius: 4px; font-size: 28px; font-weight: 900; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 0 #235017; }
-        .btn-row { display: flex; gap: 15px; margin-top: 30px; }
-        .sub-btn { background: #333; padding: 15px 25px; font-size: 12px; color: white; cursor: pointer; border: 1px solid #444; }
-        .expert { background: #1a3a7a !important; }
-
-        .panic-tag { position: fixed; bottom: 10px; right: 10px; color: #333; font-size: 10px; }
+        /* THE INTERNAL LAYER */
+        #dash { display: none; position: fixed; inset: 0; background: #121212; z-index: 100; flex-direction: column; color: white; }
+        .tab-bar { background: #1a1a1a; height: 55px; display: flex; align-items: center; padding: 0 20px; gap: 15px; border-bottom: 1px solid #333; }
+        .tab { padding: 8px 16px; color: #555; font-size: 11px; cursor: pointer; font-weight: bold; border-radius: 2px; }
+        .tab.active { color: white; background: #222; border: 1px solid #444; }
+        .view { flex: 1; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; }
+        
+        .mc-view { background: linear-gradient(rgba(0,0,0,0.7), #121212), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; background-position: center; height: 100%; padding: 50px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .expert-btn { background: #1a3a7a; border: 1px solid #2a4d9a; padding: 12px 20px; font-size: 10px; font-weight: bold; margin-left: 10px; cursor: pointer; }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
 
-    <div class="calc-case" id="calc-ui">
+    <div class="calc-case">
         <div class="led" id="led"></div>
         <div class="calc-lcd" id="display">0</div>
         <div class="calc-grid">
@@ -76,90 +66,76 @@
         <div class="tab-bar">
             <div class="tab active" onclick="setTab(0)">LAUNCHER</div>
             <div class="tab" onclick="setTab(1)">BROTATO</div>
-            <div class="tab" onclick="setTab(2)">MODS & SKIN</div>
-            <div class="tab" onclick="setTab(3)">ASIAN HUB</div>
-            <div class="ml-auto text-red-600 font-black cursor-pointer px-4" onclick="panic()">EXIT [X]</div>
+            <div class="tab" onclick="setTab(2)">HUB</div>
+            <div class="ml-auto text-zinc-600 text-[10px] font-bold cursor-pointer hover:text-red-500" onclick="panic()">EXIT [AC]</div>
         </div>
-        <div class="dash-content">
-            <div class="panel active">
-                <div class="mc-hero">
-                    <h1 class="text-7xl font-black italic mb-2 tracking-tighter">MINECRAFT</h1>
-                    <p class="text-zinc-400 font-bold mb-8">Java Edition | Rem's Corner v48.0</p>
-                    <div class="play-btn" onclick="inject('https://takaiwebsite.neocities.org/minecraft')">PLAY</div>
-                    <div class="btn-row">
-                        <div class="sub-btn expert" onclick="alert('Exporting World Data...')">EXPERT EXPORT ↓</div>
-                        <div class="sub-btn" onclick="setTab(2)">ASSET MANAGER</div>
+        <div class="view">
+            <div class="panel h-full" id="p0">
+                <div class="mc-view">
+                    <h1 class="text-6xl font-black italic mb-2 tracking-tighter">MINECRAFT</h1>
+                    <div class="flex items-center">
+                        <button class="bg-[#3c8527] px-14 py-4 text-2xl font-black shadow-[0_5px_0_#1a3d11] active:translate-y-1 active:shadow-none" onclick="location.href='https://takaiwebsite.neocities.org/minecraft'">PLAY</button>
+                        <button class="expert-btn" onclick="alert('Exporting Session Data...')">EXPERT EXPORT ↓</button>
+                        <label class="ml-4 bg-zinc-800 p-3 text-[9px] font-bold cursor-pointer border border-zinc-700">IMPORT SKIN<input type="file" style="display:none"></label>
                     </div>
                 </div>
             </div>
-            <div class="panel">
-                <iframe src="https://brotato.io/" class="w-full h-full border-none"></iframe>
+            <div class="panel hidden h-full" id="p1">
+                <iframe src="https://brotato.io/"></iframe>
             </div>
-            <div class="panel p-20 bg-zinc-900">
-                <h2 class="text-4xl mb-10">Asset Manager</h2>
-                <div class="grid grid-cols-2 gap-10">
-                    <div class="p-10 border border-zinc-700 rounded bg-zinc-800">
-                        <h3 class="text-xl mb-4 text-orange-500">Skin Importer</h3>
-                        <input type="file" accept=".png" class="mb-4">
-                        <p class="text-xs text-zinc-500">Upload .png skins for Takai Mirror</p>
-                    </div>
-                    <div class="p-10 border border-zinc-700 rounded bg-zinc-800">
-                        <h3 class="text-xl mb-4 text-green-500">Mod Loader</h3>
-                        <input type="file" accept=".jar" class="mb-4">
-                        <p class="text-xs text-zinc-500">Inject .jar files into session</p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel">
-                <iframe src="https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR" class="w-full h-full border-none"></iframe>
+            <div class="panel hidden h-full" id="p2">
+                <iframe src="https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR"></iframe>
             </div>
         </div>
-        <div class="panic-tag">Press ~ to Panic Reset</div>
     </div>
 
     <script>
-        let val = "0"; let shift = false;
+        let cur = "0"; let is2nd = false;
 
         function press(k) {
-            if (k === '2nd') { 
-                shift = !shift; 
-                document.getElementById('led').classList.toggle('led-on', shift);
-                return; 
-            }
-            if (shift && k === 'ENTER') {
-                document.getElementById('dash').style.display = 'flex';
-                shift = false;
-                document.getElementById('led').classList.remove('led-on');
+            if (k === '2nd') {
+                is2nd = !is2nd;
+                document.getElementById('led').classList.toggle('led-on', is2nd);
                 return;
             }
-            if (k === 'AC') {
-                if (document.getElementById('dash').style.display === 'flex') panic();
-                else val = "0";
+
+            // THE MASTER UNIFIED SHORTCUT
+            if (is2nd && k === 'ENTER') {
+                document.getElementById('dash').style.display = 'flex';
+                resetShift();
+                return;
             }
-            else if (k === 'DEL') val = val.slice(0, -1) || "0";
-            else if (k === 'ENTER') {
-                try { val = String(eval(val.replace('×','*').replace('÷','/'))); } catch { val = "ERR"; }
-            } else { val = (val === "0" ? k : val + k); }
-            document.getElementById('display').innerText = val;
-            shift = false;
+
+            if (k === 'AC') {
+                cur = "0";
+                panic();
+            } else if (k === 'DEL') {
+                cur = cur.slice(0, -1) || "0";
+            } else if (k === 'ENTER') {
+                try { cur = String(eval(cur.replace('×','*').replace('÷','/'))); } catch { cur = "ERR"; }
+            } else {
+                cur = (cur === "0" ? k : cur + k);
+            }
+            
+            document.getElementById('display').innerText = cur;
+            resetShift();
+        }
+
+        function resetShift() {
+            is2nd = false;
             document.getElementById('led').classList.remove('led-on');
         }
 
         function setTab(idx) {
             document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
-            document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === idx));
-        }
-
-        function inject(url) {
-            const panel = document.querySelectorAll('.panel')[0];
-            panel.innerHTML = `<iframe src="${url}" class="w-full h-full border-none"></iframe>`;
+            document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('hidden', i !== idx));
         }
 
         function panic() {
             document.getElementById('dash').style.display = 'none';
-            val = "0";
+            cur = "0";
             document.getElementById('display').innerText = "0";
-            location.reload(); // Hard reset for maximum safety
+            resetShift();
         }
     </script>
 </body>
