@@ -1,235 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rem's Corner | Research & Analytics</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root { 
-            --bg: #0f172a; 
-            --accent-orange: #f97316; 
-            --accent-red: #ef4444;
-            --glass: rgba(30, 41, 59, 0.7);
+<div id="rem-os" class="fixed inset-0 bg-[#0f172a] z-[3000] hidden flex-col font-sans">
+    <div class="bg-[#1e293b] p-4 flex justify-between items-center border-b border-orange-500/30">
+        <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+            <span class="font-black tracking-tighter text-orange-500">REM OS v4.0</span>
+        </div>
+        <button onclick="closeOS()" class="text-xs text-slate-500 hover:text-white">CLOSE [ESC]</button>
+    </div>
+
+    <div class="flex flex-1 overflow-hidden">
+        <div class="w-64 bg-[#020617] p-6 space-y-2 border-r border-slate-800">
+            <button onclick="showTab('mc')" class="w-full text-left p-3 rounded-xl hover:bg-orange-500/10 text-slate-400 hover:text-orange-500 transition">🎮 Gaming (Tuff)</button>
+            <button onclick="showTab('ai')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-500/10 text-slate-400 hover:text-indigo-400 transition">🤖 Rem-AI Console</button>
+            <button onclick="showTab('links')" class="w-full text-left p-3 rounded-xl hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-400 transition">🔗 The Link Vault</button>
+            <button onclick="showTab('proxy')" class="w-full text-left p-3 rounded-xl hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition">🌐 Frogiee Proxies</button>
+        </div>
+
+        <div class="flex-1 p-8 overflow-y-auto bg-[#0f172a] relative">
+            
+            <div id="tab-mc" class="os-tab hidden">
+                <div class="bg-[#1e293b] rounded-3xl p-8 border border-slate-700 shadow-2xl">
+                    <h2 class="text-3xl font-black mb-2">TUFF CLIENT</h2>
+                    <p class="text-slate-500 mb-6">1.12.2 Optimized Eaglercraft</p>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="p-4 bg-black/20 rounded-xl border border-white/5">Optifine: <span class="text-green-500 font-bold">ACTIVE</span></div>
+                        <div class="p-4 bg-black/20 rounded-xl border border-white/5">Eagler Forge: <span class="text-green-500 font-bold">READY</span></div>
+                    </div>
+                    <button onclick="startMinecraft()" class="w-full py-4 bg-green-600 hover:bg-green-500 rounded-xl font-bold text-xl shadow-lg shadow-green-900/20 transition">PLAY VERSION 1.12.2</button>
+                </div>
+            </div>
+
+            <div id="tab-ai" class="os-tab hidden flex flex-col h-full">
+                <div class="flex-1 bg-black/40 rounded-3xl p-6 border border-indigo-500/20 mb-4 font-mono text-sm overflow-y-auto" id="ai-chat">
+                    <p class="text-indigo-400">// REM-AI TERMINAL INITIALIZED...</p>
+                    <p class="text-slate-500">Connected to Neural-Link-4...</p>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="ai-input" placeholder="Ask Rem-AI or Gemini..." class="flex-1 bg-[#1e293b] border border-slate-700 rounded-full px-6 py-3 focus:outline-none focus:border-indigo-500">
+                    <button onclick="sendAI()" class="bg-indigo-600 px-6 py-3 rounded-full font-bold">SEND</button>
+                </div>
+            </div>
+
+            <div id="tab-links" class="os-tab hidden">
+                <h2 class="text-2xl font-bold mb-6 text-emerald-400">The Link Vault</h2>
+                <div class="grid grid-cols-2 gap-4" id="vault-grid">
+                    <p class="text-slate-500 italic">Send me your links and I will update this grid!</p>
+                </div>
+            </div>
+
+            <div id="tab-proxy" class="os-tab hidden">
+                <h2 class="text-2xl font-bold mb-6 text-red-400">Frogiee Network Mirrors</h2>
+                <div class="space-y-4">
+                    <button onclick="ghostLaunch(vault.f1, 'BYPASSING...')" class="w-full p-6 bg-slate-800 rounded-2xl border border-red-500/20 text-left hover:bg-slate-700">Mirror 1 (Primary)</button>
+                    <button onclick="ghostLaunch(vault.f2, 'SYNCING...')" class="w-full p-6 bg-slate-800 rounded-2xl border border-red-500/20 text-left hover:bg-slate-700">Mirror 2 (Education Backup)</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- MASTER OS LOGIC ---
+    function showTab(tabId) {
+        document.querySelectorAll('.os-tab').forEach(t => t.classList.add('hidden'));
+        document.getElementById('tab-' + tabId).classList.remove('hidden');
+    }
+
+    function openOS() {
+        document.getElementById('rem-os').classList.remove('hidden');
+    }
+
+    function closeOS() {
+        document.getElementById('rem-os').classList.add('hidden');
+    }
+
+    // --- Master Calc Trigger ---
+    function handleEnter() {
+        if(is2ndActive) {
+            openOS();
+            reset2nd();
+        } else {
+            // Normal Math Calc Logic
+            try {
+                currentInput = eval(currentInput.replace('×', '*').replace('÷', '/'));
+                screen.textContent = currentInput;
+            } catch { screen.textContent = "Error"; }
         }
-        body { 
-            background-color: var(--bg); 
-            color: #f1f5f9; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            min-height: 100vh;
-            background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #0f172a 100%);
-        }
+    }
+
+    // --- Fake AI Logic ---
+    function sendAI() {
+        const input = document.getElementById('ai-input');
+        const chat = document.getElementById('ai-chat');
+        if(!input.value) return;
+
+        chat.innerHTML += `<p class="text-white mt-2 font-bold">YOU: ${input.value}</p>`;
         
-        /* Smooth Oval Navbar */
-        nav { 
-            background: var(--glass); 
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding: 1rem 4rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            border-radius: 0 0 40px 40px;
-        }
-        .logo { 
-            font-weight: 800; font-size: 1.5rem; 
-            background: linear-gradient(to right, var(--accent-orange), var(--accent-red));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        // Simulating AI thinking
+        setTimeout(() => {
+            chat.innerHTML += `<p class="text-indigo-400 mt-2">REM-AI: Processing request using Gemini-X4... <br><span class="text-slate-300">Analysis complete. Proceeding with stealth protocols.</span></p>`;
+            chat.scrollTop = chat.scrollHeight;
+        }, 500);
+        
+        input.value = '';
+    }
 
-        .container { display: grid; grid-template-columns: 1fr 350px; gap: 2rem; padding: 2rem 4rem; max-width: 1600px; margin: 0 auto; }
-
-        /* Dashboard Cards */
-        .project-card {
-            background: var(--glass);
-            border-radius: 30px;
-            padding: 2rem;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.3s ease;
-        }
-        .project-card:hover { transform: translateY(-5px); border-color: var(--accent-orange); }
-
-        /* The "Widget" (Hidden Calculator) */
-        .widget-panel {
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            padding: 2rem;
-            border-radius: 50px;
-            border: 1px solid rgba(249, 115, 22, 0.2);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            height: fit-content;
-        }
-
-        .display-oval {
-            background: #020617;
-            padding: 1.5rem;
-            border-radius: 30px;
-            margin-bottom: 1.5rem;
-            border: 1px solid #334155;
-            text-align: right;
-        }
-        #screen { font-size: 2rem; font-weight: 300; color: var(--accent-orange); text-shadow: 0 0 10px rgba(249,115,22,0.3); }
-
-        /* Oval Buttons */
-        .grid-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .key {
-            height: 50px; border-radius: 25px; border: none;
-            background: rgba(255,255,255,0.03); color: #94a3b8;
-            font-weight: 700; font-size: 0.8rem; cursor: pointer;
-            transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .key:hover { background: rgba(255,255,255,0.1); color: #fff; transform: scale(1.05); }
-        .key-special { background: linear-gradient(to bottom right, var(--accent-orange), var(--accent-red)); color: white; }
-        .key-2nd { background: #6366f1; color: white; }
-        .key-2nd.active { background: #fff; color: #6366f1; box-shadow: 0 0 15px #6366f1; }
-
-        /* Stealth Mask */
-        #mask {
-            position: fixed; inset: 0; background: var(--bg); z-index: 1000;
-            display: none; align-items: center; justify-content: center;
-            flex-direction: column;
-        }
-    </style>
-</head>
-<body>
-
-    <div id="mask">
-        <div class="animate-spin h-12 w-12 border-4 border-orange-500 border-t-transparent rounded-full mb-4"></div>
-        <p class="tracking-[0.5em] text-orange-500 uppercase text-xs">Decrypting Resource...</p>
-    </div>
-
-    <nav>
-        <div class="logo">REMS CORNER</div>
-        <div class="flex gap-8 text-[10px] font-bold tracking-widest uppercase opacity-40">
-            <span>Terminal</span>
-            <span>Analytics</span>
-            <span>Cloud Sync</span>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="space-y-6">
-            <div class="project-card">
-                <h2 class="text-orange-500 font-bold mb-2 uppercase tracking-tighter">Current Research: Thermal Dynamics</h2>
-                <p class="text-slate-400 leading-relaxed">System analysis of heat distribution in low-pressure environments. Data models suggest a 14% increase in entropy within the primary cooling loop.</p>
-                <div class="mt-4 flex gap-2">
-                    <span class="px-3 py-1 bg-orange-500/10 text-orange-500 rounded-full text-[10px]">ACTIVE</span>
-                    <span class="px-3 py-1 bg-slate-800 text-slate-400 rounded-full text-[10px]">PRIVATE</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-                <div class="project-card">
-                    <h3 class="font-bold text-sm mb-2">Module_01.bin</h3>
-                    <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-indigo-500 w-[65%]"></div>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <h3 class="font-bold text-sm mb-2">Module_02.bin</h3>
-                    <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-red-500 w-[40%]"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="project-card opacity-50">
-                <h3 class="font-bold mb-4">Activity Log</h3>
-                <div class="text-[10px] font-mono space-y-2">
-                    <p>> Connection established: 192.168.1.1</p>
-                    <p>> Handshake successful...</p>
-                    <p>> Secure tunnel initialized...</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="widget-panel">
-            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-slate-500">Quick Converter</h3>
-            <div class="display-oval">
-                <div id="screen">0</div>
-            </div>
-            
-            <div class="grid-keys">
-                <button id="btn-2nd" class="key key-2nd" onclick="toggle2nd()">2nd</button>
-                <button class="key" onclick="deleteChar()">DEL</button>
-                <button class="key" onclick="handleClear()">AC</button>
-                <button class="key key-special" onclick="append('/')">÷</button>
-
-                <button class="key" onclick="append('7')">7</button>
-                <button class="key" onclick="append('8')">8</button>
-                <button class="key" onclick="append('9')">9</button>
-                <button class="key key-special" onclick="append('*')">×</button>
-
-                <button class="key" onclick="append('4')">4</button>
-                <button class="key" onclick="append('5')">5</button>
-                <button class="key" onclick="append('6')">6</button>
-                <button class="key key-special" onclick="append('-')">-</button>
-
-                <button class="key" onclick="append('1')">1</button>
-                <button class="key" onclick="append('2')">2</button>
-                <button class="key" onclick="append('3')">3</button>
-                <button class="key key-special" onclick="append('+')">+</button>
-
-                <button class="key" style="grid-column: span 2;" onclick="append('0')">0</button>
-                <button class="key" onclick="append('.')">.</button>
-                <button class="key key-special" onclick="handleEnter()">=</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let currentInput = "0";
-        let is2ndActive = false;
-
-        const screen = document.getElementById('screen');
-        const mask = document.getElementById('mask');
-        const btn2nd = document.getElementById('btn-2nd');
-
-        const vault = {
-            f1: "aHR0cHM6Ly9mcm9naWVlLW9mZmljaWFsLmdpdGh1Yi5pby8=", // AC
-            f2: "aHR0cHM6Ly9lZHVjYXRpb24tc3VwcG9ydC52ZXJjZWwuYXBwLw==", // DEL
-            ext: "aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2duLW1hdGgvZ24tbWF0aC1ET05URE1DQUBtYWluL3NpbmdsZWZpbGUuaHRtbA==" // =
-        };
-
-        function append(val) {
-            currentInput = currentInput === "0" ? val : currentInput + val;
-            screen.textContent = currentInput;
-        }
-
-        function toggle2nd() { 
-            is2ndActive = !is2ndActive; 
-            btn2nd.classList.toggle('active', is2ndActive); 
-        }
-
-        function ghostLaunch(encodedUrl) {
-            mask.style.display = 'flex';
-            const decoded = atob(encodedUrl);
-            const win = window.open("about:blank", "_blank");
-            if (win) {
-                win.document.write(`<html><body style="margin:0;overflow:hidden;background:#000;"><iframe src="${decoded}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></body></html>`);
-                win.document.close();
-            }
-            setTimeout(() => { mask.style.display = 'none'; is2ndActive = false; btn2nd.classList.remove('active'); }, 1200);
-        }
-
-        function handleClear() {
-            if(is2ndActive) ghostLaunch(vault.f1);
-            else { currentInput = "0"; screen.textContent = "0"; }
-        }
-
-        function deleteChar() {
-            if(is2ndActive) ghostLaunch(vault.f2);
-            else { currentInput = currentInput.slice(0, -1) || "0"; screen.textContent = currentInput; }
-        }
-
-        function handleEnter() {
-            if(is2ndActive) ghostLaunch(vault.ext);
-            else {
-                try {
-                    currentInput = String(eval(currentInput.replace('×', '*').replace('÷', '/')));
-                    screen.textContent = currentInput;
-                } catch { screen.textContent = "Error"; setTimeout(() => { currentInput="0"; screen.textContent="0"; }, 1000); }
-            }
-        }
-    </script>
-</body>
-</html>
+    // ... (Keep your existing toggle2nd and ghostLaunch functions) ...
+</script>
