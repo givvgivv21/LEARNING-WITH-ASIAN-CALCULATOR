@@ -2,38 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TI-84 Plus 2nd Edition | v67 Specter-Grid</title>
+    <title>TI-84 Plus 2nd Edition | v68 Sovereign</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #2d2d2d; --lcd: #8b9a84; --orange: #f0810f; --mc-green: #3c8527; }
         body, html { margin: 0; padding: 0; height: 100vh; background: #000; font-family: 'JetBrains Mono', monospace; overflow: hidden; }
 
-        /* ROTATING ANGEL HALO */
-        .halo { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); width: 150px; height: 40px; border: 4px solid #fff; border-radius: 50%; opacity: 0; filter: blur(1px) drop-shadow(0 0 15px #fff); z-index: 5; pointer-events: none; transition: 0.5s; }
-        .halo-active { opacity: 0.8; animation: rotateHalo 4s linear infinite; }
-        @keyframes rotateHalo { 0% { transform: translateX(-50%) rotateX(60deg) rotateZ(0deg); } 100% { transform: translateX(-50%) rotateX(60deg) rotateZ(360deg); } }
+        /* DIVINE HALO */
+        .halo { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); width: 150px; height: 40px; border: 4px solid #fff; border-radius: 50%; opacity: 0; filter: blur(1px) drop-shadow(0 0 20px #fff); z-index: 5; pointer-events: none; transition: 0.8s; }
+        .halo-active { opacity: 0.9; animation: divineRotate 5s linear infinite; }
+        @keyframes divineRotate { 0% { transform: translateX(-50%) rotateX(70deg) rotateZ(0deg); } 100% { transform: translateX(-50%) rotateX(70deg) rotateZ(360deg); } }
 
         /* CALC CASE */
-        .calc-case { background: var(--bg); border: 2px solid #111; width: 400px; padding: 30px; border-radius: 4px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; box-shadow: 20px 20px 0px #111; }
-        .calc-lcd { background: var(--lcd); border: 4px solid #111; height: 85px; margin-bottom: 25px; padding: 10px; font-size: 2.2rem; text-align: right; color: #1a1a1a; line-height: 65px; box-shadow: inset 3px 3px 0px rgba(0,0,0,0.1); }
+        .calc-case { background: var(--bg); border: 2px solid #111; width: 400px; padding: 30px; border-radius: 4px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; box-shadow: 15px 15px 0px #000; }
+        .calc-lcd { background: var(--lcd); border: 4px solid #111; height: 85px; margin-bottom: 25px; padding: 15px; font-size: 2.2rem; text-align: right; color: #1a1a1a; line-height: 55px; font-family: 'Courier New', monospace; font-weight: bold; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn { background: #4a4a4a; color: #fff; border-bottom: 4px solid #1a1a1a; font-size: 1.1rem; font-weight: 800; padding: 15px 0; text-align: center; cursor: pointer; user-select: none; transition: 0.1s; }
+        .btn { background: #444; color: #fff; border-bottom: 4px solid #111; font-size: 1.1rem; font-weight: 800; padding: 15px 0; text-align: center; cursor: pointer; user-select: none; }
         .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
         .orange { background: var(--orange) !important; color: #000 !important; }
 
-        /* COMMAND CENTER SIDEBAR */
-        #dash { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; flex-direction: row; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .sidebar-grid { display: grid; grid-template-columns: repeat(3, 120px); gap: 30px; }
-        .app-card { background: #111; border: 1px solid #333; height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border-radius: 15px; transition: 0.3s; }
-        .app-card:hover { border-color: var(--orange); background: #1a1a1a; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .app-card span { font-size: 10px; margin-top: 10px; font-weight: 900; color: #666; }
-        .app-card:hover span { color: var(--orange); }
+        /* COMMAND HUB */
+        #dash { display: none; position: fixed; inset: 0; background: rgba(10,10,10,0.95); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
+        .hub-grid { display: grid; grid-template-columns: repeat(3, 130px); gap: 25px; }
+        .hub-btn { background: #1a1a1a; border: 1px solid #333; height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border-radius: 20px; transition: 0.2s; }
+        .hub-btn:hover { border-color: var(--orange); transform: scale(1.05); background: #222; }
+        .hub-btn span { font-size: 9px; margin-top: 12px; color: #777; font-weight: 900; }
 
-        /* BOOT OVERLAY */
-        #boot-screen { display: none; position: fixed; inset: 0; background: var(--orange); z-index: 20000; flex-direction: column; align-items: center; justify-content: center; }
-        .loader-bar { width: 300px; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; margin-top: 25px; }
-        .loader-fill { width: 0%; height: 100%; background: #fff; }
+        /* ORANGE BOOT */
+        #boot-screen { display: none; position: fixed; inset: 0; background: var(--orange); z-index: 30000; flex-direction: column; align-items: center; justify-content: center; }
+        .bar-wrap { width: 280px; height: 4px; background: rgba(255,255,255,0.2); margin-top: 30px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { width: 0%; height: 100%; background: #fff; transition: width 0.1s; }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
@@ -57,118 +56,132 @@
             <div class="btn" onclick="press('1')">1</div>
             <div class="btn" onclick="press('2')">2</div>
             <div class="btn" onclick="press('3')">3</div>
-            <div class="btn orange col-span-1" onclick="press('ENTER')">EXE</div>
-            <div class="btn col-span-2" onclick="press('0')">0</div>
+            <div class="btn orange" onclick="press('ENTER')">EXE</div>
+            <div class="btn" onclick="press('0')">0</div>
             <div class="btn" onclick="press('.')">.</div>
+            <div class="btn text-xs" onclick="exportBuild()">EXP</div>
         </div>
     </div>
 
     <div id="dash">
-        <div class="sidebar-grid">
-            <div class="app-card" onclick="spawn('mc')">
-                <div class="w-10 h-10 bg-green-700 rounded-sm"></div>
-                <span>MINECRAFT</span>
-            </div>
-            <div class="app-card" onclick="spawn('git')">
-                <div class="w-10 h-10 bg-zinc-700 rounded-full"></div>
-                <span>GITHUB</span>
-            </div>
-            <div class="app-card" onclick="spawn('brt')">
-                <div class="w-10 h-10 bg-red-700 rounded-sm"></div>
-                <span>BROTATO</span>
-            </div>
-            <div class="app-card" onclick="spawn('ai')">
-                <div class="w-10 h-10 bg-orange-600 rounded-lg"></div>
-                <span>REM_AI</span>
-            </div>
-            <div class="app-card" onclick="spawn('web')">
-                <div class="w-10 h-10 bg-blue-600 rounded-full"></div>
-                <span>BROWSER</span>
-            </div>
-            <div class="app-card border-red-900" onclick="panic()">
-                <div class="w-10 h-10 bg-red-900 flex items-center justify-center font-black">X</div>
-                <span class="text-red-600">PANIC</span>
-            </div>
+        <div class="hub-grid">
+            <div class="hub-btn" onclick="spawn('mc')"><div class="w-12 h-12 bg-green-600 rounded"></div><span>AMPLER MC</span></div>
+            <div class="hub-btn" onclick="spawn('git')"><div class="w-12 h-12 bg-zinc-700 rounded-full"></div><span>GITHUB</span></div>
+            <div class="hub-btn" onclick="spawn('brt')"><div class="w-12 h-12 bg-red-600 rounded"></div><span>BROTATO</span></div>
+            <div class="hub-btn" onclick="spawn('ai')"><div class="w-12 h-12 bg-orange-500 rounded-lg"></div><span>REM_AI v2</span></div>
+            <div class="hub-btn" onclick="spawn('web')"><div class="w-12 h-12 bg-blue-500 rounded-full"></div><span>SOV_BROWSER</span></div>
+            <div class="hub-btn border-red-700" onclick="panic()"><div class="w-12 h-12 bg-red-900 rounded flex items-center justify-center font-black">!</div><span class="text-red-500">TERMINATE</span></div>
         </div>
     </div>
 
     <div id="boot-screen">
-        <div class="text-7xl font-black italic text-white">MOJANG</div>
-        <div class="loader-bar"><div id="boot-fill" class="loader-fill"></div></div>
-        <p id="boot-msg" class="text-white font-bold mt-6 text-xs tracking-widest uppercase">Initializing Ghost Window...</p>
+        <div class="text-white text-6xl font-black italic tracking-tighter">MOJANG</div>
+        <div class="bar-wrap"><div id="boot-fill" class="bar-fill"></div></div>
+        <p id="boot-text" class="text-white/50 text-[10px] mt-6 tracking-[0.3em] uppercase">Injecting Ampler Launcher...</p>
     </div>
 
     <script>
         let cur = "0"; 
         let is2nd = false;
-        let ghostWindows = [];
+        let activeWins = [];
 
-        const routes = {
-            mc: "https://eaglercraft.com/mc/1.8.8/",
-            git: "https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR",
-            brt: "https://takaiwebsite.neocities.org/brotato",
-            ai: "https://chat.openai.com", // Or a local sim page
-            web: "https://www.google.com/search?igu=1"
+        // REM_AI GROUND-UP LOGIC ENGINE
+        const remAI = {
+            responses: {
+                "hello": "Greetings. System v68 is fully operational. How shall we proceed?",
+                "status": "Logic Cores: Green. Firewall: Bypassed. Halo: Divine.",
+                "help": "Commands: 'status', 'inject', 'clear', 'calc [math]'.",
+                "who are you": "I am REM, the Sovereign Logic Engine of this TI-84 build."
+            },
+            process: (input) => {
+                const query = input.toLowerCase();
+                if (query.includes("calc")) return "Result: " + eval(query.replace("calc", ""));
+                return remAI.responses[query] || "Analysis: No local match found. Proceeding with default logic branch...";
+            }
         };
 
         function press(k) {
-            if (k === '2nd') { 
-                is2nd = !is2nd; 
-                document.getElementById('halo').classList.toggle('halo-active', is2nd);
-                return; 
-            }
-            if (is2nd && k === 'ENTER') { 
-                document.getElementById('dash').style.display = 'flex'; 
-                return; 
-            }
+            if (k === '2nd') { is2nd = !is2nd; document.getElementById('halo').classList.toggle('halo-active', is2nd); return; }
+            if (is2nd && k === 'ENTER') { document.getElementById('dash').style.display = 'flex'; return; }
             if (k === 'AC') panic();
             else if (k === 'ENTER') try { cur = eval(cur.replace('×','*').replace('÷','/')) + ""; } catch { cur = "ERR"; }
             else cur = (cur === "0" ? k : cur + k);
             document.getElementById('display').innerText = cur;
         }
 
-        function spawn(app) {
+        function spawn(type) {
             const boot = document.getElementById('boot-screen');
             const fill = document.getElementById('boot-fill');
-            const msg = document.getElementById('boot-msg');
-            
             boot.style.display = 'flex';
             fill.style.width = '0%';
-            msg.innerText = `Spawning ${app.toUpperCase()} Ghost...`;
             
             let p = 0;
             let int = setInterval(() => {
-                p += 10;
-                fill.style.width = p + '%';
+                p += 5; fill.style.width = p + '%';
                 if (p >= 100) {
                     clearInterval(int);
                     boot.style.display = 'none';
-                    
-                    // WIN LOGIC
-                    const win = window.open(routes[app], `_blank`, `width=1000,height=700,menubar=no,status=no,toolbar=no`);
-                    if(win) {
-                        ghostWindows.push(win);
-                        document.getElementById('dash').style.display = 'none';
-                    } else {
-                        alert("POPUP BLOCKED! Please enable popups in your browser settings to launch apps.");
-                    }
+                    openWindow(type);
                 }
-            }, 30);
+            }, 40);
+        }
+
+        function openWindow(type) {
+            let url = "";
+            let title = "System_Asset";
+
+            switch(type) {
+                case 'mc': url = "https://irv77.github.io/AmplerLauncher/"; title = "Mathematics_Framework"; break;
+                case 'git': url = "https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR"; break;
+                case 'brt': url = "https://takaiwebsite.neocities.org/brotato"; break;
+                case 'ai': 
+                    const aiWin = window.open("", "_blank", "width=600,height=700");
+                    aiWin.document.write(`
+                        <body style="background:#000;color:#f0810f;font-family:monospace;padding:20px;">
+                            <h3>REM_AI v2 [SOVEREIGN]</h3>
+                            <div id="log" style="height:500px;overflow:auto;border:1px solid #333;padding:10px;margin-bottom:10px;">SYSTEM READY...</div>
+                            <input id="in" style="width:100%;background:#111;color:#fff;border:1px solid #444;padding:10px;" placeholder="Enter logic request...">
+                            <script>
+                                const log = document.getElementById('log');
+                                document.getElementById('in').onkeydown = (e) => {
+                                    if(e.key === 'Enter') {
+                                        const val = e.target.value;
+                                        log.innerHTML += '<div>> ' + val + '</div>';
+                                        // Simple response logic
+                                        setTimeout(() => { log.innerHTML += '<div style="color:white">REM: Logic Applied. Session Stable.</div>'; }, 200);
+                                        e.target.value = "";
+                                    }
+                                }
+                            <\/script>
+                        </body>
+                    `);
+                    activeWins.push(aiWin);
+                    return;
+                case 'web': url = "https://www.bing.com"; break;
+            }
+
+            const win = window.open(url, title, "width=1100,height=700,menubar=no,toolbar=no");
+            if(win) activeWins.push(win);
+            else alert("Popup Blocked! Enable popups to launch Sovereign Windows.");
+            document.getElementById('dash').style.display = 'none';
+        }
+
+        function exportBuild() {
+            const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'AsianCalc_Sovereign_v68.html';
+            a.click();
         }
 
         function panic() {
-            // Kill all separate windows
-            ghostWindows.forEach(win => {
-                if(!win.closed) win.close();
-            });
-            ghostWindows = [];
-            // Reset main UI
+            activeWins.forEach(w => { if(!w.closed) w.close(); });
+            activeWins = [];
             document.getElementById('dash').style.display = 'none';
             document.getElementById('halo').classList.remove('halo-active');
             is2nd = false;
             cur = "0";
             document.getElementById('display').innerText = "0";
-            location.reload();
         }
     </script>
 </body>
