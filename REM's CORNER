@@ -4,41 +4,33 @@
     <meta charset="UTF-8">
     <title>Khan Academy | Progress Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/dist/skinview3d.bundle.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --mc-sidebar: #1e1e1e; --mc-bg: #2b2b2b; --mc-green: #3c8527; }
+        :root { --mc-sidebar: #1e1e1e; --mc-bg: #2b2b2b; --mc-green: #3c8527; --ti-orange: #ff922b; --ti-red: #e03131; }
         body { background: #f7f9fb; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
         
-        /* HIDDEN OS CORE */
         #rem-os { position: fixed; inset: 0; background: #010409; z-index: 9999; display: none; padding: 20px; grid-template-columns: 280px 1fr; gap: 20px; }
-        .os-sidebar { background: #0d1117; border: 4px solid #30363d; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .os-sidebar { background: #0d1117; border: 4px solid #30363d; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
         .os-tab { display: none; height: 100%; }
         .active-tab { display: flex !important; }
 
-        /* OFFICIAL 2026 LAUNCHER UI */
-        .mc-window { background: var(--mc-bg); border-radius: 10px; flex: 1; display: flex; overflow: hidden; border: 1px solid #444; position: relative; }
-        .mc-nav-side { width: 60px; background: var(--mc-sidebar); display: flex; flex-direction: column; align-items: center; padding-top: 20px; gap: 15px; border-right: 1px solid #333; }
-        .mc-icon { width: 35px; height: 35px; border-radius: 4px; cursor: pointer; transition: 0.2s; background-size: cover; border: 2px solid transparent; }
-        .mc-icon.active { border-color: #fff; background-color: #333; }
-        
-        .mc-main { flex: 1; display: flex; flex-direction: column; background: #1a1a1a; }
-        .mc-hero { height: 280px; background: linear-gradient(to bottom, rgba(0,0,0,0), #1a1a1a), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; padding: 40px; display: flex; flex-direction: column; justify-content: flex-end; }
-        
-        /* NEWS FEED */
-        .news-grid { padding: 20px; display: grid; grid-cols: 2; gap: 15px; overflow-y: auto; }
-        .news-card { background: #2b2b2b; border: 1px solid #444; border-radius: 6px; padding: 15px; }
-        .news-tag { background: #3c8527; font-size: 9px; padding: 2px 6px; border-radius: 2px; font-weight: 800; }
+        /* MINECRAFT 2026 UI */
+        .mc-window { background: var(--mc-bg); border-radius: 12px; flex: 1; display: flex; overflow: hidden; border: 1px solid #444; }
+        .mc-main { flex: 1; display: flex; flex-direction: column; background: #1a1a1a; overflow-y: auto; }
+        .mc-hero { min-height: 240px; background: linear-gradient(to bottom, transparent, #1a1a1a), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; padding: 40px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .mc-bottom-bar { height: 90px; background: #1e1e1e; margin-top: auto; display: flex; align-items: center; justify-content: center; border-top: 1px solid #333; }
+        .mc-play-btn { background: var(--mc-green); color: white; width: 220px; height: 50px; border-radius: 4px; font-size: 22px; font-weight: 900; box-shadow: 0 4px 0 #2a5d1b; cursor: pointer; text-align: center; line-height: 50px; }
 
-        .mc-bottom-bar { height: 90px; background: #1e1e1e; margin-top: auto; display: flex; align-items: center; justify-content: center; padding: 0 30px; border-top: 1px solid #444; }
-        .mc-play-btn { background: var(--mc-green); color: white; width: 200px; height: 50px; border-radius: 4px; font-size: 22px; font-weight: 900; box-shadow: 0 4px 0 #2a5d1b; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        /* OG ORANGE/RED CALCULATOR */
+        .ti-calc { background: #343a40; border-radius: 20px; padding: 25px; border: 4px solid #212529; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 380px; }
+        .ti-screen { background: #a5b9a0; border: 10px solid #212529; border-radius: 4px; height: 100px; padding: 15px; font-family: 'JetBrains Mono'; font-size: 2.5rem; text-align: right; color: #1a1a1a; margin-bottom: 20px; box-shadow: inset 0 4px 10px rgba(0,0,0,0.2); }
+        .ti-btn { background: #495057; color: white; border-radius: 8px; border-bottom: 4px solid #212529; font-weight: 800; padding: 15px; font-size: 1.2rem; transition: 0.1s; }
+        .ti-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .btn-orange { background: var(--ti-orange) !important; color: #000; }
+        .btn-red { background: var(--ti-red) !important; }
 
-        /* MC THEMED CALC */
-        .mc-calc { background: url('https://minecraft.net/static/theme/img/background/dirt.png'); image-rendering: pixelated; border: 8px solid #000; padding: 20px; }
-        .mc-btn { background: #4e4e4e; border: 4px solid #000; border-top-color: #8b8b8b; border-left-color: #8b8b8b; color: #fff; font-family: 'JetBrains Mono'; padding: 15px; text-shadow: 2px 2px #000; }
-
-        .btn-bulky { background: #21262d; border: 3px solid #484f58; color: white; font-weight: 800; padding: 15px; border-radius: 4px; text-align: left; }
+        .btn-bulky { background: #21262d; border: 3px solid #484f58; color: white; font-weight: 800; padding: 15px; border-radius: 8px; text-align: left; }
+        .active-side { border-color: var(--ti-orange); color: var(--ti-orange); }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
@@ -46,77 +38,82 @@
     <div id="edu-layer" class="h-full flex flex-col">
         <nav class="flex items-center justify-between px-10 h-[70px] bg-white border-b">
             <div class="text-2xl font-black text-[#14316d]">KHAN<span class="text-orange-500">ACADEMY</span></div>
-            <div class="w-10 h-10 bg-zinc-100 rounded-full"></div>
         </nav>
-        <main class="flex-1 flex items-center justify-center p-10">
-            <div class="max-w-2xl w-full bg-white p-12 rounded-2xl shadow-lg text-center border">
-                <h1 class="text-3xl font-black text-[#14316d] mb-4">Mastery Challenge</h1>
-                <p class="text-zinc-500 mb-8">Ready to test your knowledge of <b>Differential Calculus</b>?</p>
-                <button onclick="handshake()" class="bg-orange-500 text-white px-12 py-5 rounded-xl font-black hover:bg-orange-600">START CHALLENGE</button>
+        <main class="flex-1 flex items-center justify-center">
+            <div class="max-w-xl w-full bg-white p-12 rounded-3xl shadow-xl text-center border">
+                <h1 class="text-3xl font-black text-[#14316d] mb-4">Course Progress</h1>
+                <p class="text-zinc-500 mb-8">Resume your <b>Calculus AB</b> practice.</p>
+                <button onclick="handshake()" class="bg-orange-500 text-white px-12 py-5 rounded-2xl font-black">RESUME LESSON</button>
             </div>
         </main>
     </div>
 
     <div id="rem-os">
         <div class="os-sidebar">
-            <div class="text-white font-black italic text-lg px-2 mb-4">REMS_SYSTEM v32</div>
-            <button onclick="showTab('mc')" id="side-mc" class="btn-bulky active-side">⛏️ MINECRAFT_HOME</button>
-            <button onclick="showTab('br')" id="side-br" class="btn-bulky">🌐 GHOST_BROWSER</button>
-            <button onclick="showTab('cl')" id="side-cl" class="btn-bulky">🔢 MC_CALCULATOR</button>
-            <button onclick="downloadBuild()" class="btn-bulky mt-auto text-[10px] text-center bg-green-900/10 text-green-500">EXPORT_REPORT.ZIP</button>
+            <div class="text-white font-black italic text-lg px-2 mb-6 border-b border-zinc-800 pb-4">REMS_OS_v34</div>
+            <button onclick="showTab('mc')" id="side-mc" class="btn-bulky active-side">⛏️ MINECRAFT_2026</button>
+            <button onclick="showTab('br')" id="side-br" class="btn-bulky">🌐 BLOB_BROWSER</button>
+            <button onclick="showTab('cl')" id="side-cl" class="btn-bulky">🔢 OG_CALCULATOR</button>
+            <button onclick="closeOS()" class="btn-bulky mt-auto text-red-500 text-center">EXIT_SYSTEM</button>
         </div>
 
         <div class="flex-1 overflow-hidden">
             <div id="tab-mc" class="os-tab active-tab">
                 <div class="mc-window">
-                    <div class="mc-nav-side">
-                        <div class="mc-icon active" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png');"></div>
-                    </div>
                     <div class="mc-main">
                         <div class="mc-hero">
-                            <div class="text-white text-5xl font-black tracking-tighter" style="text-shadow: 3px 3px 0 #000">MINECRAFT</div>
-                            <div class="text-zinc-300 font-bold mt-2">Java Edition</div>
+                            <div class="text-white text-5xl font-black italic" style="text-shadow: 3px 3px 0 #000">MINECRAFT</div>
                         </div>
-                        <div class="news-grid grid grid-cols-2 gap-4">
-                            <div class="news-card">
-                                <span class="news-tag">NEWS</span>
-                                <div class="text-white font-bold mt-2">1.22: The Multiverse Update?</div>
-                                <div class="text-[10px] text-zinc-400 mt-1">Leaks suggest a new Space Dimension and Vertical Slabs coming June 2026.</div>
-                            </div>
-                            <div class="news-card">
-                                <span class="news-tag" style="background: #14316d;">EVENT</span>
-                                <div class="text-white font-bold mt-2">Minecon 2026 Live</div>
-                                <div class="text-[10px] text-zinc-400 mt-1">Join the community for the reveal of the next major drop.</div>
+                        <div class="p-8">
+                            <div class="text-white font-bold mb-4">NEWS & UPDATES</div>
+                            <div class="bg-[#2b2b2b] p-6 rounded-lg border border-zinc-700">
+                                <div class="text-green-500 text-xs font-bold">RELEASE 1.21.1</div>
+                                <div class="text-white font-bold mt-1">Multiplayer Optimization</div>
+                                <div class="text-zinc-400 text-[10px] mt-2">Enhanced socket connections for low-latency school environments.</div>
                             </div>
                         </div>
                         <div class="mc-bottom-bar">
-                            <div class="mc-play-btn" onclick="ghostLaunch('https://tuffc.speedslicer.dev/')">PLAY</div>
+                            <div class="mc-play-btn" onclick="blobLaunch('https://tuffc.speedslicer.dev/')">PLAY</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div id="tab-br" class="os-tab flex flex-col items-center justify-center bg-[#1a1a1a]">
-                <div class="text-white font-black text-4xl mb-8 italic">GHOST_BROWSER</div>
-                <div class="bg-[#2b2b2b] p-10 border-2 border-zinc-700 rounded-xl w-[500px]">
-                    <input type="text" id="ghost-url" class="w-full bg-black border border-zinc-600 rounded p-4 text-white mb-4" placeholder="Search Google or Enter URL...">
-                    <button onclick="ghostLaunch(document.getElementById('ghost-url').value)" class="w-full bg-blue-600 text-white font-black py-4 rounded hover:bg-blue-500">OPEN IN GHOST TAB</button>
-                    <p class="text-[10px] text-zinc-500 mt-4 text-center">Ghost Tabs open in a hidden about:blank window to prevent "Refused to Connect" errors.</p>
+                <div class="bg-[#2b2b2b] p-10 rounded-2xl border-4 border-zinc-800 w-[500px]">
+                    <h3 class="text-white font-black mb-6">DEEP_INJECTION_BROWSER</h3>
+                    <input type="text" id="blob-url" class="w-full bg-black border border-zinc-700 p-4 text-white rounded mb-4" placeholder="URL or Search...">
+                    <button onclick="blobLaunch(document.getElementById('blob-url').value)" class="w-full bg-blue-600 text-white font-bold py-4 rounded">INJECT SITE</button>
                 </div>
             </div>
 
             <div id="tab-cl" class="os-tab flex items-center justify-center">
-                <div class="mc-calc w-[400px]">
-                    <div class="bg-black text-orange-500 text-4xl font-mono text-right p-6 mb-4 border-4 border-black shadow-inner" id="display">0</div>
-                    <div class="grid grid-cols-4 gap-2">
-                        <button class="mc-btn" onclick="reset()">AC</button>
-                        <button class="mc-btn" onclick="del()">DEL</button>
-                        <button class="mc-btn" onclick="toggle2nd()" id="btn-2nd">2ND</button>
-                        <button class="mc-btn" style="background:#3c8527" onclick="evalCalc()">=</button>
-                        <button class="mc-btn" onclick="press('7')">7</button><button class="mc-btn" onclick="press('8')">8</button><button class="mc-btn" onclick="press('9')">9</button>
-                        <button class="mc-btn" onclick="press('/')">÷</button>
-                        <button class="mc-btn" onclick="press('4')">4</button><button class="mc-btn" onclick="press('5')">5</button><button class="mc-btn" onclick="press('6')">6</button>
-                        <button class="mc-btn" onclick="press('*')">×</button>
+                <div class="ti-calc">
+                    <div class="ti-screen" id="display">0</div>
+                    <div class="grid grid-cols-4 gap-3">
+                        <button class="ti-btn btn-orange" onclick="toggle2nd()" id="btn-2nd">2nd</button>
+                        <button class="ti-btn btn-red" onclick="reset()">AC</button>
+                        <button class="ti-btn btn-red" onclick="del()">DEL</button>
+                        <button class="ti-btn" onclick="press('/')">÷</button>
+                        
+                        <button class="ti-btn" onclick="press('7')">7</button>
+                        <button class="ti-btn" onclick="press('8')">8</button>
+                        <button class="ti-btn" onclick="press('9')">9</button>
+                        <button class="ti-btn" onclick="press('*')">×</button>
+                        
+                        <button class="ti-btn" onclick="press('4')">4</button>
+                        <button class="ti-btn" onclick="press('5')">5</button>
+                        <button class="ti-btn" onclick="press('6')">6</button>
+                        <button class="ti-btn" onclick="press('-')">−</button>
+                        
+                        <button class="ti-btn" onclick="press('1')">1</button>
+                        <button class="ti-btn" onclick="press('2')">2</button>
+                        <button class="ti-btn" onclick="press('3')">3</button>
+                        <button class="ti-btn" onclick="press('+')">+</button>
+                        
+                        <button class="ti-btn col-span-2" onclick="press('0')">0</button>
+                        <button class="ti-btn" onclick="press('.')">.</button>
+                        <button class="ti-btn btn-orange" onclick="evalCalc()">ENTER</button>
                     </div>
                 </div>
             </div>
@@ -132,20 +129,13 @@
             setTimeout(() => clicks = 0, 1000);
         }
 
-        // THE ULTIMATE BYPASS: Spawns an 'about:blank' tab and injects the site
-        function ghostLaunch(target) {
+        function blobLaunch(target) {
             if (!target) return;
-            const url = target.includes('.') ? (target.startsWith('http') ? target : 'https://' + target) : `https://www.google.com/search?q=${encodeURIComponent(target)}&igu=1`;
-            
+            const finalUrl = target.includes('.') ? (target.startsWith('http') ? target : 'https://' + target) : `https://www.google.com/search?q=${encodeURIComponent(target)}&igu=1`;
             const win = window.open('about:blank', '_blank');
-            if (!win) { alert("Pop-up blocked! Allow pop-ups to bypass the filter."); return; }
-            
-            win.document.body.style.margin = "0";
-            win.document.body.style.height = "100vh";
-            const ifr = win.document.createElement("iframe");
-            ifr.style.width = "100%"; ifr.style.height = "100%"; ifr.style.border = "none";
-            ifr.src = url;
-            win.document.body.appendChild(ifr);
+            const blobHtml = `<html><head><style>body,html{margin:0;padding:0;height:100vh;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style></head><body><iframe src="${finalUrl}"></iframe></body></html>`;
+            const blob = new Blob([blobHtml], { type: 'text/html' });
+            win.location.href = URL.createObjectURL(blob);
         }
 
         function showTab(t) {
@@ -162,18 +152,10 @@
         function press(n) { v = (v === "0" ? n : v + n); document.getElementById('display').innerText = v; }
         function del() { v = v.slice(0, -1) || "0"; document.getElementById('display').innerText = v; }
         function reset() { v = "0"; document.getElementById('display').innerText = "0"; }
-        function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').style.background = is2nd ? '#3c8527' : '#4e4e4e'; }
+        function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').style.filter = is2nd ? 'brightness(1.5)' : 'none'; }
         function evalCalc() {
             if(is2nd) { closeOS(); toggle2nd(); }
             else { try { v = String(eval(v.replace('×','*').replace('÷','/'))); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } }
-        }
-
-        function downloadBuild() {
-            const b = new Blob([document.documentElement.outerHTML], {type: "text/html"});
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(b);
-            a.download = "Khan_Dashboard_v32.html";
-            a.click();
         }
     </script>
 </body>
