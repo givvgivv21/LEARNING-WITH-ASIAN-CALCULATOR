@@ -14,20 +14,28 @@
         .os-tab { display: none; height: 100%; }
         .active-tab { display: flex !important; }
 
-        /* MINECRAFT 2026 UI */
+        /* OFFICIAL MINECRAFT LAUNCHER GUI */
         .mc-window { background: var(--mc-bg); border-radius: 12px; flex: 1; display: flex; overflow: hidden; border: 1px solid #444; }
-        .mc-main { flex: 1; display: flex; flex-direction: column; background: #1a1a1a; overflow-y: auto; }
-        .mc-hero { min-height: 240px; background: linear-gradient(to bottom, transparent, #1a1a1a), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; padding: 40px; display: flex; flex-direction: column; justify-content: flex-end; }
-        .mc-bottom-bar { height: 90px; background: #1e1e1e; margin-top: auto; display: flex; align-items: center; justify-content: center; border-top: 1px solid #333; }
-        .mc-play-btn { background: var(--mc-green); color: white; width: 220px; height: 50px; border-radius: 4px; font-size: 22px; font-weight: 900; box-shadow: 0 4px 0 #2a5d1b; cursor: pointer; text-align: center; line-height: 50px; }
+        .mc-left-nav { width: 70px; background: #181818; display: flex; flex-direction: column; align-items: center; padding-top: 20px; gap: 15px; border-right: 1px solid #333; }
+        .mc-game-icon { width: 45px; height: 45px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; background-size: cover; background-position: center; }
+        .mc-game-icon.active { border-color: #fff; background-color: #333; }
+        
+        .mc-content { flex: 1; display: flex; flex-direction: column; background: #1a1a1a; }
+        .mc-header { height: 45px; background: #212121; display: flex; align-items: center; padding-left: 25px; gap: 20px; font-size: 11px; font-weight: 800; color: #999; border-bottom: 1px solid #333; }
+        .mc-header span:hover { color: #fff; cursor: pointer; }
+        .mc-header .active { color: #fff; border-bottom: 2px solid #fff; padding-bottom: 2px; }
 
-        /* OG ORANGE/RED CALCULATOR */
-        .ti-calc { background: #343a40; border-radius: 20px; padding: 25px; border: 4px solid #212529; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 380px; }
-        .ti-screen { background: #a5b9a0; border: 10px solid #212529; border-radius: 4px; height: 100px; padding: 15px; font-family: 'JetBrains Mono'; font-size: 2.5rem; text-align: right; color: #1a1a1a; margin-bottom: 20px; box-shadow: inset 0 4px 10px rgba(0,0,0,0.2); }
-        .ti-btn { background: #495057; color: white; border-radius: 8px; border-bottom: 4px solid #212529; font-weight: 800; padding: 15px; font-size: 1.2rem; transition: 0.1s; }
-        .ti-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
-        .btn-orange { background: var(--ti-orange) !important; color: #000; }
-        .btn-red { background: var(--ti-red) !important; }
+        .mc-hero { height: 280px; background: linear-gradient(to bottom, transparent, #1a1a1a), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; padding: 30px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .mc-play-bar { height: 90px; background: #1e1e1e; margin-top: auto; display: flex; align-items: center; justify-content: center; border-top: 1px solid #333; gap: 20px; }
+        .mc-play-btn { background: var(--mc-green); color: white; width: 200px; height: 50px; border-radius: 4px; font-size: 22px; font-weight: 900; box-shadow: 0 4px 0 #2a5d1b; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        /* OG TI-84 CALCULATOR GUI */
+        .ti-case { background: #343a40; border-radius: 25px; padding: 25px; border: 5px solid #1a1a1a; width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .ti-lcd { background: #94a891; border: 10px solid #1a1a1a; border-radius: 4px; height: 100px; padding: 15px; font-family: 'JetBrains Mono'; font-size: 2.5rem; text-align: right; color: #1a1a1a; margin-bottom: 25px; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3); }
+        .ti-key { background: #495057; color: white; border-radius: 8px; border-bottom: 4px solid #212529; font-weight: 800; padding: 15px; font-size: 1.1rem; text-align: center; }
+        .ti-key:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .key-orange { background: var(--ti-orange) !important; color: #000; }
+        .key-red { background: var(--ti-red) !important; }
 
         .btn-bulky { background: #21262d; border: 3px solid #484f58; color: white; font-weight: 800; padding: 15px; border-radius: 8px; text-align: left; }
         .active-side { border-color: var(--ti-orange); color: var(--ti-orange); }
@@ -41,8 +49,8 @@
         </nav>
         <main class="flex-1 flex items-center justify-center">
             <div class="max-w-xl w-full bg-white p-12 rounded-3xl shadow-xl text-center border">
-                <h1 class="text-3xl font-black text-[#14316d] mb-4">Course Progress</h1>
-                <p class="text-zinc-500 mb-8">Resume your <b>Calculus AB</b> practice.</p>
+                <h1 class="text-3xl font-black text-[#14316d] mb-4">Calculus Mastery</h1>
+                <p class="text-zinc-500 mb-8">Resume your session on <b>Derivatives & Integrals</b>.</p>
                 <button onclick="handshake()" class="bg-orange-500 text-white px-12 py-5 rounded-2xl font-black">RESUME LESSON</button>
             </div>
         </main>
@@ -50,30 +58,40 @@
 
     <div id="rem-os">
         <div class="os-sidebar">
-            <div class="text-white font-black italic text-lg px-2 mb-6 border-b border-zinc-800 pb-4">REMS_OS_v34</div>
-            <button onclick="showTab('mc')" id="side-mc" class="btn-bulky active-side">⛏️ MINECRAFT_2026</button>
-            <button onclick="showTab('br')" id="side-br" class="btn-bulky">🌐 BLOB_BROWSER</button>
+            <div class="text-white font-black italic text-lg px-2 mb-6 border-b border-zinc-800 pb-4">REMS_OS_v36.0</div>
+            <button onclick="showTab('mc')" id="side-mc" class="btn-bulky active-side">⛏️ MINECRAFT_OFFICIAL</button>
+            <button onclick="showTab('br')" id="side-br" class="btn-bulky">🌐 BOREHOLE_BROWSER</button>
             <button onclick="showTab('cl')" id="side-cl" class="btn-bulky">🔢 OG_CALCULATOR</button>
-            <button onclick="closeOS()" class="btn-bulky mt-auto text-red-500 text-center">EXIT_SYSTEM</button>
+            <button onclick="closeOS()" class="btn-bulky mt-auto text-red-500 text-center">SHUTDOWN</button>
         </div>
 
         <div class="flex-1 overflow-hidden">
             <div id="tab-mc" class="os-tab active-tab">
                 <div class="mc-window">
-                    <div class="mc-main">
+                    <div class="mc-left-nav">
+                        <div class="mc-game-icon active" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png');"></div>
+                        <div class="mc-game-icon" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/8/8e/Minecraft_Dungeons_cover_art.jpg');"></div>
+                    </div>
+                    <div class="mc-content">
+                        <div class="mc-header">
+                            <span class="active">PLAY</span>
+                            <span>INSTALLATIONS</span>
+                            <span>SKINS</span>
+                            <span>PATCH NOTES</span>
+                        </div>
                         <div class="mc-hero">
                             <div class="text-white text-5xl font-black italic" style="text-shadow: 3px 3px 0 #000">MINECRAFT</div>
+                            <div class="text-zinc-400 font-bold mt-1">Java Edition | 1.21.x</div>
                         </div>
-                        <div class="p-8">
-                            <div class="text-white font-bold mb-4">NEWS & UPDATES</div>
-                            <div class="bg-[#2b2b2b] p-6 rounded-lg border border-zinc-700">
-                                <div class="text-green-500 text-xs font-bold">RELEASE 1.21.1</div>
-                                <div class="text-white font-bold mt-1">Multiplayer Optimization</div>
-                                <div class="text-zinc-400 text-[10px] mt-2">Enhanced socket connections for low-latency school environments.</div>
+                        <div class="p-6">
+                            <div class="bg-[#2b2b2b] p-4 rounded border border-zinc-700">
+                                <div class="text-green-500 text-[10px] font-bold">LATEST RELEASE</div>
+                                <div class="text-white font-bold mt-1">Snapshot 26w12a</div>
+                                <div class="text-zinc-400 text-[10px] mt-1">Fixing connection issues in regional school networks.</div>
                             </div>
                         </div>
-                        <div class="mc-bottom-bar">
-                            <div class="mc-play-btn" onclick="blobLaunch('https://tuffc.speedslicer.dev/')">PLAY</div>
+                        <div class="mc-play-bar">
+                            <div class="mc-play-btn" onclick="borehole('https://tuff-client.github.io/')">PLAY</div>
                         </div>
                     </div>
                 </div>
@@ -81,39 +99,39 @@
 
             <div id="tab-br" class="os-tab flex flex-col items-center justify-center bg-[#1a1a1a]">
                 <div class="bg-[#2b2b2b] p-10 rounded-2xl border-4 border-zinc-800 w-[500px]">
-                    <h3 class="text-white font-black mb-6">DEEP_INJECTION_BROWSER</h3>
-                    <input type="text" id="blob-url" class="w-full bg-black border border-zinc-700 p-4 text-white rounded mb-4" placeholder="URL or Search...">
-                    <button onclick="blobLaunch(document.getElementById('blob-url').value)" class="w-full bg-blue-600 text-white font-bold py-4 rounded">INJECT SITE</button>
+                    <h3 class="text-white font-black mb-6 uppercase tracking-widest text-blue-500">Borehole v2.0</h3>
+                    <input type="text" id="br-input" class="w-full bg-black border border-zinc-700 p-4 text-white rounded mb-4" placeholder="URL or Search Terms...">
+                    <button onclick="borehole(document.getElementById('br-input').value)" class="w-full bg-blue-600 text-white font-bold py-4 rounded">DIRECT INJECT</button>
                 </div>
             </div>
 
             <div id="tab-cl" class="os-tab flex items-center justify-center">
-                <div class="ti-calc">
-                    <div class="ti-screen" id="display">0</div>
+                <div class="ti-case">
+                    <div class="ti-lcd" id="display">0</div>
                     <div class="grid grid-cols-4 gap-3">
-                        <button class="ti-btn btn-orange" onclick="toggle2nd()" id="btn-2nd">2nd</button>
-                        <button class="ti-btn btn-red" onclick="reset()">AC</button>
-                        <button class="ti-btn btn-red" onclick="del()">DEL</button>
-                        <button class="ti-btn" onclick="press('/')">÷</button>
+                        <button class="ti-key key-orange" onclick="toggle2nd()" id="btn-2nd">2nd</button>
+                        <button class="ti-key key-red" onclick="reset()">AC</button>
+                        <button class="ti-key key-red" onclick="del()">DEL</button>
+                        <button class="ti-key" onclick="press('/')">÷</button>
                         
-                        <button class="ti-btn" onclick="press('7')">7</button>
-                        <button class="ti-btn" onclick="press('8')">8</button>
-                        <button class="ti-btn" onclick="press('9')">9</button>
-                        <button class="ti-btn" onclick="press('*')">×</button>
+                        <button class="ti-key" onclick="press('7')">7</button>
+                        <button class="ti-key" onclick="press('8')">8</button>
+                        <button class="ti-key" onclick="press('9')">9</button>
+                        <button class="ti-key" onclick="press('*')">×</button>
                         
-                        <button class="ti-btn" onclick="press('4')">4</button>
-                        <button class="ti-btn" onclick="press('5')">5</button>
-                        <button class="ti-btn" onclick="press('6')">6</button>
-                        <button class="ti-btn" onclick="press('-')">−</button>
+                        <button class="ti-key" onclick="press('4')">4</button>
+                        <button class="ti-key" onclick="press('5')">5</button>
+                        <button class="ti-key" onclick="press('6')">6</button>
+                        <button class="ti-key" onclick="press('-')">−</button>
                         
-                        <button class="ti-btn" onclick="press('1')">1</button>
-                        <button class="ti-btn" onclick="press('2')">2</button>
-                        <button class="ti-btn" onclick="press('3')">3</button>
-                        <button class="ti-btn" onclick="press('+')">+</button>
+                        <button class="ti-key" onclick="press('1')">1</button>
+                        <button class="ti-key" onclick="press('2')">2</button>
+                        <button class="ti-key" onclick="press('3')">3</button>
+                        <button class="ti-key" onclick="press('+')">+</button>
                         
-                        <button class="ti-btn col-span-2" onclick="press('0')">0</button>
-                        <button class="ti-btn" onclick="press('.')">.</button>
-                        <button class="ti-btn btn-orange" onclick="evalCalc()">ENTER</button>
+                        <button class="ti-key col-span-2" onclick="press('0')">0</button>
+                        <button class="ti-key" onclick="press('.')">.</button>
+                        <button class="ti-key key-orange" onclick="evalCalc()">ENTER</button>
                     </div>
                 </div>
             </div>
@@ -129,12 +147,16 @@
             setTimeout(() => clicks = 0, 1000);
         }
 
-        function blobLaunch(target) {
+        // BOREHOLE 2.0: Blob Constructor Bypass
+        function borehole(target) {
             if (!target) return;
-            const finalUrl = target.includes('.') ? (target.startsWith('http') ? target : 'https://' + target) : `https://www.google.com/search?q=${encodeURIComponent(target)}&igu=1`;
+            let url = target.includes('.') ? (target.startsWith('http') ? target : 'https://' + target) : `https://www.google.com/search?q=${encodeURIComponent(target)}&igu=1`;
+            
             const win = window.open('about:blank', '_blank');
-            const blobHtml = `<html><head><style>body,html{margin:0;padding:0;height:100vh;overflow:hidden;}iframe{width:100%;height:100%;border:none;}</style></head><body><iframe src="${finalUrl}"></iframe></body></html>`;
-            const blob = new Blob([blobHtml], { type: 'text/html' });
+            if (!win) { alert("Enable Pop-ups for Bypass!"); return; }
+
+            const html = `<html><body style="margin:0;padding:0;height:100vh;overflow:hidden;"><iframe src="${url}" style="width:100%;height:100%;border:none;" allow="autoplay; fullscreen; gamepad; pointer-lock;"></iframe></body></html>`;
+            const blob = new Blob([html], { type: 'text/html' });
             win.location.href = URL.createObjectURL(blob);
         }
 
@@ -155,7 +177,7 @@
         function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').style.filter = is2nd ? 'brightness(1.5)' : 'none'; }
         function evalCalc() {
             if(is2nd) { closeOS(); toggle2nd(); }
-            else { try { v = String(eval(v.replace('×','*').replace('÷','/'))); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } }
+            else { try { v = String(eval(v.replace('×','*').replace('÷','/').replace('−','-'))); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } }
         }
     </script>
 </body>
