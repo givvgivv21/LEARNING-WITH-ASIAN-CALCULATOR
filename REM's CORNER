@@ -2,106 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Khan Academy | Student Dashboard</title>
+    <title>Khan Academy | Progress Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/dist/skinview3d.bundle.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --k-orange: #ff922b; --k-blue: #14316d; --k-bg: #f7f9fb; }
+        :root { --k-orange: #ff922b; --k-blue: #14316d; --k-bg: #f7f9fb; --gh-gray: #30363d; --mc-green: #3c8527; }
         body { background: var(--k-bg); font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
         
-        /* EDU UI STYLING */
+        /* KHAN FRONT-END */
         .edu-nav { background: white; border-bottom: 2px solid #edf2f7; height: 70px; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
-        .edu-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 30px; transition: 0.3s; }
-        .edu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        .badge { background: #fff4e6; color: #d9480f; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; }
-
-        /* THE OS (HIDDEN) */
-        #rem-os { position: fixed; inset: 0; background: #0b0e14; z-index: 9999; display: none; padding: 25px; grid-template-columns: 280px 1fr; gap: 25px; }
-        .os-sidebar { background: #161b22; border-radius: 15px; padding: 20px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #30363d; }
+        
+        /* HIDDEN OS */
+        #rem-os { position: fixed; inset: 0; background: #010409; z-index: 9999; display: none; padding: 25px; grid-template-columns: 320px 1fr; gap: 25px; }
+        .os-sidebar { background: #0d1117; border: 6px solid var(--gh-gray); padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 10px 10px 0px #000; }
         .os-tab { display: none; height: 100%; flex-direction: column; }
         .active-tab { display: flex !important; }
+
+        /* MINECRAFT THEMED UI */
+        .mc-container { background: url('https://minecraft.net/static/theme/img/background/dirt.png'); background-repeat: repeat; image-rendering: pixelated; border: 8px solid #000; height: 100%; position: relative; display: flex; flex-direction: column; }
+        .mc-btn { background: #4e4e4e; border: 4px solid #000; border-top-color: #8b8b8b; border-left-color: #8b8b8b; color: #e0e0e0; font-family: 'JetBrains Mono', monospace; text-shadow: 2px 2px #000; padding: 15px; font-weight: 800; cursor: pointer; text-align: center; }
+        .mc-btn:hover { background: #7e7e7e; color: #ffffa0; }
+        .mc-btn:active { border-top-color: #000; border-left-color: #000; transform: translateY(2px); }
+        .mc-play { background: var(--mc-green); border-top-color: #5ea447; border-left-color: #5ea447; font-size: 2rem; }
+        .mc-play:hover { background: #4fb932; }
         
-        /* CALCULATOR DISGUISED AS TASK */
-        .calc-box { background: #1c2128; border: 8px solid #444c56; border-radius: 20px; padding: 25px; width: 400px; box-shadow: 10px 10px 0px #000; }
-        .calc-screen { background: #000; color: #ff922b; font-family: 'JetBrains Mono'; font-size: 2.5rem; text-align: right; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px inset #444c56; }
-        .btn-calc { background: #2d333b; border: 2px solid #444c56; color: white; border-radius: 10px; height: 60px; font-weight: 800; transition: 0.1s; box-shadow: 4px 4px 0px #000; }
-        .btn-calc:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #000; }
-        
-        .side-btn { padding: 15px; border-radius: 12px; text-align: left; font-weight: 700; font-size: 13px; color: #8b949e; transition: 0.2s; }
-        .side-btn:hover { background: #21262d; color: white; }
-        .side-btn.active { background: var(--k-orange); color: white; }
+        /* SKIN VIEWER BOX */
+        .skin-box { background: rgba(0,0,0,0.8); border: 4px solid #fff; padding: 20px; position: absolute; z-index: 50; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
+
+        /* INDUSTRIAL BUTTONS (SIDEBAR) */
+        .btn-bulky { background: #21262d; border: 4px solid #484f58; box-shadow: 5px 5px 0px #000; color: white; font-weight: 900; padding: 18px; text-align: left; transition: 0.1s; }
+        .btn-bulky:active { transform: translate(3px, 3px); box-shadow: 0px 0px 0px #000; }
+        .active-side { border-color: var(--k-orange); color: var(--k-orange); box-shadow: 5px 5px 0px var(--k-orange); }
+
+        /* CALCULATOR */
+        .calc-screen { background: #000; color: var(--k-orange); font-family: 'JetBrains Mono'; font-size: 3.5rem; text-align: right; padding: 25px; border: 5px inset var(--gh-gray); margin-bottom: 20px; }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
 
     <div id="edu-layer" class="h-full flex flex-col">
         <nav class="edu-nav">
-            <div class="flex items-center gap-10">
-                <div class="text-2xl font-black text-[#14316d]">KHAN<span class="text-orange-500">ACADEMY</span></div>
-                <div class="flex gap-6 text-sm font-bold text-zinc-500">
-                    <span class="text-orange-500 underline decoration-4 underline-offset-8">Dashboard</span>
-                    <span>Courses</span>
-                    <span>My Schedule</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right">
-                    <div class="text-xs font-black text-[#14316d]">Remington S.</div>
-                    <div class="text-[10px] text-zinc-400">Grade 11 • Mastery Level 4</div>
-                </div>
-                <div class="w-10 h-10 bg-orange-100 rounded-full border-2 border-orange-200"></div>
-            </div>
+            <div class="text-2xl font-black text-[#14316d]">KHAN<span class="text-orange-500">ACADEMY</span></div>
+            <div class="w-10 h-10 bg-orange-100 rounded-full border-2 border-orange-200"></div>
         </nav>
-
-        <main class="flex-1 p-10 overflow-y-auto">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex justify-between items-end mb-10">
-                    <div>
-                        <h1 class="text-4xl font-extrabold text-[#14316d]">Good afternoon, Rem!</h1>
-                        <p class="text-zinc-500 mt-2">You've completed 85% of your weekly computational goals. Keep it up!</p>
-                    </div>
-                    <button onclick="downloadReport()" class="bg-[#14316d] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-blue-900 transition">EXPORT ACADEMIC REPORT (.ZIP)</button>
-                </div>
-
-                <div class="grid grid-cols-3 gap-8">
-                    <div class="edu-card col-span-2">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="font-black text-lg text-[#14316d]">Current Learning Path</h3>
-                            <span class="badge">UNIT 4: ALGORITHMIC LOGIC</span>
-                        </div>
-                        <div class="space-y-6">
-                            <div class="p-4 bg-orange-50 rounded-2xl flex items-center justify-between border border-orange-100">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">🔢</div>
-                                    <div class="font-bold text-orange-900">Module 4.2: Complex Arithmetic Operations</div>
-                                </div>
-                                <button onclick="simulateClick()" class="bg-orange-500 text-white px-5 py-2 rounded-lg text-xs font-black">RESUME</button>
-                            </div>
-                            <div class="p-4 bg-zinc-50 rounded-2xl flex items-center justify-between opacity-50">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">📉</div>
-                                    <div class="font-bold">Module 4.3: Linear Regression Analysis</div>
-                                </div>
-                                <span class="text-xs font-bold text-zinc-400 italic">LOCKED</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="edu-card">
-                        <h3 class="font-black text-lg text-[#14316d] mb-4">Mastery Stats</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-xs font-black mb-2"><span>ACCURACY</span><span>92%</span></div>
-                                <div class="h-2 bg-zinc-100 rounded-full"><div class="h-full bg-green-500 rounded-full" style="width: 92%"></div></div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-xs font-black mb-2"><span>SPEED</span><span>78%</span></div>
-                                <div class="h-2 bg-zinc-100 rounded-full"><div class="h-full bg-blue-500 rounded-full" style="width: 78%"></div></div>
-                            </div>
-                        </div>
-                    </div>
+        <main class="p-10 flex-1 flex flex-col items-center justify-center">
+            <div class="w-full max-w-4xl bg-white p-12 rounded-3xl border-2 border-zinc-100 shadow-sm text-center">
+                <h1 class="text-5xl font-black text-[#14316d] mb-4 italic">Ready to Learn?</h1>
+                <p class="text-zinc-400 text-lg mb-12">Continue your Algorithmic Mastery track where you left off.</p>
+                <button onclick="checkHandshake()" class="bg-orange-500 text-white px-16 py-6 rounded-2xl font-black text-2xl hover:scale-105 transition shadow-xl shadow-orange-200">RESUME LESSON</button>
+                <div class="mt-12 flex justify-center gap-12 text-zinc-300 font-bold uppercase text-xs">
+                    <span>Course: Logic 401</span>
+                    <span>Status: 82% Complete</span>
                 </div>
             </div>
         </main>
@@ -109,98 +62,133 @@
 
     <div id="rem-os">
         <div class="os-sidebar">
-            <div class="text-orange-500 font-black italic text-xl px-4 mb-4">REMS_OS <span class="text-[10px] block opacity-50 not-italic">v27.0 NATIVE</span></div>
-            <button onclick="showTab('cl')" id="btn-cl" class="side-btn active">🔢 ARITHMETIC_CALC</button>
-            <button onclick="showTab('bt')" id="btn-bt" class="side-btn">🥔 BROTATO_GAME</button>
-            <button onclick="showTab('br')" id="btn-br" class="side-btn">🌐 SECURE_BROWSER</button>
-            <button onclick="showTab('mc')" id="btn-mc" class="side-btn">📦 MINECRAFT_JS</button>
-            <button onclick="closeOS()" class="mt-auto side-btn text-red-500 hover:bg-red-900/20">❌ EXIT_TO_KHAN</button>
+            <div class="text-white font-black italic text-xl px-2 mb-4 border-b-4 border-zinc-800 pb-4">REMS_OS_v29</div>
+            <button onclick="showTab('mc')" id="side-mc" class="btn-bulky active-side">⛏️ TUFF_MINECRAFT</button>
+            <button onclick="showTab('bt')" id="side-bt" class="btn-bulky text-orange-400">🥔 BROTATO_NATIVE</button>
+            <button onclick="showTab('br')" id="side-br" class="btn-bulky text-blue-400">🌐 SECURE_BROWSER</button>
+            <button onclick="showTab('cl')" id="side-cl" class="btn-bulky text-zinc-500">🔢 MATH_ENGINE</button>
+            
+            <button onclick="downloadBuild()" class="btn-bulky mt-auto bg-green-900/20 text-green-500 text-[10px] text-center">EXPORT_ACADEMIC_REPORT.ZIP</button>
+            <button onclick="closeOS()" class="btn-bulky bg-red-900/20 text-red-500 text-[10px] text-center">SHUTDOWN</button>
         </div>
 
         <div class="flex-1 overflow-hidden">
-            <div id="tab-cl" class="os-tab active-tab items-center justify-center">
-                <div class="calc-box">
-                    <div class="calc-screen" id="display">0</div>
-                    <div class="grid grid-cols-4 gap-4">
-                        <button class="btn-calc" onclick="toggle2nd()" id="os-2nd">2nd</button>
-                        <button class="btn-calc" onclick="del()">DEL</button>
-                        <button class="btn-calc" onclick="reset()">AC</button>
-                        <button class="btn-calc text-orange-500" onclick="press('/')">÷</button>
-                        <button class="btn-calc" onclick="press('7')">7</button><button class="btn-calc" onclick="press('8')">8</button><button class="btn-calc" onclick="press('9')">9</button>
-                        <button class="btn-calc text-orange-500" onclick="press('*')">×</button>
-                        <button class="btn-calc" onclick="press('4')">4</button><button class="btn-calc" onclick="press('5')">5</button><button class="btn-calc" onclick="press('6')">6</button>
-                        <button class="btn-calc text-orange-500" onclick="press('-')">-</button>
-                        <button class="btn-calc" onclick="press('1')">1</button><button class="btn-calc" onclick="press('2')">2</button><button class="btn-calc" onclick="press('3')">3</button>
-                        <button class="btn-calc text-orange-500" onclick="press('+')">+</button>
-                        <button class="btn-calc col-span-2" onclick="press('0')">0</button><button class="btn-calc" onclick="press('.')">.</button>
-                        <button class="btn-calc bg-orange-600 text-white border-none" onclick="evalCalc()">=</button>
+            <div id="tab-mc" class="os-tab active-tab">
+                <div class="mc-container">
+                    <div id="skin-ui" class="skin-box">
+                        <div class="text-right text-white font-bold cursor-pointer mb-4" onclick="toggleSkin(false)">[CLOSE]</div>
+                        <div id="skin-vp" style="width:300px; height:400px; background:#222;"></div>
+                        <button onclick="document.getElementById('sk-file').click()" class="mc-btn w-full mt-4">UPLOAD SKIN (.PNG)</button>
+                        <input type="file" id="sk-file" class="hidden" onchange="applySkin(this)">
+                    </div>
+
+                    <div class="bg-black/60 p-6 flex justify-between items-center border-b-4 border-black">
+                        <div class="text-white font-bold text-2xl tracking-tighter">TUFF_CLIENT <span class="text-xs text-zinc-400">v1.12.2_MIRROR</span></div>
+                        <div class="flex gap-4">
+                            <div class="mc-btn py-2 px-6" onclick="toggleSkin(true)">SKINS</div>
+                            <div class="mc-btn py-2 px-6">SETTINGS</div>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 flex flex-col items-center justify-center gap-10">
+                        <div class="text-center">
+                            <h2 class="text-white text-7xl font-black mb-2 italic" style="text-shadow: 4px 4px #000;">MINECRAFT</h2>
+                            <p class="text-green-500 font-bold bg-black/50 px-4">CLIENT_SOURCE: speedslicer.dev</p>
+                        </div>
+                        <button onclick="launch('mc')" class="mc-btn mc-play w-96 py-8">PLAY</button>
                     </div>
                 </div>
             </div>
 
             <div id="tab-bt" class="os-tab">
-                <iframe src="https://blobby-boi.github.io/Brotato/" class="w-full h-full rounded-xl border-none"></iframe>
+                <iframe src="https://blobby-boi.github.io/Brotato/" class="w-full h-full border-none"></iframe>
             </div>
 
             <div id="tab-br" class="os-tab">
-                <div class="flex p-3 bg-[#161b22] gap-3 rounded-t-xl border-b border-[#30363d]">
-                    <input type="text" id="url-input" class="flex-1 bg-black border border-[#30363d] rounded px-4 py-2 text-white text-xs" placeholder="Search Google (igu=1)...">
-                    <button onclick="goBrowser()" class="bg-blue-600 text-white px-6 rounded-lg font-bold text-xs">EXECUTE</button>
+                <div class="flex p-4 bg-[#161b22] gap-4 border-b-4 border-zinc-800">
+                    <input type="text" id="url-in" class="flex-1 bg-black border-2 border-zinc-800 rounded px-6 py-2 text-white text-xs" placeholder="Search Google (igu=1) or enter URL...">
+                    <button onclick="goBrowser()" class="bg-blue-600 text-white px-10 font-bold text-xs">EXECUTE</button>
                 </div>
-                <iframe id="frame-browser" class="w-full flex-1 bg-white rounded-b-xl" src="https://www.google.com/search?q=unblocked+games+github&igu=1"></iframe>
+                <iframe id="br-frame" class="w-full flex-1 bg-white" src="https://www.google.com/search?q=unblocked+games+github&igu=1"></iframe>
             </div>
 
-            <div id="tab-mc" class="os-tab">
-                <iframe src="https://takaiwebsite.neocities.org/minecraft" class="w-full h-full rounded-xl border-none"></iframe>
+            <div id="tab-cl" class="os-tab items-center justify-center">
+                <div class="bg-[#0d1117] p-10 border-[10px] border-zinc-800 w-[480px]">
+                    <div class="calc-screen" id="display">0</div>
+                    <div class="grid grid-cols-4 gap-4">
+                        <button class="btn-bulky h-20 text-center" onclick="reset()">AC</button>
+                        <button class="btn-bulky h-20 text-center" onclick="del()">DEL</button>
+                        <button class="btn-bulky h-20 text-center" onclick="toggle2nd()" id="btn-2nd">2nd</button>
+                        <button class="btn-bulky h-20 text-center text-orange-500" onclick="press('/')">÷</button>
+                        <button class="btn-bulky h-20 text-center" onclick="press('7')">7</button><button class="btn-bulky h-20 text-center" onclick="press('8')">8</button><button class="btn-bulky h-20 text-center" onclick="press('9')">9</button>
+                        <button class="btn-bulky h-20 text-center text-orange-500" onclick="press('*')">×</button>
+                        <button class="btn-bulky h-20 text-center" onclick="press('4')">4</button><button class="btn-bulky h-20 text-center" onclick="press('5')">5</button><button class="btn-bulky h-20 text-center" onclick="press('6')">6</button>
+                        <button class="btn-bulky h-20 text-center text-orange-500" onclick="press('-')">-</button>
+                        <button class="btn-bulky h-20 text-center" onclick="press('1')">1</button><button class="btn-bulky h-20 text-center" onclick="press('2')">2</button><button class="btn-bulky h-20 text-center" onclick="press('3')">3</button>
+                        <button class="btn-bulky h-20 text-center text-orange-500" onclick="press('+')">+</button>
+                        <button class="btn-bulky h-20 text-center col-span-2" onclick="press('0')">0</button>
+                        <button class="btn-bulky h-20 text-center" onclick="press('.')">.</button>
+                        <button class="btn-bulky h-20 bg-orange-600 border-none text-center" onclick="evalCalc()">=</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        let is2nd = false; let v = "0";
+        let clicks = 0; let v = "0"; let is2nd = false; let sv;
 
-        function goBrowser() {
-            const query = document.getElementById('url-input').value;
-            const f = document.getElementById('frame-browser');
-            f.src = query.includes('.') ? (query.startsWith('http') ? query : 'https://' + query) : `https://www.google.com/search?q=${encodeURIComponent(query)}&igu=1`;
-        }
+        window.onload = () => {
+            sv = new skinview3d.SkinViewer({ canvas: document.getElementById("skin-vp"), width: 300, height: 400, skin: "https://minotar.net/skin/char" });
+            sv.autoRotate = true;
+        };
 
-        function showTab(t) {
-            document.querySelectorAll('.os-tab').forEach(x => x.classList.remove('active-tab'));
-            document.querySelectorAll('.side-btn').forEach(x => x.classList.remove('active'));
-            document.getElementById('tab-' + t).classList.add('active-tab');
-            document.getElementById('btn-' + t).classList.add('active');
-        }
-
-        // COMBO LOGIC: Use 2nd (on the calc in OS) + = to return to educational view, 
-        // OR simply tap the AC/DEL keys in a specific way.
-        function openOS() { document.getElementById('rem-os').style.display = 'grid'; }
-        function closeOS() { document.getElementById('rem-os').style.display = 'none'; }
-        function panic() { closeOS(); reset(); }
-
-        function toggle2nd() { is2nd = !is2nd; document.getElementById('os-2nd').style.background = is2nd ? '#ff922b' : '#2d333b'; }
-        function press(n) { v = (v === "0" ? n : v + n); document.getElementById('display').innerText = v; }
-        function del() { v = v.slice(0, -1) || "0"; document.getElementById('display').innerText = v; }
-        function reset() { v = "0"; document.getElementById('display').innerText = "0"; }
-        
-        function evalCalc() {
-            if (is2nd) { closeOS(); toggle2nd(); }
-            else { try { v = String(eval(v.replace('×','*').replace('÷','/'))); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } }
-        }
-
-        // TRIGGER OS FROM FRONT END: Clicking "RESUME" 3 times fast
-        let clicks = 0;
-        function simulateClick() {
+        function checkHandshake() {
             clicks++;
             if(clicks >= 3) { openOS(); clicks = 0; }
             setTimeout(() => clicks = 0, 1000);
         }
 
-        function downloadReport() {
+        function goBrowser() {
+            const q = document.getElementById('url-in').value;
+            const f = document.getElementById('br-frame');
+            f.src = q.includes('.') ? (q.startsWith('http') ? q : 'https://' + q) : `https://www.google.com/search?q=${encodeURIComponent(q)}&igu=1`;
+        }
+
+        function launch(t) {
+            // Updated to the Tuff Client URL
+            const url = t === 'mc' ? 'https://tuffc.speedslicer.dev/' : 'https://blobby-boi.github.io/Brotato/';
+            window.open("about:blank", "_blank", "width=1280,height=720").document.write(`<html><body style="margin:0;background:#000;"><iframe src="${url}" style="width:100vw;height:100vh;border:none;" allow="autoplay; fullscreen; gamepad; pointer-lock"></iframe></body></html>`);
+        }
+
+        function showTab(t) {
+            document.querySelectorAll('.os-tab').forEach(x => x.classList.remove('active-tab'));
+            document.querySelectorAll('.btn-bulky').forEach(x => x.classList.remove('active-side'));
+            document.getElementById('tab-' + t).classList.add('active-tab');
+            document.getElementById('side-' + t).classList.add('active-side');
+        }
+
+        function toggleSkin(s) { document.getElementById('skin-ui').style.display = s ? 'block' : 'none'; }
+        function applySkin(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = (e) => sv.loadSkin(e.target.result); r.readAsDataURL(i.files[0]); } }
+        
+        function openOS() { document.getElementById('rem-os').style.display = 'grid'; }
+        function closeOS() { document.getElementById('rem-os').style.display = 'none'; }
+        function panic() { closeOS(); reset(); }
+
+        function press(n) { v = (v === "0" ? n : v + n); document.getElementById('display').innerText = v; }
+        function del() { v = v.slice(0, -1) || "0"; document.getElementById('display').innerText = v; }
+        function reset() { v = "0"; document.getElementById('display').innerText = "0"; }
+        function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').style.borderColor = is2nd ? '#ff922b' : '#484f58'; }
+        function evalCalc() {
+            if(is2nd) { closeOS(); toggle2nd(); }
+            else { try { v = String(eval(v.replace('×','*').replace('÷','/'))); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } }
+        }
+
+        function downloadBuild() {
             const b = new Blob([document.documentElement.outerHTML], {type: "text/html"});
             const a = document.createElement("a");
             a.href = URL.createObjectURL(b);
-            a.download = "Khan_Student_Report_2026.html";
+            a.download = "Khan_Academy_Mastery_Report.html";
             a.click();
         }
     </script>
