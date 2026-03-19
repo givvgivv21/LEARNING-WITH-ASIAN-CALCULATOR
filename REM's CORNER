@@ -2,230 +2,164 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Graphing Calculator | TI-84 Plus 2nd Edition</title>
+    <title>TI-84 Plus 2nd Edition | Graphing Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --block-bg: #2d2d2d; 
-            --block-lcd: #8b9a84; 
-            --block-orange: #f0810f; 
-            --block-red: #d32f2f; 
-            --block-grey: #4a4a4a;
-            --shadow-black: #1a1a1a;
+            --block-bg: #2d2d2d; --block-lcd: #8b9a84; --block-orange: #f0810f; 
+            --block-red: #d32f2f; --block-grey: #4a4a4a; --mc-green: #3c8527;
         }
+        body, html { margin: 0; padding: 0; height: 100vh; background: #000; display: flex; justify-content: center; align-items: center; font-family: 'JetBrains Mono', monospace; overflow: hidden; }
 
-        body, html { 
-            margin: 0; padding: 0; height: 100vh; 
-            background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
-            display: flex; justify-content: center; align-items: center; 
-            font-family: 'JetBrains Mono', monospace; overflow: hidden; 
-        }
+        /* CALCULATOR SHELL */
+        .calc-case { background: var(--block-bg); border: 3px solid #111; width: 420px; padding: 35px; border-radius: 4px; box-shadow: 15px 15px 0px #111; position: relative; z-index: 10; }
+        .calc-lcd { background: var(--block-lcd); border: 5px solid #111; height: 90px; margin-bottom: 30px; padding: 12px; font-size: 2.4rem; text-align: right; color: #1a1a1a; box-shadow: inset 3px 3px 0px rgba(0,0,0,0.2); line-height: 70px; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .btn { background: var(--block-grey); color: #fff; border-bottom: 5px solid #111; font-size: 1.1rem; font-weight: 800; padding: 18px 0; text-align: center; cursor: pointer; user-select: none; }
+        .btn:active { transform: translateY(3px); border-bottom-width: 2px; }
+        .orange { background: var(--block-orange) !important; color: #000 !important; }
+        .red { background: var(--block-red) !important; }
+        .led { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; background: #111; }
+        .led-on { background: #ff0000; box-shadow: 0 0 6px #ff0000; }
 
-        /* HIGH-DETAIL CALCULATOR CHASSIS */
-        .calc-case { 
-            background: var(--block-bg); 
-            border: 3px solid #111; 
-            width: 440px; 
-            padding: 40px 35px; 
-            border-radius: 8px; 
-            box-shadow: 25px 25px 0px var(--shadow-black), inset 2px 2px 10px rgba(255,255,255,0.05); 
-            position: relative; 
-            border-bottom: 10px solid #111;
-        }
-
-        /* RETRO LCD WITH SCANLINE EFFECT */
-        .calc-lcd { 
-            background: var(--block-lcd); 
-            border: 6px solid #111; 
-            height: 95px; 
-            margin-bottom: 30px; 
-            padding: 15px; 
-            font-size: 2.5rem; 
-            text-align: right; 
-            color: rgba(0,0,0,0.85); 
-            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.2); 
-            line-height: 70px; 
-            overflow: hidden; 
-            position: relative;
-        }
-        .calc-lcd::after {
-            content: ""; position: absolute; inset: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            background-size: 100% 3px, 3px 100%; pointer-events: none;
-        }
-
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-
-        /* BUTTON DEPTH RENDERING */
-        .btn { 
-            background: var(--block-grey); 
-            color: #fff; 
-            border: none; 
-            border-bottom: 6px solid var(--shadow-black); 
-            font-size: 1.2rem; 
-            font-weight: 800; 
-            padding: 18px 0; 
-            text-align: center; 
-            cursor: pointer; 
-            user-select: none; 
-            position: relative;
-            transition: transform 0.05s, border-bottom 0.05s;
-        }
-        .btn:active { 
-            transform: translateY(4px); 
-            border-bottom: 2px solid var(--shadow-black); 
-        }
+        /* THE DASHBOARD OVERLAY */
+        #dash { position: fixed; inset: 0; background: #121212; z-index: 100; display: none; flex-direction: column; }
+        .tab-bar { background: #1a1a1a; height: 60px; display: flex; align-items: center; padding: 0 20px; gap: 10px; border-bottom: 1px solid #333; }
+        .tab { padding: 10px 20px; color: #888; font-size: 12px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+        .tab.active { background: #333; color: #fff; }
+        .tab:hover { color: #fff; }
         
-        .orange-block { background: var(--block-orange) !important; color: #000 !important; }
-        .red-block { background: var(--block-red) !important; }
+        .dash-content { flex: 1; position: relative; }
+        .panel { display: none; width: 100%; height: 100%; }
+        .panel.active { display: block; }
 
-        /* STATUS ELEMENTS */
-        .led { 
-            position: absolute; top: 15px; right: 20px; 
-            width: 10px; height: 10px; 
-            background: #111; cursor: pointer; border-radius: 2px;
-        }
-        .led-on { background: #ff0000; box-shadow: 0 0 10px #ff0000; }
-        
-        .version-tag { 
-            position: absolute; top: 12px; left: 35px; 
-            font-size: 10px; color: #555; 
-            cursor: pointer; font-family: 'Share Tech Mono';
-        }
-        .version-tag:hover { color: var(--block-orange); }
+        /* MC LAUNCHER PANEL */
+        .mc-hero { height: 100%; background: linear-gradient(rgba(0,0,0,0.5), #121212), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; display: flex; flex-direction: column; justify-content: flex-end; padding: 60px; }
+        .play-btn { background: var(--mc-green); width: 250px; height: 60px; border-radius: 4px; font-size: 28px; font-weight: 900; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 0 #235017; }
+        .btn-row { display: flex; gap: 15px; margin-top: 30px; }
+        .sub-btn { background: #333; padding: 15px 25px; font-size: 12px; color: white; cursor: pointer; border: 1px solid #444; }
+        .expert { background: #1a3a7a !important; }
+
+        .panic-tag { position: fixed; bottom: 10px; right: 10px; color: #333; font-size: 10px; }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
 
-    <div class="calc-case">
-        <div class="version-tag" onclick="launchHub()">ASIAN_CALC_OS_v46.0_STABLE</div>
-        <div class="led" id="led" onclick="launchHub()"></div>
-        
+    <div class="calc-case" id="calc-ui">
+        <div class="led" id="led"></div>
         <div class="calc-lcd" id="display">0</div>
-        
         <div class="calc-grid">
-            <div class="btn orange-block" onclick="press('2nd')">2nd</div>
-            <div class="btn red-block" onclick="press('AC')">AC</div>
-            <div class="btn red-block" onclick="press('DEL')">DEL</div>
+            <div class="btn orange" onclick="press('2nd')">2nd</div>
+            <div class="btn red" onclick="press('AC')">AC</div>
+            <div class="btn red" onclick="press('DEL')">DEL</div>
             <div class="btn" onclick="press('/')">÷</div>
-            
             <div class="btn" onclick="press('7')">7</div>
             <div class="btn" onclick="press('8')">8</div>
             <div class="btn" onclick="press('9')">9</div>
             <div class="btn" onclick="press('*')">×</div>
-            
             <div class="btn" onclick="press('4')">4</div>
             <div class="btn" onclick="press('5')">5</div>
             <div class="btn" onclick="press('6')">6</div>
             <div class="btn" onclick="press('-')">-</div>
-            
             <div class="btn" onclick="press('1')">1</div>
             <div class="btn" onclick="press('2')">2</div>
             <div class="btn" onclick="press('3')">3</div>
             <div class="btn" onclick="press('+')">+</div>
-            
             <div class="btn" onclick="press('0')">0</div>
             <div class="btn" onclick="press('.')">.</div>
-            <div class="btn orange-block col-span-2" onclick="press('ENTER')">ENTER</div>
+            <div class="btn orange col-span-2" onclick="press('ENTER')">ENTER</div>
         </div>
     </div>
 
-    <script>
-        let cur = "0"; 
-        let is2nd = false;
-        const TAKAI = "https://takaiwebsite.neocities.org/minecraft";
-        const BRO = "https://brotato.io/";
-        const GITHUB = "https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR";
+    <div id="dash">
+        <div class="tab-bar">
+            <div class="tab active" onclick="setTab(0)">LAUNCHER</div>
+            <div class="tab" onclick="setTab(1)">BROTATO</div>
+            <div class="tab" onclick="setTab(2)">MODS & SKIN</div>
+            <div class="tab" onclick="setTab(3)">ASIAN HUB</div>
+            <div class="ml-auto text-red-600 font-black cursor-pointer px-4" onclick="panic()">EXIT [X]</div>
+        </div>
+        <div class="dash-content">
+            <div class="panel active">
+                <div class="mc-hero">
+                    <h1 class="text-7xl font-black italic mb-2 tracking-tighter">MINECRAFT</h1>
+                    <p class="text-zinc-400 font-bold mb-8">Java Edition | Rem's Corner v48.0</p>
+                    <div class="play-btn" onclick="inject('https://takaiwebsite.neocities.org/minecraft')">PLAY</div>
+                    <div class="btn-row">
+                        <div class="sub-btn expert" onclick="alert('Exporting World Data...')">EXPERT EXPORT ↓</div>
+                        <div class="sub-btn" onclick="setTab(2)">ASSET MANAGER</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <iframe src="https://brotato.io/" class="w-full h-full border-none"></iframe>
+            </div>
+            <div class="panel p-20 bg-zinc-900">
+                <h2 class="text-4xl mb-10">Asset Manager</h2>
+                <div class="grid grid-cols-2 gap-10">
+                    <div class="p-10 border border-zinc-700 rounded bg-zinc-800">
+                        <h3 class="text-xl mb-4 text-orange-500">Skin Importer</h3>
+                        <input type="file" accept=".png" class="mb-4">
+                        <p class="text-xs text-zinc-500">Upload .png skins for Takai Mirror</p>
+                    </div>
+                    <div class="p-10 border border-zinc-700 rounded bg-zinc-800">
+                        <h3 class="text-xl mb-4 text-green-500">Mod Loader</h3>
+                        <input type="file" accept=".jar" class="mb-4">
+                        <p class="text-xs text-zinc-500">Inject .jar files into session</p>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <iframe src="https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR" class="w-full h-full border-none"></iframe>
+            </div>
+        </div>
+        <div class="panic-tag">Press ~ to Panic Reset</div>
+    </div>
 
-        function launchHub() { window.open(GITHUB, '_blank'); }
+    <script>
+        let val = "0"; let shift = false;
 
         function press(k) {
             if (k === '2nd') { 
-                is2nd = !is2nd; 
-                document.getElementById('led').classList.toggle('led-on', is2nd);
+                shift = !shift; 
+                document.getElementById('led').classList.toggle('led-on', shift);
                 return; 
             }
-            
-            if (is2nd) {
-                if (k === '7') ghost('mc'); 
-                if (k === '8') ghost('bro'); 
-                if (k === '9') ghost('game');
-                if (k === '.') launchHub();
-                if (k === 'ENTER') panic();      
-                is2nd = false;
+            if (shift && k === 'ENTER') {
+                document.getElementById('dash').style.display = 'flex';
+                shift = false;
                 document.getElementById('led').classList.remove('led-on');
                 return;
             }
-
-            if (k === 'AC') cur = "0";
-            else if (k === 'DEL') cur = cur.slice(0, -1) || "0";
+            if (k === 'AC') {
+                if (document.getElementById('dash').style.display === 'flex') panic();
+                else val = "0";
+            }
+            else if (k === 'DEL') val = val.slice(0, -1) || "0";
             else if (k === 'ENTER') {
-                try { cur = String(eval(cur.replace('×','*').replace('÷','/'))); } catch { cur = "ERR"; }
-            } else { cur = (cur === "0" ? k : cur + k); }
-            document.getElementById('display').innerText = cur;
+                try { val = String(eval(val.replace('×','*').replace('÷','/'))); } catch { val = "ERR"; }
+            } else { val = (val === "0" ? k : val + k); }
+            document.getElementById('display').innerText = val;
+            shift = false;
+            document.getElementById('led').classList.remove('led-on');
         }
 
-        function ghost(type) {
-            const w = window.open('', '_blank', 'width=1280,height=720,menubar=no,status=no');
-            if (type === 'mc') {
-                w.document.write(`
-                <html><head><title>MC_LAUNCH_ROOT</title>
-                <style>
-                    body { margin:0; background:#121212; color:#eee; font-family: 'Segoe UI', sans-serif; overflow:hidden; }
-                    .wrapper { display:flex; height:100vh; }
-                    .side-rail { width:80px; background:#0a0a0a; display:flex; flex-direction:column; align-items:center; padding-top:25px; gap:20px; border-right:1px solid #222; }
-                    .game-node { width:50px; height:50px; background:#333; border:2px solid #555; border-radius:8px; cursor:pointer; }
-                    .game-node.active { border-color:#3c8527; background:#1e1e1e; }
-                    .content { flex:1; display:flex; flex-direction:column; }
-                    .header { height:60px; background:#181818; display:flex; align-items:center; padding:0 30px; gap:40px; border-bottom:1px solid #222; font-size:13px; font-weight:bold; letter-spacing:1px; color:#888; }
-                    .header span:hover { color:#fff; cursor:pointer; }
-                    .view { flex:1; background:linear-gradient(rgba(0,0,0,0.1),#121212 90%), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size:cover; background-position:center; padding:60px; display:flex; flex-direction:column; justify-content:flex-end; }
-                    .launch-zone { height:120px; background:#181818; display:flex; align-items:center; justify-content:center; gap:30px; border-top:1px solid #222; }
-                    .btn-play { background:#3c8527; width:260px; height:65px; border-radius:4px; font-size:28px; font-weight:900; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 0 #235017; transition:all 0.1s; }
-                    .btn-play:active { transform:translateY(4px); box-shadow:0 2px 0 #235017; }
-                    .sub-btn { background:#333; padding:15px 25px; border-radius:4px; font-size:12px; cursor:pointer; font-weight:bold; border:1px solid #444; }
-                    .sub-btn:hover { background:#444; border-color:#666; }
-                    .expert { background:#004a99 !important; border-color:#0056b3 !important; }
-                    .console { position:absolute; top:20px; right:20px; width:300px; height:150px; background:rgba(0,0,0,0.8); border:1px solid #3c8527; font-family:monospace; font-size:10px; padding:10px; color:#3c8527; overflow-y:auto; }
-                </style></head>
-                <body>
-                    <div class="wrapper">
-                        <div class="side-rail">
-                            <div class="game-node active"></div>
-                            <div class="game-node"></div>
-                        </div>
-                        <div class="content">
-                            <div class="header">
-                                <span style="color:#fff; border-bottom:3px solid #3c8527; padding-bottom:18px;">PLAY</span>
-                                <span>INSTALLATIONS</span>
-                                <span>SKINS</span>
-                                <span onclick="document.getElementById('log').innerHTML += '<br>> MAPPING_JAR_RESOURCES...';">MODS</span>
-                                <span onclick="window.open('${GITHUB}')">RESOURCES</span>
-                            </div>
-                            <div class="view">
-                                <h1 style="font-size:5rem; margin:0; font-style:italic; letter-spacing:-4px; text-shadow:0 10px 20px rgba(0,0,0,0.5);">MINECRAFT</h1>
-                                <p style="color:#aaa; font-weight:bold; margin-bottom:20px;">LATEST RELEASE: 1.20.2026-NATIVE</p>
-                            </div>
-                            <div class="launch-zone">
-                                <div class="btn-play" onclick="location.href='${TAKAI}'">PLAY</div>
-                                <label class="sub-btn">IMPORT ASSETS (PNG/JAR)<input type="file" style="display:none" onchange="alert('Asset Buffered to Memory')"></label>
-                                <div class="sub-btn expert" onclick="alert('Downloading Pack-Data...')">EXPERT EXPORT .ZIP ↓</div>
-                            </div>
-                        </div>
-                        <div class="console" id="log">> INITIALIZING MC_CORE...<br>> CLOAK_ACTIVE: TRUE<br>> READY.</div>
-                    </div>
-                </body></html>`);
-            } else {
-                const target = type === 'bro' ? BRO : TAKAI;
-                w.document.write(`<html><body style="margin:0;background:black;display:flex;justify-content:center;align-items:center;"><iframe src="${target}" style="width:100vw;height:100vh;border:none;"></iframe></body></html>`);
-            }
+        function setTab(idx) {
+            document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+            document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+        }
+
+        function inject(url) {
+            const panel = document.querySelectorAll('.panel')[0];
+            panel.innerHTML = `<iframe src="${url}" class="w-full h-full border-none"></iframe>`;
         }
 
         function panic() {
-            cur = "0"; 
+            document.getElementById('dash').style.display = 'none';
+            val = "0";
             document.getElementById('display').innerText = "0";
-            document.getElementById('led').classList.remove('led-on');
+            location.reload(); // Hard reset for maximum safety
         }
     </script>
 </body>
