@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rem's Corner | Research Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #09090b; --accent: #f97316; --mc-green: #3c8527; --mc-sidebar: #1e1e1e; }
+        body { background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #09090b 100%); color: #f1f5f9; font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; overflow: hidden; }
+        
+        /* Stealth Calculator Styling */
+        .widget { background: #111114; padding: 2.5rem; border-radius: 60px; border: 1px solid rgba(255,255,255,0.05); align-self: start; }
+        .screen { background: #000; border-radius: 30px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: right; font-family: 'JetBrains Mono'; color: var(--accent); font-size: 2rem; }
+        .key { height: 54px; border-radius: 27px; background: rgba(255,255,255,0.05); font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .key:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); }
+        .key-active { background: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+
+        /* MC LAUNCHER RECREATION */
+        .mc-container { display: flex; height: 500px; background: #313335; border-radius: 8px; overflow: hidden; border: 1px solid #1a1a1a; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .mc-sidebar { width: 220px; background: var(--mc-sidebar); padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .mc-nav-item { padding: 10px 15px; border-radius: 4px; font-size: 13px; font-weight: 700; color: #bbb; cursor: pointer; }
+        .mc-nav-item:hover { background: #2b2b2b; color: #fff; }
+        .mc-nav-item.active { background: #4e4e4e; color: #fff; }
+        .mc-main { flex: 1; position: relative; background: url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg') center/cover; }
+        .mc-footer { position: absolute; bottom: 0; width: 100%; height: 80px; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; align-items: center; padding: 0 30px; justify-content: space-between; }
+        .mc-play-btn { background: var(--mc-green); padding: 10px 60px; color: white; font-weight: 900; font-size: 24px; border-radius: 2px; border-bottom: 4px solid #2a5d1b; cursor: pointer; }
+        .mc-play-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+
+        /* MOD FOLDER STYLING */
+        .mod-item { background: #2b2b2b; border: 1px solid #3c3f41; padding: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+
+        #rem-os { position: fixed; inset: 0; background: #0a0a0c; z-index: 5000; display: none; flex-direction: column; }
+    </style>
+</head>
+<body>
+
+    <nav class="p-6 px-12 flex justify-between items-center opacity-80">
+        <div class="font-black tracking-tighter text-2xl bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">REMS CORNER</div>
+        <div class="text-[10px] font-mono tracking-[0.5em] text-white/20">LOGIC_GATE_ACTIVE</div>
+    </nav>
+
+    <div class="grid grid-cols-[1fr_400px] gap-12 p-12 h-[calc(100vh-100px)]">
+        <div class="space-y-6">
+            <div class="bg-white/5 border border-white/10 p-10 rounded-[40px]">
+                <h1 class="text-4xl font-black mb-4 italic">System Analytics</h1>
+                <p class="text-slate-400 leading-relaxed">Core temperature 32°C. All logic sectors reporting nominal. Stealth injection protocols initialized. Press 2nd + Enter to unlock internal modules.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white/5 p-6 rounded-[30px] border border-white/5">
+                    <p class="text-[10px] text-orange-500 font-bold uppercase">Memory</p>
+                    <p class="text-2xl font-mono">14.2 GB</p>
+                </div>
+                <div class="bg-white/5 p-6 rounded-[30px] border border-white/5">
+                    <p class="text-[10px] text-red-500 font-bold uppercase">Latency</p>
+                    <p class="text-2xl font-mono">4ms</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="widget">
+            <div class="screen" id="calc-val">0</div>
+            <div class="grid grid-cols-4 gap-3">
+                <button id="btn-2nd" class="key" onclick="toggle2nd()">2nd</button>
+                <button class="key" onclick="deleteChar()">DEL</button>
+                <button class="key" onclick="handleClear()">AC</button>
+                <button class="key text-orange-500" onclick="handleTuff()">÷</button>
+                <button class="key" onclick="append('7')">7</button>
+                <button class="key" onclick="append('8')">8</button>
+                <button class="key" onclick="append('9')">9</button>
+                <button class="key text-orange-500" onclick="append('*')">×</button>
+                <button class="key" onclick="append('4')">4</button>
+                <button class="key" onclick="append('5')">5</button>
+                <button class="key" onclick="append('6')">6</button>
+                <button class="key text-orange-500" onclick="append('-')">-</button>
+                <button class="key" onclick="append('1')">1</button>
+                <button class="key" onclick="append('2')">2</button>
+                <button class="key" onclick="append('3')">3</button>
+                <button class="key text-orange-500" onclick="append('+')">+</button>
+                <button class="key col-span-2" onclick="append('0')">0</button>
+                <button class="key" onclick="append('.')">.</button>
+                <button class="key bg-gradient-to-br from-orange-500 to-red-600 text-white" onclick="handleEnter()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="rem-os">
+        <div class="flex flex-1">
+            <div class="w-64 bg-black border-r border-white/5 p-8 flex flex-col gap-2">
+                <div class="text-orange-500 font-black text-xs mb-8">REM_OS_v6</div>
+                <button onclick="showTab('mc')" class="text-left p-3 rounded-xl hover:bg-white/5 font-bold transition">🎮 Minecraft</button>
+                <button onclick="showTab('ai')" class="text-left p-3 rounded-xl hover:bg-white/5 font-bold transition">🤖 Rem-AI</button>
+                <button onclick="showTab('vault')" class="text-left p-3 rounded-xl hover:bg-white/5 font-bold transition">🔗 Vault</button>
+                <button onclick="closeOS()" class="mt-auto text-red-500 text-xs font-black uppercase tracking-widest">[CLOSE]</button>
+            </div>
+
+            <div class="flex-1 p-12 overflow-y-auto">
+                <div id="tab-mc" class="os-tab">
+                    <div class="mc-container">
+                        <div class="mc-sidebar">
+                            <div class="mc-nav-item active" onclick="switchMC('play')">Play</div>
+                            <div class="mc-nav-item" onclick="switchMC('mods')">Installations (Mods)</div>
+                            <div class="mc-nav-item">Skins</div>
+                            <div class="mc-nav-item">Patch Notes</div>
+                        </div>
+                        <div class="mc-main">
+                            <div id="mc-view-play" class="h-full">
+                                <div class="mc-footer">
+                                    <div class="flex flex-col">
+                                        <span class="text-white font-bold text-sm">Minecraft: Java Edition</span>
+                                        <span class="text-gray-400 text-[10px]">Latest Release (1.12.2)</span>
+                                    </div>
+                                    <button class="mc-play-btn" onclick="launchGame()">PLAY</button>
+                                </div>
+                            </div>
+                            <div id="mc-view-mods" class="hidden p-8 bg-[#2b2b2b] h-full overflow-y-auto">
+                                <h3 class="text-white font-bold mb-4">Mod Folder (/.minecraft/mods)</h3>
+                                <div id="mod-list" class="space-y-2 mb-6">
+                                    <div class="mod-item"><span class="text-xs text-gray-300">OptiFine_1.12.2.jar</span><span class="text-[10px] text-green-500">ACTIVE</span></div>
+                                    <div class="mod-item"><span class="text-xs text-gray-300">JourneyMap_5.5.jar</span><span class="text-[10px] text-green-500">ACTIVE</span></div>
+                                </div>
+                                <input type="file" id="mod-upload" class="hidden" onchange="addMod(this)">
+                                <button onclick="document.getElementById('mod-upload').click()" class="w-full py-3 bg-[#4e4e4e] hover:bg-[#5e5e5e] text-white text-xs font-bold rounded">BROWSE DEVICE FOR MODS (.JAR)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-ai" class="os-tab hidden">
+                    <div id="ai-chat" class="h-96 bg-black/40 rounded-2xl border border-white/5 p-6 overflow-y-auto mb-4 font-mono text-sm text-orange-200">
+                        <p class="opacity-50">// ENCRYPTED NEURAL LINK ESTABLISHED...</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <input type="text" id="ai-input" class="flex-1 bg-white/5 border border-white/10 rounded-full px-6 py-4 outline-none focus:border-orange-500" placeholder="Ask Rem-AI...">
+                        <button onclick="sendAI()" class="bg-orange-600 px-8 rounded-full font-black uppercase text-xs">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let is2nd = false;
+        let input = "0";
+
+        function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').classList.toggle('key-active', is2nd); }
+        function append(v) { input = input === "0" ? v : input + v; document.getElementById('calc-val').innerText = input; }
+        function deleteChar() { input = input.slice(0, -1) || "0"; document.getElementById('calc-val').innerText = input; }
+        function handleClear() { input = "0"; document.getElementById('calc-val').innerText = "0"; }
+        
+        function handleTuff() {
+            if(is2nd) { openOS(); showTab('mc'); toggle2nd(); }
+            else append('/');
+        }
+
+        function handleEnter() {
+            if(is2nd) { openOS(); toggle2nd(); }
+            else {
+                try { input = String(eval(input.replace('×','*').replace('÷','/'))); document.getElementById('calc-val').innerText = input; }
+                catch { document.getElementById('calc-val').innerText = "Error"; }
+            }
+        }
+
+        function openOS() { document.getElementById('rem-os').style.display = 'flex'; }
+        function closeOS() { document.getElementById('rem-os').style.display = 'none'; }
+
+        function showTab(t) {
+            document.querySelectorAll('.os-tab').forEach(x => x.classList.add('hidden'));
+            document.getElementById('tab-'+t).classList.remove('hidden');
+        }
+
+        function switchMC(view) {
+            document.getElementById('mc-view-play').classList.toggle('hidden', view !== 'play');
+            document.getElementById('mc-view-mods').classList.toggle('hidden', view !== 'mods');
+        }
+
+        function addMod(input) {
+            if (input.files && input.files[0]) {
+                const list = document.getElementById('mod-list');
+                const div = document.createElement('div');
+                div.className = 'mod-item';
+                div.innerHTML = `<span class="text-xs text-gray-300">${input.files[0].name}</span><span class="text-[10px] text-blue-400">INJECTED</span>`;
+                list.appendChild(div);
+            }
+        }
+
+        function launchGame() {
+            const win = window.open("about:blank", "_blank");
+            win.document.write(`<html><body style="margin:0;overflow:hidden;background:#000;"><iframe src="https://takaiwebsite.neocities.org/minecraft" style="width:100vw;height:100vh;border:none;" allowfullscreen allow="gamepad"></iframe></body></html>`);
+        }
+
+        function sendAI() {
+            const inp = document.getElementById('ai-input');
+            const chat = document.getElementById('ai-chat');
+            if(!inp.value) return;
+            chat.innerHTML += `<div class="mb-4">USER: ${inp.value}</div>`;
+            setTimeout(() => {
+                chat.innerHTML += `<div class="mb-6 text-orange-500">REM: Launching mod-compatible environment. Ampler/Takai injection confirmed. File system access granted.</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }, 600);
+            inp.value = '';
+        }
+    </script>
+</body>
+</html>
