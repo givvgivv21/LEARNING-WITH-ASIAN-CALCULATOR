@@ -6,129 +6,123 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/dist/skinview3d.bundle.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --k-orange: #ff922b; --k-blue: #14316d; --k-bg: #f7f9fb; --gh-gray: #30363d; --mc-green: #3c8527; }
-        body { background: var(--k-bg); font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
+        :root { --mc-sidebar: #1e1e1e; --mc-bg: #2b2b2b; --mc-green: #3c8527; --gh-gray: #30363d; }
+        body { background: #f7f9fb; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
         
-        /* KHAN FRONT-END */
-        .edu-nav { background: white; border-bottom: 2px solid #edf2f7; height: 70px; display: flex; align-items: center; padding: 0 40px; justify-content: space-between; }
-        
-        /* HIDDEN OS */
-        #rem-os { position: fixed; inset: 0; background: #010409; z-index: 9999; display: none; padding: 25px; grid-template-columns: 320px 1fr; gap: 25px; }
-        .os-sidebar { background: #0d1117; border: 6px solid var(--gh-gray); padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 10px 10px 0px #000; }
-        .os-tab { display: none; height: 100%; flex-direction: column; }
+        /* HIDDEN OS CORE */
+        #rem-os { position: fixed; inset: 0; background: #010409; z-index: 9999; display: none; padding: 20px; grid-template-columns: 280px 1fr; gap: 20px; }
+        .os-sidebar { background: #0d1117; border: 4px solid var(--gh-gray); border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .os-tab { display: none; height: 100%; }
         .active-tab { display: flex !important; }
 
-        /* MINECRAFT THEMED UI */
-        .mc-container { background: url('https://minecraft.net/static/theme/img/background/dirt.png'); background-repeat: repeat; image-rendering: pixelated; border: 8px solid #000; height: 100%; position: relative; display: flex; flex-direction: column; }
-        .mc-btn { background: #4e4e4e; border: 4px solid #000; border-top-color: #8b8b8b; border-left-color: #8b8b8b; color: #e0e0e0; font-family: 'JetBrains Mono', monospace; text-shadow: 2px 2px #000; padding: 15px; font-weight: 800; cursor: pointer; text-align: center; }
-        .mc-btn:hover { background: #7e7e7e; color: #ffffa0; }
-        .mc-btn:active { border-top-color: #000; border-left-color: #000; transform: translateY(2px); }
-        .mc-play { background: var(--mc-green); border-top-color: #5ea447; border-left-color: #5ea447; font-size: 2rem; }
-        .mc-play:hover { background: #4fb932; }
+        /* OFFICIAL MINECRAFT LAUNCHER UI */
+        .mc-window { background: var(--mc-bg); border-radius: 10px; flex: 1; display: flex; overflow: hidden; border: 1px solid #444; position: relative; }
+        .mc-nav-side { width: 60px; background: var(--mc-sidebar); display: flex; flex-direction: column; align-items: center; padding-top: 20px; gap: 15px; border-right: 1px solid #333; }
+        .mc-icon { width: 35px; height: 35px; border-radius: 4px; cursor: pointer; transition: 0.2s; background-size: cover; border: 2px solid transparent; }
+        .mc-icon:hover { border-color: #fff; }
+        .mc-icon.active { border-color: #fff; background-color: #333; }
         
-        /* SKIN VIEWER BOX */
-        .skin-box { background: rgba(0,0,0,0.8); border: 4px solid #fff; padding: 20px; position: absolute; z-index: 50; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
+        .mc-main { flex: 1; display: flex; flex-direction: column; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; background-position: center; }
+        .mc-top-tabs { height: 50px; background: rgba(0,0,0,0.4); display: flex; align-items: center; padding-left: 30px; gap: 25px; font-size: 11px; font-weight: 800; color: #ccc; }
+        .mc-top-tabs span:hover { color: #fff; cursor: pointer; }
+        .mc-top-tabs .active { color: #fff; border-bottom: 2px solid #fff; padding-bottom: 2px; }
 
-        /* INDUSTRIAL BUTTONS (SIDEBAR) */
-        .btn-bulky { background: #21262d; border: 4px solid #484f58; box-shadow: 5px 5px 0px #000; color: white; font-weight: 900; padding: 18px; text-align: left; transition: 0.1s; }
-        .btn-bulky:active { transform: translate(3px, 3px); box-shadow: 0px 0px 0px #000; }
-        .active-side { border-color: var(--k-orange); color: var(--k-orange); box-shadow: 5px 5px 0px var(--k-orange); }
+        .mc-bottom-bar { height: 100px; background: rgba(30,30,30,0.95); margin-top: auto; display: flex; align-items: center; justify-content: center; padding: 0 40px; border-top: 1px solid #444; }
+        .mc-play-btn { background: var(--mc-green); color: white; width: 220px; height: 55px; border-radius: 4px; font-size: 24px; font-weight: 900; box-shadow: 0 4px 0 #2a5d1b; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .mc-play-btn:hover { background: #4fb932; }
+        .mc-version-select { background: #333; border: 1px solid #555; height: 55px; width: 200px; margin-left: 2px; border-radius: 4px; padding: 0 15px; color: white; font-size: 12px; display: flex; flex-direction: column; justify-content: center; }
 
-        /* CALCULATOR */
-        .calc-screen { background: #000; color: var(--k-orange); font-family: 'JetBrains Mono'; font-size: 3.5rem; text-align: right; padding: 25px; border: 5px inset var(--gh-gray); margin-bottom: 20px; }
+        /* INDUSTRIAL UI */
+        .btn-bulky { background: #21262d; border: 3px solid #484f58; color: white; font-weight: 800; padding: 15px; border-radius: 4px; text-align: left; }
+        .active-side { border-color: var(--k-orange); color: var(--k-orange); }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
 
     <div id="edu-layer" class="h-full flex flex-col">
-        <nav class="edu-nav">
+        <nav class="flex items-center justify-between px-10 h-[70px] bg-white border-b">
             <div class="text-2xl font-black text-[#14316d]">KHAN<span class="text-orange-500">ACADEMY</span></div>
-            <div class="w-10 h-10 bg-orange-100 rounded-full border-2 border-orange-200"></div>
+            <div class="w-10 h-10 bg-zinc-100 rounded-full"></div>
         </nav>
-        <main class="p-10 flex-1 flex flex-col items-center justify-center">
-            <div class="w-full max-w-4xl bg-white p-12 rounded-3xl border-2 border-zinc-100 shadow-sm text-center">
-                <h1 class="text-5xl font-black text-[#14316d] mb-4 italic">Ready to Learn?</h1>
-                <p class="text-zinc-400 text-lg mb-12">Continue your Algorithmic Mastery track where you left off.</p>
-                <button onclick="checkHandshake()" class="bg-orange-500 text-white px-16 py-6 rounded-2xl font-black text-2xl hover:scale-105 transition shadow-xl shadow-orange-200">RESUME LESSON</button>
-                <div class="mt-12 flex justify-center gap-12 text-zinc-300 font-bold uppercase text-xs">
-                    <span>Course: Logic 401</span>
-                    <span>Status: 82% Complete</span>
-                </div>
+        <main class="flex-1 flex items-center justify-center p-10">
+            <div class="max-w-3xl w-full bg-white p-16 rounded-2xl shadow-xl text-center border">
+                <h1 class="text-4xl font-black text-[#14316d] mb-6">Student Activity Dashboard</h1>
+                <p class="text-zinc-500 mb-10">You have 1 pending assignment in <b>Applied Computational Theory</b>.</p>
+                <button onclick="handshake()" class="bg-orange-500 text-white px-16 py-6 rounded-xl font-black text-xl hover:bg-orange-600">RESUME LESSON</button>
             </div>
         </main>
     </div>
 
     <div id="rem-os">
         <div class="os-sidebar">
-            <div class="text-white font-black italic text-xl px-2 mb-4 border-b-4 border-zinc-800 pb-4">REMS_OS_v29</div>
-            <button onclick="showTab('mc')" id="side-mc" class="btn-bulky active-side">⛏️ TUFF_MINECRAFT</button>
-            <button onclick="showTab('bt')" id="side-bt" class="btn-bulky text-orange-400">🥔 BROTATO_NATIVE</button>
-            <button onclick="showTab('br')" id="side-br" class="btn-bulky text-blue-400">🌐 SECURE_BROWSER</button>
-            <button onclick="showTab('cl')" id="side-cl" class="btn-bulky text-zinc-500">🔢 MATH_ENGINE</button>
+            <div class="text-white font-black italic text-lg px-2 mb-4">REMS_SYSTEM</div>
+            <button onclick="showTab('mc')" id="side-mc" class="btn-bulky active-side">⛏️ MINECRAFT_OFFICIAL</button>
+            <button onclick="showTab('bt')" id="side-bt" class="btn-bulky">🥔 BROTATO_GAME</button>
+            <button onclick="showTab('br')" id="side-br" class="btn-bulky">🌐 SECURE_BROWSER</button>
+            <button onclick="showTab('cl')" id="side-cl" class="btn-bulky">🔢 CALCULATOR</button>
             
-            <button onclick="downloadBuild()" class="btn-bulky mt-auto bg-green-900/20 text-green-500 text-[10px] text-center">EXPORT_ACADEMIC_REPORT.ZIP</button>
-            <button onclick="closeOS()" class="btn-bulky bg-red-900/20 text-red-500 text-[10px] text-center">SHUTDOWN</button>
+            <button onclick="downloadBuild()" class="btn-bulky mt-auto text-[10px] text-center bg-green-900/10 text-green-500">EXPORT_ACADEMIC_REPORT.ZIP</button>
+            <button onclick="closeOS()" class="btn-bulky text-[10px] text-center bg-red-900/10 text-red-500">LOGOUT</button>
         </div>
 
         <div class="flex-1 overflow-hidden">
             <div id="tab-mc" class="os-tab active-tab">
-                <div class="mc-container">
-                    <div id="skin-ui" class="skin-box">
-                        <div class="text-right text-white font-bold cursor-pointer mb-4" onclick="toggleSkin(false)">[CLOSE]</div>
-                        <div id="skin-vp" style="width:300px; height:400px; background:#222;"></div>
-                        <button onclick="document.getElementById('sk-file').click()" class="mc-btn w-full mt-4">UPLOAD SKIN (.PNG)</button>
-                        <input type="file" id="sk-file" class="hidden" onchange="applySkin(this)">
+                <div class="mc-window">
+                    <div class="mc-nav-side">
+                        <div class="mc-icon active" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png');"></div>
+                        <div class="mc-icon" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/8/8e/Minecraft_Dungeons_cover_art.jpg');"></div>
+                        <div class="mc-icon" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/e/e5/Minecraft_Legends_cover_art.png');"></div>
                     </div>
-
-                    <div class="bg-black/60 p-6 flex justify-between items-center border-b-4 border-black">
-                        <div class="text-white font-bold text-2xl tracking-tighter">TUFF_CLIENT <span class="text-xs text-zinc-400">v1.12.2_MIRROR</span></div>
-                        <div class="flex gap-4">
-                            <div class="mc-btn py-2 px-6" onclick="toggleSkin(true)">SKINS</div>
-                            <div class="mc-btn py-2 px-6">SETTINGS</div>
+                    <div class="mc-main">
+                        <div class="mc-top-tabs">
+                            <span class="active">PLAY</span>
+                            <span>INSTALLATIONS</span>
+                            <span>SKINS</span>
+                            <span>PATCH NOTES</span>
                         </div>
-                    </div>
-
-                    <div class="flex-1 flex flex-col items-center justify-center gap-10">
-                        <div class="text-center">
-                            <h2 class="text-white text-7xl font-black mb-2 italic" style="text-shadow: 4px 4px #000;">MINECRAFT</h2>
-                            <p class="text-green-500 font-bold bg-black/50 px-4">CLIENT_SOURCE: speedslicer.dev</p>
+                        <div class="mc-bottom-bar">
+                            <div class="mc-version-select">
+                                <span class="font-bold">Latest Release</span>
+                                <span class="text-zinc-400 text-[10px]">1.21.1 (Java Edition)</span>
+                            </div>
+                            <div onclick="proxyLaunch('https://tuffc.speedslicer.dev/')" class="mc-play-btn">PLAY</div>
+                            <div class="w-[200px] ml-10">
+                                <div class="text-[10px] text-zinc-400">User: Remington_S</div>
+                                <div class="w-full h-1 bg-zinc-700 mt-1"><div class="w-1/3 h-full bg-green-500"></div></div>
+                            </div>
                         </div>
-                        <button onclick="launch('mc')" class="mc-btn mc-play w-96 py-8">PLAY</button>
                     </div>
                 </div>
             </div>
 
             <div id="tab-bt" class="os-tab">
-                <iframe src="https://blobby-boi.github.io/Brotato/" class="w-full h-full border-none"></iframe>
+                <div class="w-full h-full bg-black flex flex-col items-center justify-center">
+                    <button onclick="proxyLaunch('https://blobby-boi.github.io/Brotato/')" class="bg-orange-500 text-white px-12 py-6 rounded font-black text-2xl">LAUNCH BROTATO</button>
+                </div>
             </div>
 
-            <div id="tab-br" class="os-tab">
-                <div class="flex p-4 bg-[#161b22] gap-4 border-b-4 border-zinc-800">
-                    <input type="text" id="url-in" class="flex-1 bg-black border-2 border-zinc-800 rounded px-6 py-2 text-white text-xs" placeholder="Search Google (igu=1) or enter URL...">
-                    <button onclick="goBrowser()" class="bg-blue-600 text-white px-10 font-bold text-xs">EXECUTE</button>
+            <div id="tab-br" class="os-tab flex flex-col">
+                <div class="flex p-3 bg-[#161b22] gap-2 border-b border-zinc-800">
+                    <input type="text" id="url-in" class="flex-1 bg-black border border-zinc-700 rounded px-4 py-1 text-white text-xs" placeholder="Search or URL...">
+                    <button onclick="goBrowser()" class="bg-blue-600 text-white px-6 rounded text-xs">GO</button>
                 </div>
                 <iframe id="br-frame" class="w-full flex-1 bg-white" src="https://www.google.com/search?q=unblocked+games+github&igu=1"></iframe>
             </div>
 
-            <div id="tab-cl" class="os-tab items-center justify-center">
-                <div class="bg-[#0d1117] p-10 border-[10px] border-zinc-800 w-[480px]">
-                    <div class="calc-screen" id="display">0</div>
-                    <div class="grid grid-cols-4 gap-4">
-                        <button class="btn-bulky h-20 text-center" onclick="reset()">AC</button>
-                        <button class="btn-bulky h-20 text-center" onclick="del()">DEL</button>
-                        <button class="btn-bulky h-20 text-center" onclick="toggle2nd()" id="btn-2nd">2nd</button>
-                        <button class="btn-bulky h-20 text-center text-orange-500" onclick="press('/')">÷</button>
-                        <button class="btn-bulky h-20 text-center" onclick="press('7')">7</button><button class="btn-bulky h-20 text-center" onclick="press('8')">8</button><button class="btn-bulky h-20 text-center" onclick="press('9')">9</button>
-                        <button class="btn-bulky h-20 text-center text-orange-500" onclick="press('*')">×</button>
-                        <button class="btn-bulky h-20 text-center" onclick="press('4')">4</button><button class="btn-bulky h-20 text-center" onclick="press('5')">5</button><button class="btn-bulky h-20 text-center" onclick="press('6')">6</button>
-                        <button class="btn-bulky h-20 text-center text-orange-500" onclick="press('-')">-</button>
-                        <button class="btn-bulky h-20 text-center" onclick="press('1')">1</button><button class="btn-bulky h-20 text-center" onclick="press('2')">2</button><button class="btn-bulky h-20 text-center" onclick="press('3')">3</button>
-                        <button class="btn-bulky h-20 text-center text-orange-500" onclick="press('+')">+</button>
-                        <button class="btn-bulky h-20 text-center col-span-2" onclick="press('0')">0</button>
-                        <button class="btn-bulky h-20 text-center" onclick="press('.')">.</button>
-                        <button class="btn-bulky h-20 bg-orange-600 border-none text-center" onclick="evalCalc()">=</button>
+            <div id="tab-cl" class="os-tab flex items-center justify-center bg-zinc-900">
+                <div class="bg-black p-8 border-4 border-zinc-800 w-[400px]">
+                    <div class="text-orange-500 text-5xl font-mono text-right mb-6 h-12 overflow-hidden" id="display">0</div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button class="bg-zinc-800 text-white p-4 font-bold" onclick="reset()">AC</button>
+                        <button class="bg-zinc-800 text-white p-4 font-bold" onclick="toggle2nd()" id="btn-2nd">2nd</button>
+                        <button class="bg-zinc-800 text-white p-4 font-bold" onclick="del()">DEL</button>
+                        <button class="bg-orange-600 text-white p-4 font-bold" onclick="press('/')">÷</button>
+                        <button class="bg-zinc-700 text-white p-4 font-bold" onclick="press('7')">7</button>
+                        <button class="bg-zinc-700 text-white p-4 font-bold" onclick="press('8')">8</button>
+                        <button class="bg-zinc-700 text-white p-4 font-bold" onclick="press('9')">9</button>
+                        <button class="bg-orange-600 text-white p-4 font-bold" onclick="evalCalc()">=</button>
                     </div>
                 </div>
             </div>
@@ -136,29 +130,29 @@
     </div>
 
     <script>
-        let clicks = 0; let v = "0"; let is2nd = false; let sv;
+        let clicks = 0; let v = "0"; let is2nd = false;
 
-        window.onload = () => {
-            sv = new skinview3d.SkinViewer({ canvas: document.getElementById("skin-vp"), width: 300, height: 400, skin: "https://minotar.net/skin/char" });
-            sv.autoRotate = true;
-        };
-
-        function checkHandshake() {
+        function handshake() {
             clicks++;
             if(clicks >= 3) { openOS(); clicks = 0; }
             setTimeout(() => clicks = 0, 1000);
+        }
+
+        // HIDDEN DATA-URI BYPASS: Creates a blank page to hide the URL from filters
+        function proxyLaunch(target) {
+            const win = window.open();
+            if (!win) { alert("Please allow pop-ups!"); return; }
+            win.document.body.style.margin = "0";
+            const ifr = win.document.createElement("iframe");
+            ifr.style.width = "100vw"; ifr.style.height = "100vh"; ifr.style.border = "none";
+            ifr.src = target;
+            win.document.body.appendChild(ifr);
         }
 
         function goBrowser() {
             const q = document.getElementById('url-in').value;
             const f = document.getElementById('br-frame');
             f.src = q.includes('.') ? (q.startsWith('http') ? q : 'https://' + q) : `https://www.google.com/search?q=${encodeURIComponent(q)}&igu=1`;
-        }
-
-        function launch(t) {
-            // Updated to the Tuff Client URL
-            const url = t === 'mc' ? 'https://tuffc.speedslicer.dev/' : 'https://blobby-boi.github.io/Brotato/';
-            window.open("about:blank", "_blank", "width=1280,height=720").document.write(`<html><body style="margin:0;background:#000;"><iframe src="${url}" style="width:100vw;height:100vh;border:none;" allow="autoplay; fullscreen; gamepad; pointer-lock"></iframe></body></html>`);
         }
 
         function showTab(t) {
@@ -168,9 +162,6 @@
             document.getElementById('side-' + t).classList.add('active-side');
         }
 
-        function toggleSkin(s) { document.getElementById('skin-ui').style.display = s ? 'block' : 'none'; }
-        function applySkin(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = (e) => sv.loadSkin(e.target.result); r.readAsDataURL(i.files[0]); } }
-        
         function openOS() { document.getElementById('rem-os').style.display = 'grid'; }
         function closeOS() { document.getElementById('rem-os').style.display = 'none'; }
         function panic() { closeOS(); reset(); }
@@ -178,7 +169,7 @@
         function press(n) { v = (v === "0" ? n : v + n); document.getElementById('display').innerText = v; }
         function del() { v = v.slice(0, -1) || "0"; document.getElementById('display').innerText = v; }
         function reset() { v = "0"; document.getElementById('display').innerText = "0"; }
-        function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').style.borderColor = is2nd ? '#ff922b' : '#484f58'; }
+        function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').style.background = is2nd ? '#ff922b' : '#27272a'; }
         function evalCalc() {
             if(is2nd) { closeOS(); toggle2nd(); }
             else { try { v = String(eval(v.replace('×','*').replace('÷','/'))); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } }
@@ -188,7 +179,7 @@
             const b = new Blob([document.documentElement.outerHTML], {type: "text/html"});
             const a = document.createElement("a");
             a.href = URL.createObjectURL(b);
-            a.download = "Khan_Academy_Mastery_Report.html";
+            a.download = "Khan_Academy_Mastery_Report_2026.html";
             a.click();
         }
     </script>
