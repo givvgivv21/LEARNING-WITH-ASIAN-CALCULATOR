@@ -2,184 +2,133 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Khan Academy | Progress Dashboard</title>
+    <title>TI-84 Plus | Graphing Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --mc-sidebar: #1e1e1e; --mc-bg: #2b2b2b; --mc-green: #3c8527; --ti-orange: #ff922b; --ti-red: #e03131; }
-        body, html { margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        /* OS CORE */
-        #rem-os { position: fixed; inset: 0; background: #010409; z-index: 9999; display: none; padding: 20px; grid-template-columns: 280px 1fr; gap: 20px; }
-        .os-sidebar { background: #0d1117; border: 4px solid #30363d; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .os-tab { display: none; height: 100%; width: 100%; }
-        .active-tab { display: flex !important; }
+        :root { --ti-bg: #343a40; --ti-lcd: #94a891; --ti-orange: #ff922b; --ti-red: #e03131; }
+        body, html { margin: 0; padding: 0; height: 100vh; background: #121212; display: flex; justify-content: center; align-items: center; font-family: sans-serif; overflow: hidden; }
 
-        /* THE OFFICIAL MC LAUNCHER GUI 1:1 */
-        .mc-container { background: var(--mc-bg); border-radius: 8px; flex: 1; display: flex; overflow: hidden; border: 1px solid #444; }
-        .mc-left-rail { width: 60px; background: #181818; display: flex; flex-direction: column; align-items: center; padding-top: 20px; gap: 15px; border-right: 1px solid #333; }
-        .mc-rail-icon { width: 40px; height: 40px; border-radius: 4px; background: #333; cursor: pointer; border: 2px solid transparent; background-size: cover; }
-        .mc-rail-icon.active { border-color: white; }
-        
-        .mc-viewport { flex: 1; display: flex; flex-direction: column; background: #1a1a1a; position: relative; }
-        .mc-nav { height: 48px; background: #212121; display: flex; align-items: center; padding: 0 20px; gap: 25px; font-size: 11px; font-weight: 800; color: #aaa; border-bottom: 1px solid #333; }
-        .mc-nav span:hover { color: #fff; cursor: pointer; }
-        .mc-nav .active { color: #fff; border-bottom: 2px solid #fff; padding-bottom: 3px; }
+        /* THE OG CALCULATOR GUI */
+        .ti-frame { background: var(--ti-bg); border: 8px solid #1a1a1a; border-radius: 24px; padding: 35px; width: 420px; box-shadow: 0 30px 60px rgba(0,0,0,0.9); position: relative; }
+        .ti-lcd { background: var(--ti-lcd); border: 12px solid #111; height: 110px; margin-bottom: 30px; padding: 15px; font-family: 'JetBrains Mono'; font-size: 2.6rem; text-align: right; color: #1a1a1a; box-shadow: inset 5px 5px 10px rgba(0,0,0,0.4); line-height: 80px; }
+        .ti-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .ti-btn { background: #495057; color: white; border-radius: 6px; border-bottom: 6px solid #212529; font-weight: 800; padding: 20px 0; font-size: 1.2rem; text-align: center; cursor: pointer; user-select: none; }
+        .ti-btn:active { transform: translateY(4px); border-bottom-width: 2px; }
+        .orange { background: var(--ti-orange) !important; color: #000; }
+        .red { background: var(--ti-red) !important; }
 
-        .mc-hero-bg { flex: 1; background: linear-gradient(rgba(0,0,0,0), #1a1a1a), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; background-position: center; padding: 40px; display: flex; flex-direction: column; justify-content: flex-end; }
-        .mc-news-tag { background: #3c8527; font-size: 9px; padding: 2px 6px; width: fit-content; border-radius: 2px; font-weight: 800; margin-bottom: 10px; }
-        
-        .mc-play-bar { height: 100px; background: #1e1e1e; border-top: 1px solid #333; display: flex; align-items: center; justify-content: center; gap: 15px; }
-        .mc-play-btn { background: var(--mc-green); color: white; width: 220px; height: 52px; border-radius: 4px; font-size: 24px; font-weight: 900; box-shadow: 0 4px 0 #2a5d1b; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .mc-play-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a5d1b; }
-
-        /* THE ORIGINAL TI-84 GUI (1ST EDITION) */
-        .ti-calc { background: #343a40; border-radius: 20px; padding: 25px; border: 6px solid #1a1a1a; width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
-        .ti-screen { background: #94a891; border: 10px solid #1a1a1a; border-radius: 4px; height: 100px; padding: 15px; font-family: 'JetBrains Mono'; font-size: 2.5rem; text-align: right; color: #1a1a1a; margin-bottom: 25px; box-shadow: inset 0 4px 10px rgba(0,0,0,0.3); }
-        .ti-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .ti-key { background: #495057; color: white; border-radius: 6px; border-bottom: 5px solid #212529; font-weight: 800; padding: 18px 0; font-size: 1.2rem; text-align: center; cursor: pointer; }
-        .ti-key:active { transform: translateY(3px); border-bottom-width: 2px; }
-        .key-orange { background: var(--ti-orange) !important; color: #000; }
-        .key-red { background: var(--ti-red) !important; }
-
-        /* EMBED FRAME */
-        #game-overlay { position: fixed; inset: 0; background: black; z-index: 10001; display: none; }
-
-        .btn-bulky { background: #21262d; border: 3px solid #484f58; color: white; font-weight: 800; padding: 15px; border-radius: 8px; text-align: left; }
-        .active-side { border-color: var(--ti-orange); color: var(--ti-orange); }
+        .status-led { position: absolute; top: 15px; right: 40px; width: 8px; height: 8px; background: #222; border-radius: 50%; }
+        .led-on { background: #0f0; box-shadow: 0 0 5px #0f0; }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
 
-    <div id="edu-layer" class="h-full flex flex-col bg-white">
-        <nav class="flex items-center justify-between px-10 h-[70px] border-b">
-            <div class="text-2xl font-black text-[#14316d]">KHAN<span class="text-orange-500">ACADEMY</span></div>
-        </nav>
-        <main class="flex-1 flex items-center justify-center">
-            <div class="max-w-xl w-full p-12 text-center">
-                <h1 class="text-4xl font-black text-[#14316d] mb-4">Welcome back, Remington.</h1>
-                <p class="text-zinc-400 mb-8">You're 85% through <b>Unit 4: Integration</b>.</p>
-                <button onclick="handshake()" class="bg-orange-500 text-white px-16 py-6 rounded-2xl font-black text-xl">RESUME COURSE</button>
-            </div>
-        </main>
-    </div>
-
-    <div id="game-overlay">
-        <div class="absolute top-4 right-4 z-[10002] bg-black/50 text-white px-4 py-2 rounded cursor-pointer font-bold" onclick="closeGame()">CLOSE [X]</div>
-        <iframe id="game-iframe" class="w-full h-full border-none"></iframe>
-    </div>
-
-    <div id="rem-os">
-        <div class="os-sidebar">
-            <div class="text-white font-black italic text-lg px-2 mb-6 border-b border-zinc-800 pb-4">REMS_OS_v38</div>
-            <button onclick="showTab('mc')" id="side-mc" class="btn-bulky active-side">⛏️ MINECRAFT_OFFICIAL</button>
-            <button onclick="showTab('br')" id="side-br" class="btn-bulky">🌐 SECURE_BROWSER</button>
-            <button onclick="showTab('cl')" id="side-cl" class="btn-bulky">🔢 OG_TI84_GUI</button>
-            <button onclick="closeOS()" class="btn-bulky mt-auto text-red-500 text-center">SHUTDOWN</button>
-        </div>
-
-        <div class="flex-1 overflow-hidden">
-            <div id="tab-mc" class="os-tab active-tab">
-                <div class="mc-container">
-                    <div class="mc-left-rail">
-                        <div class="mc-rail-icon active" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png')"></div>
-                        <div class="mc-rail-icon" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/8/8e/Minecraft_Dungeons_cover_art.jpg')"></div>
-                        <div class="mc-rail-icon" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/e/e5/Minecraft_Legends_cover_art.png')"></div>
-                    </div>
-                    <div class="mc-viewport">
-                        <div class="mc-nav">
-                            <span class="active">PLAY</span>
-                            <span>INSTALLATIONS</span>
-                            <span>SKINS</span>
-                            <span>PATCH NOTES</span>
-                        </div>
-                        <div class="mc-hero-bg">
-                            <div class="mc-news-tag">LATEST SNAPSHOT: 26w11a</div>
-                            <div class="text-white text-5xl font-black italic mb-2" style="text-shadow: 3px 3px 0 #000">MINECRAFT</div>
-                            <div class="text-zinc-300 font-bold">Java Edition</div>
-                        </div>
-                        <div class="mc-play-bar">
-                            <div class="mc-play-btn" onclick="launchGame('https://tuff-client.github.io/')">PLAY</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-br" class="os-tab flex flex-col items-center justify-center bg-[#1a1a1a]">
-                <div class="bg-[#2b2b2b] p-10 rounded-2xl border-4 border-zinc-800 w-[500px]">
-                    <h3 class="text-white font-black mb-6 uppercase">Native Browser</h3>
-                    <input type="text" id="url-in" class="w-full bg-black border border-zinc-700 p-4 text-white rounded mb-4" placeholder="URL or Search...">
-                    <button onclick="launchGame(document.getElementById('url-in').value)" class="w-full bg-blue-600 text-white font-bold py-4 rounded">GO NATIVE</button>
-                </div>
-            </div>
-
-            <div id="tab-cl" class="os-tab flex items-center justify-center">
-                <div class="ti-calc">
-                    <div class="ti-screen" id="display">0</div>
-                    <div class="ti-grid">
-                        <div class="ti-key key-orange" onclick="toggle2nd()" id="btn-2nd">2nd</div>
-                        <div class="ti-key key-red" onclick="reset()">AC</div>
-                        <div class="ti-key key-red" onclick="del()">DEL</div>
-                        <div class="ti-key" onclick="press('/')">/</div>
-                        
-                        <div class="ti-key" onclick="press('7')">7</div>
-                        <div class="ti-key" onclick="press('8')">8</div>
-                        <div class="ti-key" onclick="press('9')">9</div>
-                        <div class="ti-key" onclick="press('*')">*</div>
-                        
-                        <div class="ti-key" onclick="press('4')">4</button></div><div class="ti-key" onclick="press('5')">5</div><div class="ti-key" onclick="press('6')">6</div>
-                        <div class="ti-key" onclick="press('-')">-</div>
-                        
-                        <div class="ti-key" onclick="press('1')">1</div><div class="ti-key" onclick="press('2')">2</div><div class="ti-key" onclick="press('3')">3</div>
-                        <div class="ti-key" onclick="press('+')">+</div>
-                        
-                        <div class="ti-key" onclick="press('0')">0</div><div class="ti-key" onclick="press('.')">.</div>
-                        <div class="ti-key key-orange col-span-2" onclick="evalCalc()">ENTER</div>
-                    </div>
-                </div>
-            </div>
+    <div class="ti-frame">
+        <div class="status-led" id="led"></div>
+        <div class="ti-lcd" id="display">0</div>
+        <div class="ti-grid">
+            <div class="ti-btn orange" onclick="handle('2nd')">2nd</div>
+            <div class="ti-btn red" onclick="handle('AC')">AC</div>
+            <div class="ti-btn red" onclick="handle('DEL')">DEL</div>
+            <div class="ti-btn" onclick="handle('/')">/</div>
+            
+            <div class="ti-btn" onclick="handle('7')">7</div>
+            <div class="ti-btn" onclick="handle('8')">8</div>
+            <div class="ti-btn" onclick="handle('9')">9</div>
+            <div class="ti-btn" onclick="handle('*')">*</div>
+            
+            <div class="ti-btn" onclick="handle('4')">4</div>
+            <div class="ti-btn" onclick="handle('5')">5</div>
+            <div class="ti-btn" onclick="handle('6')">6</div>
+            <div class="ti-btn" onclick="handle('-')">-</div>
+            
+            <div class="ti-btn" onclick="handle('1')">1</div>
+            <div class="ti-btn" onclick="handle('2')">2</div>
+            <div class="ti-btn" onclick="handle('3')">3</div>
+            <div class="ti-btn" onclick="handle('+')">+</div>
+            
+            <div class="ti-btn" onclick="handle('0')">0</div>
+            <div class="ti-btn" onclick="handle('.')">.</div>
+            <div class="ti-btn orange col-span-2" onclick="handle('ENTER')">ENTER</div>
         </div>
     </div>
 
     <script>
-        let clicks = 0; let v = "0"; let is2nd = false;
+        let val = "0"; let isShift = false;
+        const MC_URL = "https://takaiwebsite.neocities.org/minecraft";
+        const BROTATO_URL = "https://brotato.io/"; // Optimized Brotato Mirror
 
-        function handshake() {
-            clicks++;
-            if(clicks >= 3) { openOS(); clicks = 0; }
-            setTimeout(() => clicks = 0, 1000);
+        function handle(k) {
+            if (k === '2nd') { 
+                isShift = !isShift; 
+                document.getElementById('led').classList.toggle('led-on', isShift);
+                document.getElementById('display').innerText = isShift ? "2nd..." : val;
+                return; 
+            }
+            
+            if (isShift) {
+                if (k === '7') spawnLauncher(); 
+                if (k === '8') spawnBrotato(); 
+                if (k === '9') spawnGame();     
+                if (k === 'ENTER') panic();      
+                isShift = false;
+                document.getElementById('led').classList.remove('led-on');
+                return;
+            }
+
+            if (k === 'AC') val = "0";
+            else if (k === 'DEL') val = val.slice(0, -1) || "0";
+            else if (k === 'ENTER') {
+                try { val = String(eval(val.replace('×','*').replace('÷','/'))); } catch { val = "ERR"; }
+            } else { val = (val === "0" ? k : val + k); }
+            document.getElementById('display').innerText = val;
         }
 
-        function launchGame(target) {
-            if (!target) return;
-            let url = target.includes('.') ? (target.startsWith('http') ? target : 'https://' + target) : `https://www.google.com/search?q=${encodeURIComponent(target)}&igu=1`;
-            document.getElementById('game-iframe').src = url;
-            document.getElementById('game-overlay').style.display = 'block';
+        function spawnLauncher() {
+            const win = window.open('', '_blank', 'width=1100,height=750');
+            win.document.write(`
+                <html><head><title>Minecraft Launcher</title>
+                <style>
+                    body { margin:0; background:#1a1a1a; font-family:sans-serif; color:white; overflow:hidden; }
+                    .mc-window { display:flex; height:100vh; }
+                    .sidebar { width:70px; background:#181818; display:flex; flex-direction:column; align-items:center; padding-top:20px; border-right:1px solid #333; }
+                    .main { flex:1; display:flex; flex-direction:column; }
+                    .nav { height:50px; background:#212121; display:flex; align-items:center; padding-left:30px; gap:25px; font-size:12px; font-weight:bold; border-bottom:1px solid #333; }
+                    .nav span:hover { color:#3c8527; cursor:pointer; }
+                    .hero { flex:1; background:linear-gradient(rgba(0,0,0,0.3), #1a1a1a), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size:cover; padding:40px; display:flex; flex-direction:column; justify-content:flex-end; }
+                    .footer { height:100px; background:#1e1e1e; border-top:1px solid #333; display:flex; align-items:center; justify-content:center; gap:20px; }
+                    .play-btn { background:#3c8527; width:220px; height:50px; border-radius:4px; font-size:24px; font-weight:900; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 0 #2a5d1b; }
+                    .mod-btn { background:#444; width:120px; height:50px; border-radius:4px; font-weight:bold; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+                </style></head>
+                <body><div class="mc-window">
+                    <div class="sidebar"><div style="width:45px;height:45px;background:#333;border:2px solid #fff;border-radius:6px;"></div></div>
+                    <div class="main">
+                        <div class="nav"><span>PLAY</span><span>INSTALLATIONS</span><span>SKINS</span><span onclick="alert('Mod Folder Opened: Import .jar or .png below')">MODS</span></div>
+                        <div class="hero"><h1>MINECRAFT</h1><p>Java Edition</p></div>
+                        <div class="footer">
+                            <div class="play-btn" onclick="location.href='${MC_URL}'">PLAY</div>
+                            <label class="mod-btn">IMPORT PNG<input type="file" accept="image/png" style="display:none"></label>
+                            <label class="mod-btn">ADD MODS<input type="file" accept=".jar,.zip" style="display:none"></label>
+                        </div>
+                    </div>
+                </div></body></html>
+            `);
         }
 
-        function closeGame() {
-            document.getElementById('game-overlay').style.display = 'none';
-            document.getElementById('game-iframe').src = '';
+        function spawnBrotato() {
+            const win = window.open('', '_blank', 'width=1200,height=850');
+            win.document.write(`<html><body style="margin:0;background:black;"><iframe src="${BROTATO_URL}" style="width:100vw;height:100vh;border:none;"></iframe></body></html>`);
         }
 
-        function showTab(t) {
-            document.querySelectorAll('.os-tab').forEach(x => x.classList.remove('active-tab'));
-            document.querySelectorAll('.btn-bulky').forEach(x => x.classList.remove('active-side'));
-            document.getElementById('tab-' + t).classList.add('active-tab');
-            document.getElementById('side-' + t).classList.add('active-side');
+        function spawnGame() {
+            const win = window.open('', '_blank', 'width=1200,height=800');
+            win.document.write(`<html><body style="margin:0;background:black;"><iframe src="${MC_URL}" style="width:100vw;height:100vh;border:none;"></iframe></body></html>`);
         }
 
-        function openOS() { document.getElementById('rem-os').style.display = 'grid'; }
-        function closeOS() { document.getElementById('rem-os').style.display = 'none'; }
-        function panic() { closeGame(); closeOS(); reset(); }
-
-        function press(n) { v = (v === "0" ? n : v + n); document.getElementById('display').innerText = v; }
-        function del() { v = v.slice(0, -1) || "0"; document.getElementById('display').innerText = v; }
-        function reset() { v = "0"; document.getElementById('display').innerText = "0"; }
-        function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').style.filter = is2nd ? 'brightness(1.5)' : 'none'; }
-        function evalCalc() {
-            if(is2nd) { panic(); toggle2nd(); }
-            else { try { v = String(eval(v)); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } }
+        function panic() {
+            val = "0"; document.getElementById('display').innerText = "0";
+            document.getElementById('led').classList.remove('led-on');
         }
     </script>
 </body>
