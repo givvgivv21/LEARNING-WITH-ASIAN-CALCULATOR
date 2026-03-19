@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning with an Asian's Calculator</title>
+    <title>Calculator System v4.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #1a1a1a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
         .calculator { background: #2b569e; width: 340px; padding: 20px; border-radius: 40px 40px 60px 60px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 2px solid #1e3d70; position: relative; }
         .screen-container { background: #000; padding: 15px; border-radius: 10px; margin-bottom: 25px; border: 4px solid #333; }
-        .screen { background: #9ead86; height: 140px; border-radius: 4px; padding: 10px; font-family: 'Courier New', monospace; display: flex; flex-direction: column; justify-content: space-between; }
+        .screen { background: #9ead86; height: 140px; border-radius: 4px; padding: 10px; font-family: 'Courier New', monospace; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         .screen-current { font-size: 24px; text-align: right; color: #000; font-weight: bold; }
         .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .btn { height: 35px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; text-transform: uppercase; box-shadow: 0 3px 0 #152d52; }
@@ -27,7 +27,7 @@
     <div class="calculator">
         <div id="launch-overlay">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-            <p id="overlay-text" class="text-lg font-bold">SYSTEM BOOT...</p>
+            <p id="overlay-text" class="text-lg font-bold">CLEANING RAM...</p>
         </div>
 
         <div class="screen-container">
@@ -78,10 +78,10 @@
         const overlayText = document.getElementById('overlay-text');
         const btn2nd = document.getElementById('btn-2nd');
 
-        // SCRAMBLED TARGETS (Base64)
+        // NEW MARCH 2026 MIRRORS (SCRAMBLED)
         const vault = {
-            f1: "aHR0cHM6Ly9wbGF5LmZyb2dpZWUxLm5ldC8=",
-            f2: "aHR0cHM6Ly9mcm9naWVlaXNiYWNrLWVkdS56b25lLmlkLw==",
+            f1: "aHR0cHM6Ly9mcm9naWVlLW9mZmljaWFsLmdpdGh1Yi5pby8=", // Frogiee Official Mirror
+            f2: "aHR0cHM6Ly9lZHVjYXRpb24tc3VwcG9ydC52ZXJjZWwuYXBwLw==", // Stealth Vercel Mirror
             ext: "aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2duLW1hdGgvZ24tbWF0aC1ET05URE1DQUBtYWluL3NpbmdsZWZpbGUuaHRtbA=="
         };
 
@@ -94,38 +94,23 @@
         function toggle2nd() { is2ndActive = !is2ndActive; btn2nd.classList.toggle('active', is2ndActive); }
         function clearScreen() { currentInput = "0"; updateDisplay(); }
 
-        // --- THE "GHOST" LAUNCHER ---
         function ghostLaunch(encodedUrl, msg) {
             overlayText.textContent = msg;
             overlay.style.display = 'flex';
-            
             const decoded = atob(encodedUrl);
             const win = window.open("about:blank", "_blank");
             
             if (win) {
-                // This creates a data-blob environment that filters can't easily scan
-                const content = `
-                <!DOCTYPE html>
-                <html>
-                <head><title>System Processor</title></head>
-                <body style="margin:0;padding:0;overflow:hidden;background:#000;">
-                    <iframe src="${decoded}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>
-                    <script>
-                        // Self-destruct logic: if the iframe is blocked, try a redirect
-                        window.addEventListener('message', (e) => {
-                            if(e.data === 'blocked') window.location.replace('${decoded}');
-                        });
-                    <\/script>
-                </body>
-                </html>`;
-                
-                win.document.open();
-                win.document.write(content);
+                win.document.write(`
+                    <html>
+                    <body style="margin:0;padding:0;overflow:hidden;background:#000;">
+                        <iframe src="${decoded}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>
+                    </body>
+                    </html>`);
                 win.document.close();
             } else {
-                alert("Pop-up blocked! Enable them to use the system.");
+                alert("Pop-up blocked! Allow pop-ups for this site.");
             }
-            
             setTimeout(() => { overlay.style.display = 'none'; }, 800);
         }
 
@@ -141,7 +126,7 @@
 
         function handleEnter() {
             if (is2ndActive) { ghostLaunch(vault.ext, "SYNCING DATA..."); reset2nd(); }
-            else { /* Math Logic */ }
+            else { /* Math logic here */ }
         }
 
         function reset2nd() { is2ndActive = false; btn2nd.classList.remove('active'); }
