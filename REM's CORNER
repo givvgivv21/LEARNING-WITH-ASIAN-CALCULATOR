@@ -2,117 +2,135 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TI-84 Plus 2nd Edition | Iron-Clad v61</title>
+    <title>TI-84 Plus 2nd Edition | Halo v63</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #2d2d2d; --lcd: #8b9a84; --orange: #f0810f; --red: #d32f2f; --grey: #4a4a4a; }
+        :root { --bg: #2d2d2d; --lcd: #8b9a84; --orange: #f0810f; --mc-green: #3c8527; }
         body, html { margin: 0; padding: 0; height: 100vh; background: #000; display: flex; justify-content: center; align-items: center; font-family: 'JetBrains Mono', monospace; overflow: hidden; }
 
+        /* ANGEL HALO EFFECT */
+        .halo { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 120px; height: 30px; border: 4px solid #fff; border-radius: 50%; opacity: 0; transition: 0.5s; filter: blur(2px) drop-shadow(0 0 10px #fff); z-index: 5; pointer-events: none; }
+        .halo-active { opacity: 0.8; top: -40px; }
+
         /* CALC UI */
-        .calc-case { background: var(--bg); border: 2px solid #111; width: 400px; padding: 30px; border-radius: 4px; box-shadow: 10px 10px 0px #1a1a1a; position: relative; z-index: 10; }
+        .calc-case { background: var(--bg); border: 2px solid #111; width: 400px; padding: 30px; border-radius: 4px; position: relative; z-index: 10; }
         .calc-lcd { background: var(--lcd); border: 4px solid #111; height: 85px; margin-bottom: 25px; padding: 10px; font-size: 2.2rem; text-align: right; color: #1a1a1a; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.2); line-height: 65px; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn { background: var(--grey); color: #fff; border-bottom: 4px solid #1a1a1a; font-size: 1.1rem; font-weight: 800; padding: 15px 0; text-align: center; cursor: pointer; user-select: none; }
+        .btn { background: #4a4a4a; color: #fff; border-bottom: 4px solid #1a1a1a; font-size: 1.1rem; font-weight: 800; padding: 15px 0; text-align: center; cursor: pointer; user-select: none; }
         .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
         .orange { background: var(--orange) !important; color: #000 !important; }
-        .led { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; background: #1a1a1a; transition: 0.2s; }
-        .led-on { background: #ff0000; box-shadow: 0 0 5px #ff0000; }
 
-        /* OMNI-OS */
-        #dash { display: none; position: fixed; inset: 0; background: #0a0a0a; z-index: 100; flex-direction: row; color: white; }
-        .sidebar { width: 75px; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 15px; }
-        .side-icon { width: 45px; height: 45px; background: #222; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 8px; cursor: pointer; color: #555; }
-        .side-icon.active { background: var(--orange); color: #000; }
+        /* DASHBOARD */
+        #dash { display: none; position: fixed; inset: 0; background: #1a1a1a; z-index: 100; flex-direction: row; }
+        .sidebar { width: 80px; background: #111; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; border-right: 1px solid #333; }
+        .side-icon { width: 45px; height: 45px; background: #222; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #666; font-weight: bold; border: 1px solid transparent; }
+        .side-icon.active { border-color: #fff; color: #fff; background: #333; }
 
-        .main-stage { flex: 1; position: relative; }
-        .app-view { display: none; width: 100%; height: 100%; border: none; }
-        .app-view.active { display: block; }
-
-        /* MC LAUNCHER */
-        .mc-overlay { background: linear-gradient(rgba(0,0,0,0.8), #121212), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; height: 100%; padding: 40px; display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
-        #boot-screen { display: none; position: absolute; inset: 0; background: var(--orange); z-index: 200; flex-direction: column; align-items: center; justify-content: center; }
+        /* REAL MC LAUNCHER STYLE */
+        .mc-launcher-app { display: flex; height: 100%; width: 100%; background: #222; color: white; }
+        .mc-nav { width: 220px; background: #2b2b2b; padding: 20px 0; border-right: 1px solid #111; }
+        .mc-nav-item { padding: 12px 25px; cursor: pointer; font-size: 11px; font-weight: bold; color: #aaa; transition: 0.2s; }
+        .mc-nav-item:hover { background: #333; color: #fff; }
+        .mc-nav-item.active { border-left: 4px solid #3c8527; color: #fff; background: #3a3a3a; }
         
-        /* AI CHAT */
-        #ai-log { height: 300px; overflow-y: auto; background: #000; border: 1px solid #222; padding: 10px; font-size: 12px; color: #f0810f; margin-bottom: 10px; }
+        .mc-content { flex: 1; position: relative; background: url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg') center; background-size: cover; }
+        .mc-footer { position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(0,0,0,0.85); display: flex; align-items: center; padding: 0 30px; border-top: 1px solid #444; }
+        .play-btn { background: var(--mc-green); padding: 12px 50px; font-size: 22px; font-weight: 900; color: white; border-bottom: 4px solid #1a3d11; transition: 0.1s; cursor: pointer; }
+        .play-btn:active { transform: translateY(2px); border-bottom-width: 0; }
+
+        /* ORANGE BOOT */
+        #boot-screen { display: none; position: absolute; inset: 0; background: var(--orange); z-index: 500; flex-direction: column; align-items: center; justify-content: center; }
+        .loader-bar { width: 300px; height: 4px; background: rgba(255,255,255,0.2); margin-top: 20px; }
+        .loader-fill { width: 0%; height: 100%; background: #fff; }
+
+        /* BROWSER BAR */
+        .browser-bar { background: #111; padding: 10px; display: flex; gap: 10px; }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
 
     <div class="calc-case">
-        <div class="led" id="led"></div>
-        <div class="calc-lcd" id="display">0</div>
+        <div class="halo" id="halo"></div>
+        <div id="display" class="calc-lcd">0</div>
         <div class="calc-grid">
             <div class="btn orange" onclick="press('2nd')">2nd</div>
             <div class="btn" onclick="press('AC')">AC</div>
-            <div class="btn" onclick="press('DEL')">DEL</div>
             <div class="btn" onclick="press('/')">/</div>
+            <div class="btn" onclick="press('*')">*</div>
             <div class="btn" onclick="press('7')">7</div>
             <div class="btn" onclick="press('8')">8</div>
             <div class="btn" onclick="press('9')">9</div>
-            <div class="btn" onclick="press('*')">*</div>
+            <div class="btn" onclick="press('-')">-</div>
             <div class="btn" onclick="press('4')">4</div>
             <div class="btn" onclick="press('5')">5</div>
             <div class="btn" onclick="press('6')">6</div>
-            <div class="btn" onclick="press('-')">-</div>
+            <div class="btn" onclick="press('+')">+</div>
             <div class="btn" onclick="press('1')">1</div>
             <div class="btn" onclick="press('2')">2</div>
             <div class="btn" onclick="press('3')">3</div>
-            <div class="btn" onclick="press('+')">+</div>
-            <div class="btn" onclick="press('0')">0</div>
+            <div class="btn orange col-span-1" onclick="press('ENTER')">EXE</div>
+            <div class="btn col-span-2" onclick="press('0')">0</div>
             <div class="btn" onclick="press('.')">.</div>
-            <div class="btn orange col-span-2" onclick="press('ENTER')">ENTER</div>
         </div>
     </div>
 
     <div id="dash">
         <div class="sidebar">
-            <div class="side-icon active" onclick="setTab(0, this)"><span>MC</span></div>
-            <div class="side-icon" onclick="setTab(1, this)"><span>GIT</span></div>
-            <div class="side-icon" onclick="setTab(2, this)"><span>BRT</span></div>
-            <div class="side-icon" onclick="setTab(3, this)"><span>AI</span></div>
-            <div class="side-icon" onclick="setTab(4, this)"><span>WEB</span></div>
-            <div class="mt-auto side-icon bg-blue-900 text-white" onclick="exportSystem()"><span>EXP</span></div>
-            <div class="side-icon text-red-600 font-bold" onclick="panic()"><span>PANIC</span></div>
+            <div class="side-icon active" onclick="setApp(0, this)">MC</div>
+            <div class="side-icon" onclick="setApp(1, this)">GIT</div>
+            <div class="side-icon" onclick="setApp(2, this)">BRT</div>
+            <div class="side-icon" onclick="setApp(3, this)">AI</div>
+            <div class="side-icon" onclick="setApp(4, this)">WEB</div>
+            <div class="mt-auto text-red-600 font-bold text-[8px] cursor-pointer" onclick="panic()">PANIC</div>
         </div>
 
-        <div class="main-stage">
-            <div id="v0" class="app-view active relative">
-                <div id="boot-screen">
-                    <div class="text-6xl font-black mb-4">MOJANG</div>
-                    <div id="boot-status" class="text-xs tracking-widest">BOOTING...</div>
-                    <div class="w-64 h-1 bg-white/20 mt-4"><div id="boot-bar" class="bg-white h-full w-0 transition-all"></div></div>
-                </div>
-                <div id="mc-ui" class="mc-overlay">
-                    <div class="flex flex-col justify-end">
-                        <h1 class="text-6xl font-black italic mb-4">MINECRAFT</h1>
-                        <input type="text" id="user" class="bg-black/60 border border-zinc-700 p-3 mb-4 text-orange-500 w-64" value="RemPlayer_1">
-                        <div class="flex gap-2">
-                            <button class="bg-white text-black px-10 py-3 font-black" onclick="startBoot()">PLAY</button>
-                            <label class="bg-zinc-800 p-3 text-[10px] font-bold cursor-pointer">LOAD SKIN<input type="file" style="display:none" onchange="loadSkin(this)"></label>
-                        </div>
-                    </div>
-                    <div class="bg-black/60 border border-zinc-800 p-4 overflow-y-auto">
-                        <h3 class="text-[10px] text-zinc-500 mb-4">TUFF_REGISTRY</h3>
-                        <div id="skin-preview" class="w-24 h-32 bg-zinc-900 mx-auto mb-4 hidden border border-orange-500">
-                            <img id="skin-img" class="w-full h-full object-contain image-pixelated">
-                        </div>
-                        <button class="w-full bg-orange-600 text-[9px] font-bold py-2 mb-2" onclick="window.open('https://www.mediafire.com/folder/mzsqrk6tat9wl/tuff_client_stuff')">TUFF_CLIENT DOWNLOAD</button>
-                    </div>
-                </div>
-                <iframe id="mc-frame" class="hidden w-full h-full border-none"></iframe>
+        <div class="flex-1 overflow-hidden relative">
+            <div id="boot-screen">
+                <div class="text-white font-black text-6xl">MOJANG</div>
+                <div class="loader-bar"><div id="boot-fill" class="loader-fill"></div></div>
+                <div id="boot-status" class="text-white/50 text-[10px] mt-4 uppercase">Loading Tuff_Client...</div>
             </div>
 
-            <iframe id="v1" class="app-view" src="https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR"></iframe>
-            <iframe id="v2" class="app-view" src="https://takaiwebsite.neocities.org/brotato"></iframe> <div id="v3" class="app-view bg-[#0d0d0d] p-10">
-                <div id="ai-log">Welcome to REM_AI v61. System ready.</div>
-                <input type="text" id="ai-in" class="w-full bg-black border border-zinc-800 p-4 text-orange-500" placeholder="Type message..." onkeydown="if(event.key==='Enter') aiChat()">
+            <div id="v0" class="app-view h-full active">
+                <div class="mc-launcher-app">
+                    <div class="mc-nav">
+                        <div class="mc-nav-item active">PLAY</div>
+                        <div class="mc-nav-item" onclick="window.open('https://www.mediafire.com/folder/mzsqrk6tat9wl/tuff_client_stuff')">INSTALLATIONS</div>
+                        <div class="mc-nav-item" onclick="document.getElementById('skin-trigger').click()">SKINS</div>
+                        <div class="mc-nav-item">PATCH NOTES</div>
+                    </div>
+                    <div class="mc-content" id="mc-home">
+                        <div class="mc-footer">
+                            <div class="flex flex-col mr-10">
+                                <span class="text-[10px] text-zinc-400">PLAYER NAME</span>
+                                <input type="text" id="username" class="bg-transparent text-white border-none font-bold outline-none" value="RemPlayer_1">
+                            </div>
+                            <div class="play-btn" onclick="launchGame()">PLAY</div>
+                            <div class="ml-auto flex items-center gap-4">
+                                <div id="skin-p" class="w-10 h-10 bg-black/40 border border-white/10 hidden"><img id="skin-img" class="image-pixelated w-full h-full"></div>
+                                <input type="file" id="skin-trigger" style="display:none" onchange="loadSkin(this)">
+                            </div>
+                        </div>
+                    </div>
+                    <iframe id="mc-frame" class="hidden w-full h-full border-none"></iframe>
+                </div>
             </div>
 
-            <div id="v4" class="app-view">
-                <div class="p-2 bg-zinc-900 flex gap-2">
-                    <input type="text" id="url" class="flex-1 bg-black p-2 text-xs text-orange-500" value="https://www.google.com/search?igu=1">
-                    <button class="bg-orange-500 text-black px-4 text-xs font-bold" onclick="document.getElementById('web-f').src=document.getElementById('url').value">LOAD</button>
+            <iframe id="v1" class="app-view w-full h-full" src="https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR"></iframe>
+            
+            <iframe id="v2" class="app-view w-full h-full" src="https://takaiwebsite.neocities.org/brotato"></iframe>
+
+            <div id="v3" class="app-view bg-[#0a0a0a] p-12">
+                <h2 class="text-orange-500 font-bold text-2xl mb-4">REM_AI_CORE</h2>
+                <div id="ai-log" class="text-green-500 font-mono text-xs h-64 overflow-y-auto mb-4 bg-black p-4 border border-zinc-900">SYSTEM READY...</div>
+                <input id="ai-in" class="w-full bg-black border border-zinc-800 p-4 text-orange-500 font-mono" placeholder="Request logic..." onkeydown="if(event.key==='Enter') runAI()">
+            </div>
+
+            <div id="v4" class="app-view h-full">
+                <div class="browser-bar">
+                    <input id="url" class="flex-1 bg-black text-xs text-orange-400 p-2" value="https://www.google.com/search?igu=1">
+                    <button class="bg-zinc-800 px-4 text-xs font-bold" onclick="document.getElementById('web-f').src=document.getElementById('url').value">GO</button>
                 </div>
                 <iframe id="web-f" class="w-full h-full border-none" src="https://www.google.com/search?igu=1"></iframe>
             </div>
@@ -123,68 +141,57 @@
         let cur = "0"; let is2nd = false;
 
         function press(k) {
-            if (k === '2nd') { is2nd = !is2nd; document.getElementById('led').classList.toggle('led-on', is2nd); return; }
-            if (is2nd && k === 'ENTER') { document.getElementById('dash').style.display = 'flex'; resetShift(); return; }
+            if (k === '2nd') { 
+                is2nd = !is2nd; 
+                document.getElementById('halo').classList.toggle('halo-active', is2nd);
+                return; 
+            }
+            if (is2nd && k === 'ENTER') { document.getElementById('dash').style.display = 'flex'; is2nd = false; return; }
             if (k === 'AC') panic();
             else if (k === 'ENTER') try { cur = eval(cur.replace('×','*').replace('÷','/')) + ""; } catch { cur = "ERR"; }
             else cur = (cur === "0" ? k : cur + k);
             document.getElementById('display').innerText = cur;
         }
 
-        function startBoot() {
+        function launchGame() {
             const boot = document.getElementById('boot-screen');
-            const bar = document.getElementById('boot-bar');
+            const fill = document.getElementById('boot-fill');
             boot.style.display = 'flex';
             let p = 0;
             let int = setInterval(() => {
-                p += 2; bar.style.width = p + '%';
+                p += 2; fill.style.width = p + '%';
                 if (p >= 100) {
                     clearInterval(int);
-                    document.getElementById('mc-ui').classList.add('hidden');
-                    boot.classList.add('hidden');
+                    document.getElementById('mc-home').classList.add('hidden');
+                    boot.style.display = 'none';
                     document.getElementById('mc-frame').classList.remove('hidden');
-                    document.getElementById('mc-frame').src = "https://takaiwebsite.neocities.org/minecraft";
+                    document.getElementById('mc-frame').src = "https://takaiwebsite.neocities.org/minecraft?user=" + document.getElementById('username').value;
                 }
-            }, 50);
+            }, 40);
         }
 
         function loadSkin(input) {
-            const file = input.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
+            if (input.files[0]) {
+                const url = URL.createObjectURL(input.files[0]);
                 document.getElementById('skin-img').src = url;
-                document.getElementById('skin-preview').classList.remove('hidden');
+                document.getElementById('skin-p').classList.remove('hidden');
             }
         }
 
-        function aiChat() {
-            const input = document.getElementById('ai-in');
-            const log = document.getElementById('ai-log');
-            if(!input.value) return;
-            log.innerHTML += `<div>USER: ${input.value}</div>`;
-            setTimeout(() => {
-                log.innerHTML += `<div class="text-white">REM: Protocol analyzed. Processing "${input.value}" via Tuff_Core...</div>`;
-                log.scrollTop = log.scrollHeight;
-            }, 500);
-            input.value = "";
+        function runAI() {
+            const i = document.getElementById('ai-in');
+            const l = document.getElementById('ai-log');
+            l.innerHTML += `<div>> ${i.value}</div>`;
+            setTimeout(() => { l.innerHTML += `<div class="text-white">REM: Applying logic to "${i.value}"... [SUCCESS]</div>`; l.scrollTop = l.scrollHeight; }, 300);
+            i.value = "";
         }
 
-        function setTab(idx, el) {
+        function setApp(idx, el) {
             document.querySelectorAll('.app-view').forEach((v, i) => v.classList.toggle('active', i === idx));
             document.querySelectorAll('.side-icon').forEach(s => s.classList.remove('active'));
             el.classList.add('active');
         }
 
-        function exportSystem() {
-            const html = document.documentElement.outerHTML;
-            const blob = new Blob([html], {type: 'text/html'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'AsianCalc_v61_Stable.html';
-            a.click();
-        }
-
-        function resetShift() { is2nd = false; document.getElementById('led').classList.remove('led-on'); }
         function panic() { location.reload(); }
     </script>
 </body>
