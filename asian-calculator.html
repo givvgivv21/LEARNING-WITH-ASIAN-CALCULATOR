@@ -6,146 +6,21 @@
     <title>Learning with an Asian's Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            background-color: #1a1a1a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-        }
-
-        .calculator {
-            background: #2b569e; /* TI Blue */
-            width: 340px;
-            padding: 20px;
-            border-radius: 40px 40px 60px 60px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.2);
-            border: 2px solid #1e3d70;
-            position: relative;
-        }
-
-        .screen-container {
-            background: #000;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            border: 4px solid #333;
-        }
-
-        .screen {
-            background: #9ead86; 
-            height: 140px;
-            border-radius: 4px;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        .screen-history {
-            font-size: 14px;
-            text-align: right;
-            color: #222;
-            opacity: 0.7;
-        }
-
-        .screen-current {
-            font-size: 24px;
-            text-align: right;
-            color: #000;
-            font-weight: bold;
-            word-break: break-all;
-        }
-
-        #graph-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-        }
-
-        #y-menu {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #9ead86;
-            display: none;
-            padding: 10px;
-            flex-direction: column;
-            font-size: 14px;
-            color: #000;
-        }
-
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-        }
-
-        .btn {
-            height: 35px;
-            border-radius: 6px;
-            border: none;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 3px 0 #152d52;
-            transition: all 0.1s;
-            color: white;
-            text-transform: uppercase;
-        }
-
-        .btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #152d52;
-        }
-
-        .btn-gray { background: #555; box-shadow: 0 3px 0 #333; }
-        .btn-dark-gray { background: #333; box-shadow: 0 3px 0 #111; }
-        .btn-blue-func { background: #4b78c8; box-shadow: 0 3px 0 #2b569e; }
-        
-        .btn-2nd { 
-            background: #7ec8e3; 
-            color: #003366; 
-            box-shadow: 0 3px 0 #5da8c3; 
-        }
-        .btn-2nd.active {
-            background: #fff;
-            box-shadow: 0 0 10px #7ec8e3;
-            color: #000;
-        }
-
-        .btn-alpha { background: #96c93d; box-shadow: 0 3px 0 #6d942a; }
-        .btn-num { background: #ffffff; color: #333; box-shadow: 0 3px 0 #999; font-size: 16px; }
-
-        #launch-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            border-radius: 40px 40px 60px 60px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
+        body { background-color: #1a1a1a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        .calculator { background: #2b569e; width: 340px; padding: 20px; border-radius: 40px 40px 60px 60px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 2px solid #1e3d70; position: relative; }
+        .screen-container { background: #000; padding: 15px; border-radius: 10px; margin-bottom: 25px; border: 4px solid #333; }
+        .screen { background: #9ead86; height: 140px; border-radius: 4px; padding: 10px; font-family: 'Courier New', monospace; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .screen-current { font-size: 24px; text-align: right; color: #000; font-weight: bold; }
+        .screen-history { font-size: 14px; text-align: right; color: #222; opacity: 0.7; }
+        .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .btn { height: 35px; border-radius: 6px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; text-transform: uppercase; box-shadow: 0 3px 0 #152d52; }
+        .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #152d52; }
+        .btn-2nd { background: #7ec8e3; color: #003366; }
+        .btn-2nd.active { background: #fff; box-shadow: 0 0 10px #7ec8e3; }
+        .btn-blue-func { background: #4b78c8; }
+        .btn-dark-gray { background: #333; }
+        .btn-num { background: #ffffff; color: #333; font-size: 16px; }
+        #launch-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); border-radius: 40px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: white; }
     </style>
 </head>
 <body>
@@ -153,41 +28,26 @@
     <div class="calculator">
         <div id="launch-overlay">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-            <p id="overlay-text" class="text-lg font-bold">INITIALIZING...</p>
-            <p class="text-xs mt-2 opacity-70">Check pop-up settings</p>
+            <p id="overlay-text" class="text-lg font-bold">CLEANING RAM...</p>
         </div>
 
         <div class="screen-container">
             <div class="screen">
-                <div id="calc-view">
-                    <div id="screen-history" class="screen-history"></div>
-                    <div id="screen-current" class="screen-current">0</div>
-                </div>
-                <div id="y-menu">
-                    <div class="font-bold border-b border-black mb-1">Plot1 Plot2 Plot3</div>
-                    <div>\Y1=<span id="y1-input"></span><span class="animate-pulse">_</span></div>
-                    <div class="opacity-50">\Y2=</div>
-                    <div class="opacity-50">\Y3=</div>
-                </div>
-                <canvas id="graph-canvas"></canvas>
+                <div id="screen-history" class="screen-history"></div>
+                <div id="screen-current" class="screen-current">0</div>
             </div>
         </div>
 
         <div class="keypad">
-            <button class="btn btn-blue-func" onclick="showYMenu()">y=</button>
+            <button class="btn btn-blue-func" onclick="clearScreen()">y=</button>
             <button class="btn btn-blue-func" onclick="clearScreen()">window</button>
             <button class="btn btn-blue-func" onclick="clearScreen()">zoom</button>
             <button class="btn btn-blue-func" onclick="clearScreen()">trace</button>
-            <button class="btn btn-blue-func" onclick="showGraph()">graph</button>
+            <button class="btn btn-blue-func" onclick="clearScreen()">graph</button>
 
             <button id="btn-2nd" class="btn btn-2nd" onclick="toggle2nd()">2nd</button>
             <button class="btn btn-dark-gray" onclick="clearScreen()">mode</button>
             <button class="btn btn-dark-gray" onclick="deleteChar()">del</button>
-            <div class="col-span-2"></div>
-
-            <button class="btn btn-alpha" onclick="clearScreen()">alpha</button>
-            <button class="btn btn-dark-gray" onclick="append('X')">X,T,θ,n</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">stat</button>
             <div class="col-span-2"></div>
 
             <button class="btn btn-dark-gray" onclick="clearScreen()">math</button>
@@ -195,18 +55,6 @@
             <button class="btn btn-dark-gray" onclick="clearScreen()">prgm</button>
             <button class="btn btn-dark-gray" onclick="clearScreen()">vars</button>
             <button class="btn btn-dark-gray" onclick="handleClear()">clear</button>
-
-            <button class="btn btn-dark-gray" onclick="clearScreen()">x⁻¹</button>
-            <button class="btn btn-dark-gray" onclick="append('sin(')">sin</button>
-            <button class="btn btn-dark-gray" onclick="append('cos(')">cos</button>
-            <button class="btn btn-dark-gray" onclick="append('tan(')">tan</button>
-            <button class="btn btn-dark-gray" onclick="append('^')">^</button>
-
-            <button class="btn btn-dark-gray" onclick="append('^2')">x²</button>
-            <button class="btn btn-dark-gray" onclick="append('(')">(</button>
-            <button class="btn btn-dark-gray" onclick="append(')')">)</button>
-            <button class="btn btn-dark-gray" onclick="append('/')">÷</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">log</button>
 
             <button class="btn btn-num" onclick="append('7')">7</button>
             <button class="btn btn-num" onclick="append('8')">8</button>
@@ -218,198 +66,83 @@
             <button class="btn btn-num" onclick="append('5')">5</button>
             <button class="btn btn-num" onclick="append('6')">6</button>
             <button class="btn btn-dark-gray" onclick="append('-')">-</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">sto→</button>
+            <button class="btn btn-dark-gray" onclick="clearScreen()">on</button>
 
             <button class="btn btn-num" onclick="append('1')">1</button>
             <button class="btn btn-num" onclick="append('2')">2</button>
             <button class="btn btn-num" onclick="append('3')">3</button>
             <button class="btn btn-dark-gray" onclick="append('+')">+</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">on</button>
-
-            <button class="btn btn-num" onclick="append('0')">0</button>
-            <button class="btn btn-num" onclick="append('.')">.</button>
-            <button class="btn btn-num" onclick="append('-')">(-)</button>
             <button class="btn btn-dark-gray" onclick="handleEnter()" style="grid-column: span 2; background: #333;">enter</button>
-        </div>
-        
-        <div class="flex flex-col items-center mt-4 gap-1">
-            <div class="opacity-40 text-[8px] text-white">TI-84 Plus CE Python</div>
-            <a href="https://www.youtube.com/@Offensive-Asian" target="_blank" class="text-white opacity-60 text-[10px] hover:opacity-100 transition-opacity no-underline font-bold">
-                Made by Asian Industries
-            </a>
         </div>
     </div>
 
     <script>
         let currentInput = "0";
-        let yEquation = "";
         let is2ndActive = false;
-        let currentMode = "calc";
 
         const screenCurrent = document.getElementById('screen-current');
-        const screenHistory = document.getElementById('screen-history');
-        const y1Input = document.getElementById('y1-input');
-        const calcView = document.getElementById('calc-view');
-        const yMenu = document.getElementById('y-menu');
-        const canvas = document.getElementById('graph-canvas');
         const overlay = document.getElementById('launch-overlay');
         const overlayText = document.getElementById('overlay-text');
         const btn2nd = document.getElementById('btn-2nd');
-        const ctx = canvas.getContext('2d');
 
-        // --- ENCRYPTED VAULT (Base64 Scrambled) ---
-        const vault = {
-            // play.frogiee1.net
-            clear: "aHR0cHM6Ly9wbGF5LmZyb2dpZWUxLm5ldC8=",
-            // frogieeisback-edu.zone.id
-            del: "aHR0cHM6Ly9mcm9naWVlaXNiYWNrLWVkdS56b25lLmlkLw==",
-            // singlefile.html
-            enter: "aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2duLW1hdGgvZ24tbWF0aC1ET05URE1DQUBtYWluL3NpbmdsZWZpbGUuaHRtbA=="
+        // THE TARGETS
+        const targets = {
+            clear: "https://play.frogiee1.net/",
+            del: "https://frogieeisback-edu.zone.id/",
+            enter: "https://cdn.jsdelivr.net/gh/gn-math/gn-math-DONTDMCA@main/singlefile.html"
         };
 
         function append(val) {
-            if (currentMode === "y-menu") {
-                yEquation += val;
-                y1Input.textContent = yEquation;
-            } else {
-                if (currentMode === "graph") { currentMode = "calc"; updateView(); }
-                if (currentInput === "0") currentInput = val;
-                else currentInput += val;
-                updateDisplay();
-            }
-        }
-
-        function deleteChar() {
-            if (is2ndActive) {
-                launchStealth(vault.del, "DEFRAGMENTING...");
-                reset2nd();
-            } else {
-                if (currentMode === "y-menu") {
-                    yEquation = yEquation.slice(0, -1);
-                    y1Input.textContent = yEquation;
-                } else {
-                    currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : "0";
-                    updateDisplay();
-                }
-            }
-        }
-
-        function handleClear() {
-            if (is2ndActive) {
-                launchStealth(vault.clear, "CLEANING RAM...");
-                reset2nd();
-            } else {
-                clearScreen();
-            }
-        }
-
-        function handleEnter() {
-            if (is2ndActive) {
-                launchStealth(vault.enter, "SYNCING DATA...");
-                reset2nd();
-                return;
-            }
-
-            if (currentMode === "y-menu") {
-                showGraph();
-            } else if (currentMode === "graph") {
-                showYMenu();
-            } else {
-                try {
-                    const safeExpr = currentInput.replace(/×/g, '*').replace(/÷/g, '/').replace(/\^/g, '**');
-                    const result = eval(safeExpr);
-                    screenHistory.textContent = currentInput + "=";
-                    currentInput = String(result);
-                    updateDisplay();
-                } catch (e) {
-                    currentInput = "ERR:SYNTAX";
-                    updateDisplay();
-                    setTimeout(clearScreen, 1500);
-                }
-            }
-        }
-
-        function launchStealth(encodedUrl, message) {
-            overlayText.textContent = message;
-            overlay.style.display = 'flex';
-            
-            const realUrl = atob(encodedUrl);
-            const win = window.open("about:blank", "_blank");
-            
-            if (win) {
-                win.document.write(`
-                    <html>
-                    <head><title>System Cache</title></head>
-                    <body style="margin:0;padding:0;overflow:hidden;background:#000;">
-                        <iframe src="${realUrl}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>
-                    </body>
-                    </html>
-                `);
-                win.document.close();
-            } else {
-                alert("Pop-up blocked! Look at the top-right of your address bar and click 'Allow'.");
-            }
-            
-            setTimeout(() => { overlay.style.display = 'none'; }, 1000);
-        }
-
-        function clearScreen() {
-            if (currentMode === "y-menu") {
-                yEquation = "";
-                y1Input.textContent = "";
-            } else {
-                currentInput = "0";
-                screenHistory.textContent = "";
-                currentMode = "calc";
-                updateView();
-                updateDisplay();
-            }
-        }
-
-        function reset2nd() {
-            is2ndActive = false;
-            btn2nd.classList.remove('active');
+            if (currentInput === "0") currentInput = val;
+            else currentInput += val;
+            updateDisplay();
         }
 
         function updateDisplay() { screenCurrent.textContent = currentInput; }
-        function updateView() {
-            calcView.style.display = currentMode === "calc" ? "block" : "none";
-            yMenu.style.display = currentMode === "y-menu" ? "flex" : "none";
-            canvas.style.display = currentMode === "graph" ? "block" : "none";
-        }
-        function showYMenu() { currentMode = "y-menu"; updateView(); }
         function toggle2nd() { is2ndActive = !is2ndActive; btn2nd.classList.toggle('active', is2ndActive); }
-        function showGraph() { currentMode = "graph"; updateView(); drawGraph(); }
+        function clearScreen() { currentInput = "0"; updateDisplay(); }
 
-        function drawGraph() {
-            const w = canvas.width = canvas.offsetWidth;
-            const h = canvas.height = canvas.offsetHeight;
-            ctx.clearRect(0, 0, w, h);
-            ctx.strokeStyle = '#777';
-            ctx.beginPath();
-            ctx.moveTo(0, h/2); ctx.lineTo(w, h/2);
-            ctx.moveTo(w/2, 0); ctx.lineTo(w/2, h);
-            ctx.stroke();
-            if (!yEquation) return;
-            ctx.strokeStyle = '#003366';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            const scale = 15;
-            let first = true;
-            for (let px = 0; px < w; px++) {
-                const xVal = (px - w/2) / scale;
-                try {
-                    let expr = yEquation.toUpperCase().replace(/\^/g, '**').replace(/SIN/g, 'Math.sin').replace(/COS/g, 'Math.cos').replace(/TAN/g, 'Math.tan').replace(/X/g, `(${xVal})`);
-                    const yVal = eval(expr);
-                    const py = h/2 - (yVal * scale);
-                    if (isNaN(py) || !isFinite(py)) { first = true; continue; }
-                    if (first) { ctx.moveTo(px, py); first = false; } else { ctx.lineTo(px, py); }
-                } catch (e) { first = true; }
+        // --- THE "OG" UNBLOCK METHOD ---
+        async function launch(url, msg) {
+            overlayText.textContent = msg;
+            overlay.style.display = 'flex';
+            
+            try {
+                // Open window first
+                const win = window.open("about:blank", "_blank");
+                
+                // Fetch the site content (The "OG" trick)
+                const response = await fetch(url);
+                const html = await response.text();
+                
+                win.document.open();
+                win.document.write(html);
+                win.document.close();
+            } catch (e) {
+                console.error("Fetch failed, falling back to iframe.");
+                // Fallback if fetch is blocked
+                const win = window.open("about:blank", "_blank");
+                win.document.write(`<iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>`);
             }
-            ctx.stroke();
+            overlay.style.display = 'none';
         }
 
-        window.addEventListener('resize', () => { if (currentMode === "graph") drawGraph(); });
+        function handleClear() {
+            if (is2ndActive) { launch(targets.clear, "CLEANING RAM..."); reset2nd(); }
+            else clearScreen();
+        }
+
+        function deleteChar() {
+            if (is2ndActive) { launch(targets.del, "DEFRAGMENTING..."); reset2nd(); }
+            else { currentInput = currentInput.slice(0, -1) || "0"; updateDisplay(); }
+        }
+
+        function handleEnter() {
+            if (is2ndActive) { launch(targets.enter, "SYNCING DATA..."); reset2nd(); }
+            else { /* Normal Math Logic Here */ }
+        }
+
+        function reset2nd() { is2ndActive = false; btn2nd.classList.remove('active'); }
     </script>
 </body>
 </html>
