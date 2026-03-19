@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TI-84 Plus 2nd Edition | Tuff Client Build</title>
+    <title>TI-84 Plus 2nd Edition | Omni-OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
@@ -18,20 +18,30 @@
         .orange { background: var(--orange) !important; color: #000 !important; }
         .red { background: var(--red) !important; }
 
-        /* DASHBOARD */
-        #dash { display: none; position: fixed; inset: 0; background: #121212; z-index: 100; flex-direction: column; color: white; }
-        .tab-bar { background: #1a1a1a; height: 50px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid #333; }
+        /* MASTER DASHBOARD */
+        #dash { display: none; position: fixed; inset: 0; background: #0a0a0a; z-index: 100; flex-direction: row; color: white; }
         
-        /* MC VIEW */
-        .mc-view { background: linear-gradient(rgba(0,0,0,0.85), #121212), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; height: 100%; padding: 40px; display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
-        .mod-sidebar { background: rgba(0,0,0,0.7); border: 1px solid #333; padding: 20px; display: flex; flex-direction: column; }
-        .tuff-link { color: #f0810f; font-size: 10px; text-decoration: underline; margin-top: 5px; cursor: pointer; display: block; }
-        
-        /* ORANGE BOOT */
-        #boot-screen { display: none; position: absolute; inset: 0; background: var(--orange); z-index: 200; flex-direction: column; align-items: center; justify-content: center; }
-        .progress-bar { width: 0%; height: 100%; background: white; transition: width 0.1s linear; }
+        /* SIDEBAR */
+        .sidebar { width: 70px; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; }
+        .side-icon { width: 40px; height: 40px; background: #222; border-radius: 8px; display: flex; items: center; justify-content: center; font-size: 10px; font-weight: 900; cursor: pointer; transition: 0.2s; border: 1px solid transparent; color: #555; }
+        .side-icon.active { background: var(--orange); color: #000; border-color: white; }
+        .side-icon:hover { color: white; border-color: #444; }
 
-        .hidden { display: none !important; }
+        /* MAIN VIEW */
+        .main-stage { flex: 1; display: flex; flex-direction: column; }
+        .view-frame { flex: 1; width: 100%; height: 100%; border: none; display: none; }
+        .view-frame.active { display: block; }
+
+        /* SPECIAL MC VIEW */
+        #p-mc { background: #121212; }
+        .mc-overlay { background: linear-gradient(rgba(0,0,0,0.7), #121212), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size: cover; height: 100%; padding: 60px; display: flex; flex-direction: column; justify-content: flex-end; }
+
+        /* BOOT SCREEN */
+        #boot-screen { display: none; position: absolute; inset: 0; background: var(--orange); z-index: 200; flex-direction: column; align-items: center; justify-content: center; }
+        .progress-bar { width: 0%; height: 100%; background: white; }
+
+        .browser-bar { background: #1a1a1a; padding: 10px; display: flex; gap: 10px; border-bottom: 1px solid #333; }
+        .browser-input { background: #000; border: 1px solid #333; color: #888; padding: 5px 15px; flex: 1; border-radius: 20px; font-size: 11px; outline: none; }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
@@ -62,51 +72,49 @@
     </div>
 
     <div id="dash">
-        <div class="tab-bar">
-            <span class="text-[10px] font-black tracking-widest text-zinc-500">REMS CORNER // TUFF_EDITION</span>
-            <div class="ml-auto text-red-600 font-bold cursor-pointer" onclick="panic()">PANIC [AC]</div>
+        <div class="sidebar">
+            <div class="side-icon active" onclick="setTab(0, this)">MC</div>
+            <div class="side-icon" onclick="setTab(1, this)">GIT</div>
+            <div class="side-icon" onclick="setTab(2, this)">BRT</div>
+            <div class="side-icon" onclick="setTab(3, this)">AI</div>
+            <div class="side-icon" onclick="setTab(4, this)">WEB</div>
+            <div class="mt-auto text-red-600 font-bold text-[10px] cursor-pointer" onclick="panic()">PANIC</div>
         </div>
-        <div class="flex-1 relative">
-            
-            <div id="boot-screen">
-                <div class="w-20 h-20 border-4 border-white mb-8"></div>
-                <div id="boot-text" class="text-xs font-bold mb-4 tracking-widest uppercase">Initializing...</div>
-                <div class="w-64 h-1 bg-white/20"><div id="boot-bar" class="progress-bar"></div></div>
-            </div>
 
-            <div id="p0" class="mc-view">
-                <div class="flex flex-col justify-end pb-10">
-                    <h1 class="text-7xl font-black italic mb-2 tracking-tighter">MINECRAFT</h1>
-                    <input type="text" id="user" class="bg-black/40 border border-zinc-700 p-3 mb-4 text-orange-500 outline-none w-64" value="RemPlayer_1">
+        <div class="main-stage">
+            <div id="p-mc" class="view-frame active relative">
+                <div id="boot-screen">
+                    <div class="w-16 h-16 border-4 border-white mb-6"></div>
+                    <div id="boot-text" class="text-xs font-bold tracking-widest uppercase">Initializing Tuff_Client...</div>
+                    <div class="w-48 h-1 bg-white/20 mt-4"><div id="boot-bar" class="progress-bar h-full"></div></div>
+                </div>
+                <div id="mc-launcher" class="mc-overlay">
+                    <h1 class="text-6xl font-black italic mb-4 tracking-tighter">MINECRAFT</h1>
                     <div class="flex gap-4">
-                        <button class="bg-white text-black px-12 py-4 text-2xl font-black" onclick="startBoot()">PLAY</button>
-                        <button class="bg-zinc-800 border border-zinc-700 px-6 text-[10px] font-bold uppercase" onclick="window.open('https://www.mediafire.com/folder/mzsqrk6tat9wl/tuff_client_stuff')">GET TUFF ASSETS</button>
+                        <button class="bg-white text-black px-12 py-3 font-black text-xl" onclick="startBoot()">PLAY</button>
+                        <button class="bg-zinc-800 px-6 py-3 text-[10px] font-bold" onclick="window.open('https://www.mediafire.com/folder/mzsqrk6tat9wl/tuff_client_stuff')">TUFF_STUFF</button>
                     </div>
                 </div>
+                <iframe id="mc-game" class="hidden w-full h-full border-none"></iframe>
+            </div>
 
-                <div class="mod-sidebar">
-                    <h3 class="text-[10px] font-bold border-b border-zinc-800 pb-2 text-zinc-500">TEXTURE PACKS</h3>
-                    <div class="py-4 flex-1">
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-8 h-8 bg-orange-600 rounded"></div>
-                            <div>
-                                <p class="text-[10px] font-bold">TUFF_CLIENT_V1</p>
-                                <a href="https://www.mediafire.com/folder/mzsqrk6tat9wl/tuff_client_stuff" target="_blank" class="tuff-link">MediaFire Folder Source</a>
-                            </div>
-                        </div>
-                        <div class="text-[9px] text-zinc-600 bg-black/40 p-2 border border-dashed border-zinc-800">
-                            Drag PNGs here to override Tuff_Client default textures.
-                        </div>
-                    </div>
-                    <div class="border-t border-zinc-800 pt-4 text-[10px]">
-                        <p class="text-zinc-500 mb-2 uppercase">Active Profile:</p>
-                        <p class="text-orange-500 font-bold" id="profile-display">RemPlayer_1</p>
-                    </div>
+            <iframe id="p-git" class="view-frame" src="https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR"></iframe>
+            
+            <iframe id="p-brt" class="view-frame" src="https://brotato.io/"></iframe>
+
+            <div id="p-ai" class="view-frame bg-[#121212] p-10">
+                <div class="max-w-2xl">
+                    <h2 class="text-orange-500 font-black text-2xl mb-2">REM_AI // CORE</h2>
+                    <p class="text-zinc-500 text-xs mb-8">Integrated Assistant Protocol active.</p>
+                    <input type="text" class="w-full bg-black border border-zinc-800 p-4 text-orange-500 outline-none" placeholder="Enter inquiry...">
                 </div>
             </div>
 
-            <div id="game-frame" class="hidden h-full">
-                <iframe id="game-src" class="w-full h-full border-none"></iframe>
+            <div id="p-web" class="view-frame">
+                <div class="browser-bar">
+                    <input type="text" class="browser-input" id="web-url" value="https://www.google.com/search?q=calculator" onkeydown="if(event.key==='Enter') loadUrl()">
+                </div>
+                <iframe id="web-frame" class="w-full h-full border-none" src="https://www.google.com/search?q=calculator"></iframe>
             </div>
         </div>
     </div>
@@ -123,28 +131,36 @@
             document.getElementById('display').innerText = cur;
         }
 
+        function setTab(idx, el) {
+            document.querySelectorAll('.view-frame').forEach((f, i) => f.classList.toggle('active', i === idx));
+            document.querySelectorAll('.side-icon').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function loadUrl() {
+            let url = document.getElementById('web-url').value;
+            if(!url.startsWith('http')) url = 'https://' + url;
+            document.getElementById('web-frame').src = url;
+        }
+
         function startBoot() {
             const boot = document.getElementById('boot-screen');
             const bar = document.getElementById('boot-bar');
-            const text = document.getElementById('boot-text');
             boot.style.display = 'flex';
             let p = 0;
             let int = setInterval(() => {
-                p += Math.random() * 4;
-                if (p >= 100) {
-                    p = 100; clearInterval(int);
-                    document.getElementById('p0').classList.add('hidden');
-                    boot.classList.add('hidden');
-                    document.getElementById('game-frame').classList.remove('hidden');
-                    document.getElementById('game-src').src = "https://takaiwebsite.neocities.org/minecraft?user=" + document.getElementById('user').value;
-                }
+                p += 2;
                 bar.style.width = p + '%';
-                if (p > 20) text.innerText = "Injecting Mods...";
-                if (p > 60) text.innerText = "Applying Tuff_Client Textures...";
-            }, 50);
+                if (p >= 100) {
+                    clearInterval(int);
+                    document.getElementById('mc-launcher').classList.add('hidden');
+                    boot.classList.add('hidden');
+                    document.getElementById('mc-game').classList.remove('hidden');
+                    document.getElementById('mc-game').src = "https://takaiwebsite.neocities.org/minecraft";
+                }
+            }, 30);
         }
 
-        document.getElementById('user').oninput = (e) => document.getElementById('profile-display').innerText = e.target.value;
         function panic() { location.reload(); }
     </script>
 </body>
