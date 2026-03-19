@@ -2,132 +2,229 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TI-84 Plus | Graphing Calculator</title>
+    <title>Graphing Calculator | TI-84 Plus 2nd Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --ti-bg: #343a40; --ti-lcd: #94a891; --ti-orange: #ff922b; --ti-red: #e03131; }
-        body, html { margin: 0; padding: 0; height: 100vh; background: #121212; display: flex; justify-content: center; align-items: center; font-family: sans-serif; overflow: hidden; }
+        :root { 
+            --block-bg: #2d2d2d; 
+            --block-lcd: #8b9a84; 
+            --block-orange: #f0810f; 
+            --block-red: #d32f2f; 
+            --block-grey: #4a4a4a;
+            --shadow-black: #1a1a1a;
+        }
 
-        /* THE OG CALCULATOR GUI */
-        .ti-frame { background: var(--ti-bg); border: 8px solid #1a1a1a; border-radius: 24px; padding: 35px; width: 420px; box-shadow: 0 30px 60px rgba(0,0,0,0.9); position: relative; }
-        .ti-lcd { background: var(--ti-lcd); border: 12px solid #111; height: 110px; margin-bottom: 30px; padding: 15px; font-family: 'JetBrains Mono'; font-size: 2.6rem; text-align: right; color: #1a1a1a; box-shadow: inset 5px 5px 10px rgba(0,0,0,0.4); line-height: 80px; }
-        .ti-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        .ti-btn { background: #495057; color: white; border-radius: 6px; border-bottom: 6px solid #212529; font-weight: 800; padding: 20px 0; font-size: 1.2rem; text-align: center; cursor: pointer; user-select: none; }
-        .ti-btn:active { transform: translateY(4px); border-bottom-width: 2px; }
-        .orange { background: var(--ti-orange) !important; color: #000; }
-        .red { background: var(--ti-red) !important; }
+        body, html { 
+            margin: 0; padding: 0; height: 100vh; 
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
+            display: flex; justify-content: center; align-items: center; 
+            font-family: 'JetBrains Mono', monospace; overflow: hidden; 
+        }
 
-        .status-led { position: absolute; top: 15px; right: 40px; width: 8px; height: 8px; background: #222; border-radius: 50%; }
-        .led-on { background: #0f0; box-shadow: 0 0 5px #0f0; }
+        /* HIGH-DETAIL CALCULATOR CHASSIS */
+        .calc-case { 
+            background: var(--block-bg); 
+            border: 3px solid #111; 
+            width: 440px; 
+            padding: 40px 35px; 
+            border-radius: 8px; 
+            box-shadow: 25px 25px 0px var(--shadow-black), inset 2px 2px 10px rgba(255,255,255,0.05); 
+            position: relative; 
+            border-bottom: 10px solid #111;
+        }
+
+        /* RETRO LCD WITH SCANLINE EFFECT */
+        .calc-lcd { 
+            background: var(--block-lcd); 
+            border: 6px solid #111; 
+            height: 95px; 
+            margin-bottom: 30px; 
+            padding: 15px; 
+            font-size: 2.5rem; 
+            text-align: right; 
+            color: rgba(0,0,0,0.85); 
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.2); 
+            line-height: 70px; 
+            overflow: hidden; 
+            position: relative;
+        }
+        .calc-lcd::after {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background-size: 100% 3px, 3px 100%; pointer-events: none;
+        }
+
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+        /* BUTTON DEPTH RENDERING */
+        .btn { 
+            background: var(--block-grey); 
+            color: #fff; 
+            border: none; 
+            border-bottom: 6px solid var(--shadow-black); 
+            font-size: 1.2rem; 
+            font-weight: 800; 
+            padding: 18px 0; 
+            text-align: center; 
+            cursor: pointer; 
+            user-select: none; 
+            position: relative;
+            transition: transform 0.05s, border-bottom 0.05s;
+        }
+        .btn:active { 
+            transform: translateY(4px); 
+            border-bottom: 2px solid var(--shadow-black); 
+        }
+        
+        .orange-block { background: var(--block-orange) !important; color: #000 !important; }
+        .red-block { background: var(--block-red) !important; }
+
+        /* STATUS ELEMENTS */
+        .led { 
+            position: absolute; top: 15px; right: 20px; 
+            width: 10px; height: 10px; 
+            background: #111; cursor: pointer; border-radius: 2px;
+        }
+        .led-on { background: #ff0000; box-shadow: 0 0 10px #ff0000; }
+        
+        .version-tag { 
+            position: absolute; top: 12px; left: 35px; 
+            font-size: 10px; color: #555; 
+            cursor: pointer; font-family: 'Share Tech Mono';
+        }
+        .version-tag:hover { color: var(--block-orange); }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
 
-    <div class="ti-frame">
-        <div class="status-led" id="led"></div>
-        <div class="ti-lcd" id="display">0</div>
-        <div class="ti-grid">
-            <div class="ti-btn orange" onclick="handle('2nd')">2nd</div>
-            <div class="ti-btn red" onclick="handle('AC')">AC</div>
-            <div class="ti-btn red" onclick="handle('DEL')">DEL</div>
-            <div class="ti-btn" onclick="handle('/')">/</div>
+    <div class="calc-case">
+        <div class="version-tag" onclick="launchHub()">ASIAN_CALC_OS_v46.0_STABLE</div>
+        <div class="led" id="led" onclick="launchHub()"></div>
+        
+        <div class="calc-lcd" id="display">0</div>
+        
+        <div class="calc-grid">
+            <div class="btn orange-block" onclick="press('2nd')">2nd</div>
+            <div class="btn red-block" onclick="press('AC')">AC</div>
+            <div class="btn red-block" onclick="press('DEL')">DEL</div>
+            <div class="btn" onclick="press('/')">÷</div>
             
-            <div class="ti-btn" onclick="handle('7')">7</div>
-            <div class="ti-btn" onclick="handle('8')">8</div>
-            <div class="ti-btn" onclick="handle('9')">9</div>
-            <div class="ti-btn" onclick="handle('*')">*</div>
+            <div class="btn" onclick="press('7')">7</div>
+            <div class="btn" onclick="press('8')">8</div>
+            <div class="btn" onclick="press('9')">9</div>
+            <div class="btn" onclick="press('*')">×</div>
             
-            <div class="ti-btn" onclick="handle('4')">4</div>
-            <div class="ti-btn" onclick="handle('5')">5</div>
-            <div class="ti-btn" onclick="handle('6')">6</div>
-            <div class="ti-btn" onclick="handle('-')">-</div>
+            <div class="btn" onclick="press('4')">4</div>
+            <div class="btn" onclick="press('5')">5</div>
+            <div class="btn" onclick="press('6')">6</div>
+            <div class="btn" onclick="press('-')">-</div>
             
-            <div class="ti-btn" onclick="handle('1')">1</div>
-            <div class="ti-btn" onclick="handle('2')">2</div>
-            <div class="ti-btn" onclick="handle('3')">3</div>
-            <div class="ti-btn" onclick="handle('+')">+</div>
+            <div class="btn" onclick="press('1')">1</div>
+            <div class="btn" onclick="press('2')">2</div>
+            <div class="btn" onclick="press('3')">3</div>
+            <div class="btn" onclick="press('+')">+</div>
             
-            <div class="ti-btn" onclick="handle('0')">0</div>
-            <div class="ti-btn" onclick="handle('.')">.</div>
-            <div class="ti-btn orange col-span-2" onclick="handle('ENTER')">ENTER</div>
+            <div class="btn" onclick="press('0')">0</div>
+            <div class="btn" onclick="press('.')">.</div>
+            <div class="btn orange-block col-span-2" onclick="press('ENTER')">ENTER</div>
         </div>
     </div>
 
     <script>
-        let val = "0"; let isShift = false;
-        const MC_URL = "https://takaiwebsite.neocities.org/minecraft";
-        const BROTATO_URL = "https://brotato.io/"; // Optimized Brotato Mirror
+        let cur = "0"; 
+        let is2nd = false;
+        const TAKAI = "https://takaiwebsite.neocities.org/minecraft";
+        const BRO = "https://brotato.io/";
+        const GITHUB = "https://github.com/givvgivv21/LEARNING-WITH-ASIAN-CALCULATOR";
 
-        function handle(k) {
+        function launchHub() { window.open(GITHUB, '_blank'); }
+
+        function press(k) {
             if (k === '2nd') { 
-                isShift = !isShift; 
-                document.getElementById('led').classList.toggle('led-on', isShift);
-                document.getElementById('display').innerText = isShift ? "2nd..." : val;
+                is2nd = !is2nd; 
+                document.getElementById('led').classList.toggle('led-on', is2nd);
                 return; 
             }
             
-            if (isShift) {
-                if (k === '7') spawnLauncher(); 
-                if (k === '8') spawnBrotato(); 
-                if (k === '9') spawnGame();     
+            if (is2nd) {
+                if (k === '7') ghost('mc'); 
+                if (k === '8') ghost('bro'); 
+                if (k === '9') ghost('game');
+                if (k === '.') launchHub();
                 if (k === 'ENTER') panic();      
-                isShift = false;
+                is2nd = false;
                 document.getElementById('led').classList.remove('led-on');
                 return;
             }
 
-            if (k === 'AC') val = "0";
-            else if (k === 'DEL') val = val.slice(0, -1) || "0";
+            if (k === 'AC') cur = "0";
+            else if (k === 'DEL') cur = cur.slice(0, -1) || "0";
             else if (k === 'ENTER') {
-                try { val = String(eval(val.replace('×','*').replace('÷','/'))); } catch { val = "ERR"; }
-            } else { val = (val === "0" ? k : val + k); }
-            document.getElementById('display').innerText = val;
+                try { cur = String(eval(cur.replace('×','*').replace('÷','/'))); } catch { cur = "ERR"; }
+            } else { cur = (cur === "0" ? k : cur + k); }
+            document.getElementById('display').innerText = cur;
         }
 
-        function spawnLauncher() {
-            const win = window.open('', '_blank', 'width=1100,height=750');
-            win.document.write(`
-                <html><head><title>Minecraft Launcher</title>
+        function ghost(type) {
+            const w = window.open('', '_blank', 'width=1280,height=720,menubar=no,status=no');
+            if (type === 'mc') {
+                w.document.write(`
+                <html><head><title>MC_LAUNCH_ROOT</title>
                 <style>
-                    body { margin:0; background:#1a1a1a; font-family:sans-serif; color:white; overflow:hidden; }
-                    .mc-window { display:flex; height:100vh; }
-                    .sidebar { width:70px; background:#181818; display:flex; flex-direction:column; align-items:center; padding-top:20px; border-right:1px solid #333; }
-                    .main { flex:1; display:flex; flex-direction:column; }
-                    .nav { height:50px; background:#212121; display:flex; align-items:center; padding-left:30px; gap:25px; font-size:12px; font-weight:bold; border-bottom:1px solid #333; }
-                    .nav span:hover { color:#3c8527; cursor:pointer; }
-                    .hero { flex:1; background:linear-gradient(rgba(0,0,0,0.3), #1a1a1a), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size:cover; padding:40px; display:flex; flex-direction:column; justify-content:flex-end; }
-                    .footer { height:100px; background:#1e1e1e; border-top:1px solid #333; display:flex; align-items:center; justify-content:center; gap:20px; }
-                    .play-btn { background:#3c8527; width:220px; height:50px; border-radius:4px; font-size:24px; font-weight:900; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 0 #2a5d1b; }
-                    .mod-btn { background:#444; width:120px; height:50px; border-radius:4px; font-weight:bold; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+                    body { margin:0; background:#121212; color:#eee; font-family: 'Segoe UI', sans-serif; overflow:hidden; }
+                    .wrapper { display:flex; height:100vh; }
+                    .side-rail { width:80px; background:#0a0a0a; display:flex; flex-direction:column; align-items:center; padding-top:25px; gap:20px; border-right:1px solid #222; }
+                    .game-node { width:50px; height:50px; background:#333; border:2px solid #555; border-radius:8px; cursor:pointer; }
+                    .game-node.active { border-color:#3c8527; background:#1e1e1e; }
+                    .content { flex:1; display:flex; flex-direction:column; }
+                    .header { height:60px; background:#181818; display:flex; align-items:center; padding:0 30px; gap:40px; border-bottom:1px solid #222; font-size:13px; font-weight:bold; letter-spacing:1px; color:#888; }
+                    .header span:hover { color:#fff; cursor:pointer; }
+                    .view { flex:1; background:linear-gradient(rgba(0,0,0,0.1),#121212 90%), url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg'); background-size:cover; background-position:center; padding:60px; display:flex; flex-direction:column; justify-content:flex-end; }
+                    .launch-zone { height:120px; background:#181818; display:flex; align-items:center; justify-content:center; gap:30px; border-top:1px solid #222; }
+                    .btn-play { background:#3c8527; width:260px; height:65px; border-radius:4px; font-size:28px; font-weight:900; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 0 #235017; transition:all 0.1s; }
+                    .btn-play:active { transform:translateY(4px); box-shadow:0 2px 0 #235017; }
+                    .sub-btn { background:#333; padding:15px 25px; border-radius:4px; font-size:12px; cursor:pointer; font-weight:bold; border:1px solid #444; }
+                    .sub-btn:hover { background:#444; border-color:#666; }
+                    .expert { background:#004a99 !important; border-color:#0056b3 !important; }
+                    .console { position:absolute; top:20px; right:20px; width:300px; height:150px; background:rgba(0,0,0,0.8); border:1px solid #3c8527; font-family:monospace; font-size:10px; padding:10px; color:#3c8527; overflow-y:auto; }
                 </style></head>
-                <body><div class="mc-window">
-                    <div class="sidebar"><div style="width:45px;height:45px;background:#333;border:2px solid #fff;border-radius:6px;"></div></div>
-                    <div class="main">
-                        <div class="nav"><span>PLAY</span><span>INSTALLATIONS</span><span>SKINS</span><span onclick="alert('Mod Folder Opened: Import .jar or .png below')">MODS</span></div>
-                        <div class="hero"><h1>MINECRAFT</h1><p>Java Edition</p></div>
-                        <div class="footer">
-                            <div class="play-btn" onclick="location.href='${MC_URL}'">PLAY</div>
-                            <label class="mod-btn">IMPORT PNG<input type="file" accept="image/png" style="display:none"></label>
-                            <label class="mod-btn">ADD MODS<input type="file" accept=".jar,.zip" style="display:none"></label>
+                <body>
+                    <div class="wrapper">
+                        <div class="side-rail">
+                            <div class="game-node active"></div>
+                            <div class="game-node"></div>
                         </div>
+                        <div class="content">
+                            <div class="header">
+                                <span style="color:#fff; border-bottom:3px solid #3c8527; padding-bottom:18px;">PLAY</span>
+                                <span>INSTALLATIONS</span>
+                                <span>SKINS</span>
+                                <span onclick="document.getElementById('log').innerHTML += '<br>> MAPPING_JAR_RESOURCES...';">MODS</span>
+                                <span onclick="window.open('${GITHUB}')">RESOURCES</span>
+                            </div>
+                            <div class="view">
+                                <h1 style="font-size:5rem; margin:0; font-style:italic; letter-spacing:-4px; text-shadow:0 10px 20px rgba(0,0,0,0.5);">MINECRAFT</h1>
+                                <p style="color:#aaa; font-weight:bold; margin-bottom:20px;">LATEST RELEASE: 1.20.2026-NATIVE</p>
+                            </div>
+                            <div class="launch-zone">
+                                <div class="btn-play" onclick="location.href='${TAKAI}'">PLAY</div>
+                                <label class="sub-btn">IMPORT ASSETS (PNG/JAR)<input type="file" style="display:none" onchange="alert('Asset Buffered to Memory')"></label>
+                                <div class="sub-btn expert" onclick="alert('Downloading Pack-Data...')">EXPERT EXPORT .ZIP ↓</div>
+                            </div>
+                        </div>
+                        <div class="console" id="log">> INITIALIZING MC_CORE...<br>> CLOAK_ACTIVE: TRUE<br>> READY.</div>
                     </div>
-                </div></body></html>
-            `);
-        }
-
-        function spawnBrotato() {
-            const win = window.open('', '_blank', 'width=1200,height=850');
-            win.document.write(`<html><body style="margin:0;background:black;"><iframe src="${BROTATO_URL}" style="width:100vw;height:100vh;border:none;"></iframe></body></html>`);
-        }
-
-        function spawnGame() {
-            const win = window.open('', '_blank', 'width=1200,height=800');
-            win.document.write(`<html><body style="margin:0;background:black;"><iframe src="${MC_URL}" style="width:100vw;height:100vh;border:none;"></iframe></body></html>`);
+                </body></html>`);
+            } else {
+                const target = type === 'bro' ? BRO : TAKAI;
+                w.document.write(`<html><body style="margin:0;background:black;display:flex;justify-content:center;align-items:center;"><iframe src="${target}" style="width:100vw;height:100vh;border:none;"></iframe></body></html>`);
+            }
         }
 
         function panic() {
-            val = "0"; document.getElementById('display').innerText = "0";
+            cur = "0"; 
+            document.getElementById('display').innerText = "0";
             document.getElementById('led').classList.remove('led-on');
         }
     </script>
