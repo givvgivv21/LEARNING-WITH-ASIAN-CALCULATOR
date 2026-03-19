@@ -2,182 +2,175 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>RemOS v24.0 | GitHub Absolute</title>
+    <title>RemOS v26.0 | Khan Mastery Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/dist/skinview3d.bundle.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --gh-black: #010409; --gh-dark: #0d1117; --gh-gray: #30363d; --accent: #f0883e; --thick-border: 10px solid #21262d; }
-        body { background: var(--gh-black); color: #c9d1d9; font-family: 'JetBrains Mono', monospace; margin: 0; overflow: hidden; height: 100vh; }
+        :root { --khan-orange: #ff922b; --khan-blue: #14316d; --khan-green: #63d334; }
+        body { background: #f8f9fa; color: #333; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow: hidden; height: 100vh; }
         
-        /* BULKY BRUTALIST UI */
-        .industrial-frame { border: var(--thick-border); box-shadow: 15px 15px 0px #000; background: var(--gh-dark); border-radius: 2px; }
-        .calc-bezel { border: 12px solid #30363d; background: #161b22; box-shadow: 20px 20px 0px rgba(0,0,0,0.8); }
-        .btn-bulky { background: #21262d; border: 4px solid #484f58; box-shadow: 6px 6px 0px #000; transition: 0.05s; font-weight: 900; text-transform: uppercase; }
-        .btn-bulky:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #000; }
-        
-        /* TERMINAL STYLE */
-        .terminal-display { background: #000; border: 4px inset #30363d; padding: 25px; color: var(--accent); font-size: 3rem; text-align: right; text-shadow: 0 0 10px var(--accent); }
-        
-        /* OS OVERLAY */
-        #rem-os { position: fixed; inset: 0; background: var(--gh-black); z-index: 9999; display: none; padding: 40px; grid-template-columns: 350px 1fr; gap: 40px; }
-        .os-tab { display: none; height: 100%; flex-direction: column; }
-        .active-tab { display: flex; }
+        /* THE "LEARNING SITE" FAKE UI */
+        .edu-sidebar { background: white; border-right: 4px solid #e9ecef; }
+        .edu-card { background: white; border: 4px solid #ff922b; border-radius: 24px; box-shadow: 8px 8px 0px #ff922b; }
+        .progress-bar { background: #e9ecef; border-radius: 10px; height: 20px; overflow: hidden; }
+        .progress-fill { background: var(--khan-green); width: 65%; height: 100%; }
 
-        /* BROWSER */
-        .browser-box { flex: 1; display: flex; flex-direction: column; background: #fff; border: 8px solid var(--gh-gray); }
-        .browser-nav { background: #161b22; padding: 18px; display: flex; gap: 15px; border-bottom: 6px solid var(--gh-gray); }
+        /* BULKY ARITHMETIC CHALLENGE (CALC) */
+        .calc-bezel { border: 10px solid var(--khan-blue); background: #f1f3f5; border-radius: 30px; box-shadow: 12px 12px 0px #14316d; }
+        .calc-display { background: #fff; border: 4px inset #dee2e6; padding: 20px; text-align: right; color: var(--khan-blue); font-size: 2.5rem; font-family: 'JetBrains Mono'; border-radius: 15px; }
+        .btn-bulky { background: white; border: 3px solid #dee2e6; border-radius: 15px; box-shadow: 4px 4px 0px #dee2e6; font-weight: 800; color: var(--khan-blue); transition: 0.1s; }
+        .btn-bulky:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #000; }
+        .btn-orange { background: var(--khan-orange); color: white; border-color: #e67700; box-shadow: 4px 4px 0px #e67700; }
+
+        /* OS OVERLAY (STAYS DARK/GITHUB STYLE) */
+        #rem-os { position: fixed; inset: 0; background: #010409; z-index: 9999; display: none; padding: 30px; grid-template-columns: 300px 1fr; gap: 30px; }
+        .os-tab { display: none; height: 100%; flex-direction: column; }
+        .active-tab { display: flex !important; }
+        
+        /* COMBO OVERLAYS */
+        #fake-code { position: fixed; inset: 0; background: rgba(0,0,0,0.9); color: #0f0; font-family: monospace; padding: 20px; z-index: 10000; display: none; pointer-events: none; }
     </style>
 </head>
-<body onkeydown="if(event.key==='~'){panic()}">
+<body onkeydown="handleCombos(event)">
 
-    <div class="flex h-screen items-center justify-center p-16 gap-16">
-        
-        <div class="industrial-frame w-[400px] h-[700px] p-10 flex flex-col">
-            <div class="border-b-4 border-gh-gray pb-6 mb-8">
-                <h1 class="text-4xl font-black italic">REMS_OS <span class="text-orange-500">v24</span></h1>
-                <p class="text-[10px] text-zinc-500 mt-2 font-bold tracking-[0.2em]">CORE ARCHITECTURE: GITHUB_NATIVE</p>
-            </div>
-            
-            <div id="sys-log" class="flex-1 overflow-y-auto font-mono text-[10px] space-y-2 opacity-70">
-                <div class="text-green-500">[SYSTEM] Handshake with GitHub.io... OK</div>
-                <div class="text-green-500">[SYSTEM] Bypassing X-Frame-Options... OK</div>
-                <div class="text-white">[CMD] Loading Mechanical UI...</div>
-                <div class="text-orange-400">[WARN] Panic Key: Tilde (~) Ready.</div>
-            </div>
+    <div id="fake-code"><code>> Initializing Python Runtime...<br>> Loading Linear_Algebra_Module...<br>> Processing data at 0x4F22...</code></div>
 
-            <div class="mt-10 space-y-4">
-                <button onclick="downloadSelf()" class="btn-bulky w-full py-5 bg-green-800 text-white text-xs">COMPILED_BUILD.ZIP</button>
-                <div class="text-center text-[9px] text-zinc-600">UNBLOCKED_BY: GITHUB_CERTIFIED</div>
+    <div class="flex h-screen">
+        <div class="edu-sidebar w-72 p-8 flex flex-col gap-6">
+            <div class="text-2xl font-black text-[#14316d] italic">KHAN<span class="text-orange-500">MASTERY</span></div>
+            <div class="space-y-2">
+                <div class="p-3 bg-orange-50 rounded-xl text-orange-600 font-bold text-sm">🏠 Dashboard</div>
+                <div class="p-3 hover:bg-zinc-50 rounded-xl text-zinc-400 font-bold text-sm">📚 My Courses</div>
+                <div class="p-3 hover:bg-zinc-50 rounded-xl text-zinc-400 font-bold text-sm">🏆 Achievements</div>
+            </div>
+            <div class="mt-auto p-4 bg-blue-50 rounded-2xl border-2 border-blue-100">
+                <div class="text-[10px] font-black text-blue-800 uppercase mb-2">Daily Goal</div>
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+                <div class="text-[10px] mt-2 text-blue-600">Keep up the great work, Rem!</div>
             </div>
         </div>
 
-        <div class="calc-bezel p-10 w-[500px]">
-            <div class="terminal-display mb-10" id="display">0</div>
-            <div class="grid grid-cols-4 gap-5">
-                <button id="mode-2nd" class="btn-bulky h-20 text-xs" onclick="toggle2nd()">2nd</button>
-                <button class="btn-bulky h-20 text-xs" onclick="del()">DEL</button>
-                <button class="btn-bulky h-20 text-xs" onclick="reset()">AC</button>
-                <button class="btn-bulky h-20 text-orange-500 text-2xl" onclick="op('/')">÷</button>
+        <div class="flex-1 p-12 bg-[#fdfdfe] flex gap-12 items-center justify-center">
+            
+            <div class="edu-card flex-1 h-[600px] p-10 flex flex-col">
+                <h2 class="text-4xl font-black text-[#14316d] mb-4">Welcome back, Scholar!</h2>
+                <p class="text-zinc-500 mb-8">Ready to master your arithmetic goals today? Complete the challenge below to earn your next badge.</p>
                 
-                <button class="btn-bulky h-20 text-2xl" onclick="press('7')">7</button>
-                <button class="btn-bulky h-20 text-2xl" onclick="press('8')">8</button>
-                <button class="btn-bulky h-20 text-2xl" onclick="press('9')">9</button>
-                <button class="btn-bulky h-20 text-orange-500 text-2xl" onclick="press('*')">×</button>
-                
-                <button class="btn-bulky h-20 text-2xl" onclick="press('4')">4</button>
-                <button class="btn-bulky h-20 text-2xl" onclick="press('5')">5</button>
-                <button class="btn-bulky h-20 text-2xl" onclick="press('6')">6</button>
-                <button class="btn-bulky h-20 text-orange-500 text-2xl" onclick="press('-')">-</button>
-                
-                <button class="btn-bulky h-20 text-2xl" onclick="press('1')">1</button>
-                <button class="btn-bulky h-20 text-2xl" onclick="press('2')">2</button>
-                <button class="btn-bulky h-20 text-2xl" onclick="press('3')">3</button>
-                <button class="btn-bulky h-20 text-orange-500 text-2xl" onclick="press('+')">+</button>
-                
-                <button class="btn-bulky h-20 text-2xl col-span-2" onclick="press('0')">0</button>
-                <button class="btn-bulky h-20 text-2xl" onclick="press('.')">.</button>
-                <button class="btn-bulky h-20 bg-orange-600 text-white border-none text-2xl" onclick="evalCalc()">=</button>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-6 border-2 border-zinc-100 rounded-3xl flex items-center gap-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">12</div>
+                        <div><div class="text-xs font-black uppercase text-zinc-400">Current Streak</div><div class="text-lg font-bold">Days</div></div>
+                    </div>
+                    <div class="p-6 border-2 border-zinc-100 rounded-3xl flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">★</div>
+                        <div><div class="text-xs font-black uppercase text-zinc-400">Mastery Points</div><div class="text-lg font-bold">4,250</div></div>
+                    </div>
+                </div>
+
+                <div class="mt-auto flex justify-between items-center p-6 bg-orange-50 rounded-3xl border-2 border-orange-100">
+                    <div>
+                        <div class="text-xs font-black text-orange-800 uppercase">Current Unit</div>
+                        <div class="font-bold text-[#14316d]">Advanced Computational Logic</div>
+                    </div>
+                    <button onclick="downloadSelf()" class="bg-[#14316d] text-white px-6 py-2 rounded-full font-bold text-xs">RESUME COURSE</button>
+                </div>
+            </div>
+
+            <div class="calc-bezel w-[450px] p-8">
+                <div class="text-center font-black text-[10px] text-blue-900 uppercase mb-4 tracking-widest">Mastery Challenge v26</div>
+                <div class="calc-display mb-6" id="display">0</div>
+                <div class="grid grid-cols-4 gap-3">
+                    <button id="btn-2nd" class="btn-bulky h-16" onclick="toggle2nd()">2nd</button>
+                    <button class="btn-bulky h-16" onclick="del()">DEL</button>
+                    <button class="btn-bulky h-16" onclick="reset()">AC</button>
+                    <button class="btn-bulky h-16 text-orange-600" onclick="op('/')">÷</button>
+                    
+                    <button class="btn-bulky h-16" onclick="press('7')">7</button>
+                    <button class="btn-bulky h-16" onclick="press('8')">8</button>
+                    <button class="btn-bulky h-16" onclick="press('9')">9</button>
+                    <button class="btn-bulky h-16 text-orange-600" onclick="press('*')">×</button>
+                    
+                    <button class="btn-bulky h-16" onclick="press('4')">4</button>
+                    <button class="btn-bulky h-16" onclick="press('5')">5</button>
+                    <button class="btn-bulky h-16" onclick="press('6')">6</button>
+                    <button class="btn-bulky h-16 text-orange-600" onclick="press('-')">-</button>
+                    
+                    <button class="btn-bulky h-16" onclick="press('1')">1</button>
+                    <button class="btn-bulky h-16" onclick="press('2')">2</button>
+                    <button class="btn-bulky h-16" onclick="press('3')">3</button>
+                    <button class="btn-bulky h-16 text-orange-600" onclick="press('+')">+</button>
+                    
+                    <button class="btn-bulky h-16 col-span-2" onclick="press('0')">0</button>
+                    <button class="btn-bulky h-16" onclick="press('.')">.</button>
+                    <button class="btn-bulky h-16 btn-orange border-none" onclick="evalCalc()">=</button>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="rem-os">
-        <div class="industrial-frame p-10 flex flex-col gap-6">
-            <div class="font-black text-center mb-10 border-b-4 border-gh-gray pb-6 text-xl">COMMAND_MATRIX</div>
-            <button onclick="showTab('bt')" class="btn-bulky p-6 text-sm text-left text-orange-500">🥔 BROTATO (GITHUB_PAGES)</button>
-            <button onclick="showTab('br')" class="btn-bulky p-6 text-sm text-left text-blue-400">🌐 BYPASS_BROWSER_v2</button>
-            <button onclick="showTab('mc')" class="btn-bulky p-6 text-sm text-left">📦 MINECRAFT_FORGE</button>
-            
-            <div class="mt-auto p-6 bg-black border-4 border-gh-gray text-[10px] text-zinc-500 italic">
-                > PROTOCOL: GITHUB_PAGES_SECURE<br>
-                > STATUS: BYPASS_ACTIVE
-            </div>
-            <button onclick="closeOS()" class="btn-bulky bg-red-900/30 text-red-500 py-5 text-xs">TERMINATE_PROCESS</button>
+        <div class="flex flex-col gap-4 border-r border-zinc-800 pr-6">
+            <div class="text-white font-black text-xl italic mb-6">REMS_OS</div>
+            <button onclick="showTab('bt')" class="bg-zinc-900 p-4 rounded-xl text-left font-bold text-orange-400 hover:bg-zinc-800">🥔 BROTATO</button>
+            <button onclick="showTab('br')" class="bg-zinc-900 p-4 rounded-xl text-left font-bold text-blue-400 hover:bg-zinc-800">🌐 BROWSER (V2)</button>
+            <button onclick="showTab('mc')" class="bg-zinc-900 p-4 rounded-xl text-left font-bold text-zinc-100 hover:bg-zinc-800">📦 MINECRAFT</button>
+            <button onclick="closeOS()" class="mt-auto bg-red-900/20 text-red-500 p-4 rounded-xl font-bold">SHUTDOWN</button>
         </div>
 
-        <div class="flex flex-col">
-            <div id="tab-br" class="os-tab active-tab flex flex-col">
-                <div class="browser-box">
-                    <div class="browser-nav">
-                        <input type="text" id="url-input" class="flex-1 bg-black border-4 border-gh-gray rounded px-6 py-2 text-white text-xs font-bold" placeholder="Search Google-IGU (No Refusal) or type URL...">
-                        <button onclick="goBrowser()" class="btn-bulky bg-blue-700 text-white px-10 text-[10px]">EXECUTE</button>
-                    </div>
-                    <iframe id="frame-browser" class="w-full h-full" src="https://www.google.com/search?q=unblocked+github+games&igu=1"></iframe>
-                </div>
+        <div class="flex-1">
+            <div id="tab-bt" class="os-tab h-full">
+                <iframe src="https://blobby-boi.github.io/Brotato/" class="w-full h-full rounded-2xl border-none"></iframe>
             </div>
-
-            <div id="tab-bt" class="os-tab hidden flex-col items-center justify-center bg-[url('https://github.githubassets.com/images/modules/site/home-campaign/hero-bg.webp')] bg-cover">
-                <div class="bg-black/90 p-20 border-[10px] border-gh-gray text-center shadow-2xl">
-                    <h2 class="text-9xl font-black italic text-white mb-6">BROTATO</h2>
-                    <p class="text-orange-500 font-mono text-sm mb-12 tracking-[0.4em]">DEPLOYED_ON: GITHUB.IO</p>
-                    <button onclick="launch('bt')" class="btn-bulky bg-orange-600 text-white px-24 py-10 text-4xl hover:scale-105 transition">START_SESSION</button>
+            <div id="tab-br" class="os-tab active-tab h-full flex flex-col">
+                <div class="flex p-4 bg-zinc-900 gap-4 rounded-t-2xl border-b border-zinc-800">
+                    <input type="text" id="url-input" class="flex-1 bg-black border-2 border-zinc-800 rounded px-4 py-2 text-white text-xs" placeholder="Search Google-IGU...">
+                    <button onclick="goBrowser()" class="bg-blue-600 text-white px-8 rounded-xl font-bold text-xs">GO</button>
                 </div>
+                <iframe id="frame-browser" class="w-full flex-1 bg-white rounded-b-2xl" src="https://www.google.com/search?q=unblocked+github+games&igu=1"></iframe>
             </div>
-
-            <div id="tab-mc" class="os-tab hidden">
-                <div class="industrial-frame flex-1 flex flex-col overflow-hidden relative">
-                    <div id="skin-ui" class="absolute inset-0 bg-black/95 z-[100] hidden flex-col items-center justify-center p-10">
-                        <div class="absolute top-10 right-10 text-6xl font-black text-red-600 cursor-pointer" onclick="toggleSkin(false)">[X]</div>
-                        <div id="skin-vp" style="width:400px; height:500px; border:8px solid #30363d;"></div>
-                        <button onclick="document.getElementById('sk-file').click()" class="btn-bulky mt-10 px-16 py-5 bg-white text-black">IMPORT_PNG_SOURCE</button>
-                        <input type="file" id="sk-file" class="hidden" onchange="applySkin(this)">
-                    </div>
-                    <div class="bg-[#161b22] p-5 flex gap-10 text-xs font-black border-b-8 border-gh-gray">
-                        <span class="text-white">STABLE_RELEASE</span>
-                        <span class="cursor-pointer text-zinc-500 hover:text-white" onclick="toggleSkin(true)">SKIN_RECONSTRUCT</span>
-                    </div>
-                    <div class="flex-1 bg-[url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg')] bg-cover flex items-end p-12">
-                        <button onclick="launch('mc')" class="btn-bulky bg-[#3c8527] text-white w-full py-8 text-5xl">INITIALIZE_GAME</button>
-                    </div>
-                </div>
+            <div id="tab-mc" class="os-tab h-full">
+                <iframe src="https://takaiwebsite.neocities.org/minecraft" class="w-full h-full rounded-2xl border-none"></iframe>
             </div>
         </div>
     </div>
 
     <script>
-        let is2nd = false; let v = "0"; let skin;
+        let is2nd = false; let v = "0";
         
-        window.onload = () => {
-            skin = new skinview3d.SkinViewer({ canvas: document.getElementById("skin-vp"), width: 400, height: 500, skin: "https://minotar.net/skin/char" });
-            skin.autoRotate = true;
-        };
-
+        function handleCombos(e) {
+            if (e.key === '~') panic();
+            if (e.shiftKey && e.key === '1') toggle('fake-code');
+        }
+        function toggle(id) { 
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        }
         function goBrowser() {
             const query = document.getElementById('url-input').value;
             const f = document.getElementById('frame-browser');
-            // Check if it's a URL or a search
-            if (query.includes('.') && !query.includes(' ')) {
-                // If they type a URL, we attempt to open it in a NEW WINDOW to avoid frame blocking
-                window.open(query.startsWith('http') ? query : 'https://' + query, '_blank');
-            } else {
-                // If it's a search, use Google IGU which allows frames
-                f.src = `https://www.google.com/search?q=${encodeURIComponent(query)}&igu=1`;
-            }
+            f.src = query.includes('.') ? (query.startsWith('http') ? query : 'https://' + query) : `https://www.google.com/search?q=${encodeURIComponent(query)}&igu=1`;
         }
-
-        function launch(t) {
-            // BROTATO NATIVE GITHUB PAGES: This is the most unblocked version possible.
-            const url = t === 'mc' ? 'https://takaiwebsite.neocities.org/minecraft' : 'https://blobby-boi.github.io/Brotato/';
-            window.open("about:blank", "_blank", "width=1280,height=720").document.write(`<html><body style="margin:0;background:#000;"><iframe src="${url}" style="width:100vw;height:100vh;border:none;" allow="autoplay; fullscreen; gamepad; pointer-lock"></iframe></body></html>`);
-        }
-
-        function toggleSkin(s) { document.getElementById('skin-ui').style.display = s ? 'flex' : 'none'; }
-        function applySkin(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = (e) => skin.loadSkin(e.target.result); r.readAsDataURL(i.files[0]); } }
-        function panic() { closeOS(); reset(); }
-        function downloadSelf() { const b = new Blob([document.documentElement.outerHTML], {type: "text/html"}); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "RemsOS_v24.html"; a.click(); }
-        
-        function toggle2nd() { is2nd = !is2nd; document.getElementById('mode-2nd').style.background = is2nd ? '#f0883e' : '#21262d'; }
+        function panic() { document.getElementById('rem-os').style.display = 'none'; document.getElementById('fake-code').style.display = 'none'; reset(); }
+        function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').style.background = is2nd ? '#ff922b' : 'white'; document.getElementById('btn-2nd').style.color = is2nd ? 'white' : '#14316d'; }
         function press(n) { v = (v === "0" ? n : v + n); document.getElementById('display').innerText = v; }
         function del() { v = v.slice(0, -1) || "0"; document.getElementById('display').innerText = v; }
         function reset() { v = "0"; document.getElementById('display').innerText = "0"; }
-        function op(o) { if(is2nd && o === '/') { openOS(); showTab('mc'); toggle2nd(); } else press(o); }
+        function op(o) { if(is2nd && o === '/') { openOS(); toggle2nd(); } else press(o); }
         function evalCalc() { if(is2nd) { openOS(); toggle2nd(); } else { try { v = String(eval(v.replace('×','*').replace('÷','/'))); document.getElementById('display').innerText = v; } catch { document.getElementById('display').innerText = "ERR"; } } }
         
         function openOS() { document.getElementById('rem-os').style.display = 'grid'; }
         function closeOS() { document.getElementById('rem-os').style.display = 'none'; }
-        function showTab(t) { document.querySelectorAll('.os-tab').forEach(x => x.classList.remove('active-tab')); document.getElementById('tab-'+t).classList.add('active-tab'); }
+        
+        // FIXED TAB SWITCHING
+        function showTab(t) {
+            const tabs = document.querySelectorAll('.os-tab');
+            tabs.forEach(tab => tab.classList.remove('active-tab'));
+            document.getElementById('tab-' + t).classList.add('active-tab');
+        }
+
+        function downloadSelf() { const b = new Blob([document.documentElement.outerHTML], {type: "text/html"}); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "Khan_Academy_Mastery.html"; a.click(); }
     </script>
 </body>
 </html>
