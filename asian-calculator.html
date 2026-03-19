@@ -3,69 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator System v4.2</title>
+    <title>Rem's Corner | Research & Analytics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #1a1a1a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        .calculator { background: #2b569e; width: 340px; padding: 20px; border-radius: 40px 40px 60px 60px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 2px solid #1e3d70; position: relative; }
-        .screen-container { background: #000; padding: 15px; border-radius: 10px; margin-bottom: 25px; border: 4px solid #333; }
-        .screen { background: #9ead86; height: 140px; border-radius: 4px; padding: 10px; font-family: 'Courier New', monospace; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
-        .screen-current { font-size: 24px; text-align: right; color: #000; font-weight: bold; }
-        .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .btn { height: 35px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; text-transform: uppercase; box-shadow: 0 3px 0 #152d52; }
-        .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #152d52; }
-        .btn-2nd { background: #7ec8e3; color: #003366; }
-        .btn-2nd.active { background: #fff; box-shadow: 0 0 10px #7ec8e3; }
-        .btn-blue-func { background: #4b78c8; }
-        .btn-dark-gray { background: #333; }
-        .btn-num { background: #ffffff; color: #333; font-size: 16px; }
-        #launch-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); border-radius: 40px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: white; }
+        :root { 
+            --bg: #0f172a; 
+            --accent-orange: #f97316; 
+            --accent-red: #ef4444;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+        body { 
+            background-color: var(--bg); 
+            color: #f1f5f9; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            min-height: 100vh;
+            background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #0f172a 100%);
+        }
+        
+        /* Smooth Oval Navbar */
+        nav { 
+            background: var(--glass); 
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1rem 4rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-radius: 0 0 40px 40px;
+        }
+        .logo { 
+            font-weight: 800; font-size: 1.5rem; 
+            background: linear-gradient(to right, var(--accent-orange), var(--accent-red));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .container { display: grid; grid-template-columns: 1fr 350px; gap: 2rem; padding: 2rem 4rem; max-width: 1600px; margin: 0 auto; }
+
+        /* Dashboard Cards */
+        .project-card {
+            background: var(--glass);
+            border-radius: 30px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s ease;
+        }
+        .project-card:hover { transform: translateY(-5px); border-color: var(--accent-orange); }
+
+        /* The "Widget" (Hidden Calculator) */
+        .widget-panel {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            padding: 2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            height: fit-content;
+        }
+
+        .display-oval {
+            background: #020617;
+            padding: 1.5rem;
+            border-radius: 30px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #334155;
+            text-align: right;
+        }
+        #screen { font-size: 2rem; font-weight: 300; color: var(--accent-orange); text-shadow: 0 0 10px rgba(249,115,22,0.3); }
+
+        /* Oval Buttons */
+        .grid-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .key {
+            height: 50px; border-radius: 25px; border: none;
+            background: rgba(255,255,255,0.03); color: #94a3b8;
+            font-weight: 700; font-size: 0.8rem; cursor: pointer;
+            transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .key:hover { background: rgba(255,255,255,0.1); color: #fff; transform: scale(1.05); }
+        .key-special { background: linear-gradient(to bottom right, var(--accent-orange), var(--accent-red)); color: white; }
+        .key-2nd { background: #6366f1; color: white; }
+        .key-2nd.active { background: #fff; color: #6366f1; box-shadow: 0 0 15px #6366f1; }
+
+        /* Stealth Mask */
+        #mask {
+            position: fixed; inset: 0; background: var(--bg); z-index: 1000;
+            display: none; align-items: center; justify-content: center;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
 
-    <div class="calculator">
-        <div id="launch-overlay">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-            <p id="overlay-text" class="text-lg font-bold">CLEANING RAM...</p>
-        </div>
+    <div id="mask">
+        <div class="animate-spin h-12 w-12 border-4 border-orange-500 border-t-transparent rounded-full mb-4"></div>
+        <p class="tracking-[0.5em] text-orange-500 uppercase text-xs">Decrypting Resource...</p>
+    </div>
 
-        <div class="screen-container">
-            <div class="screen">
-                <div id="screen-history" style="text-align:right; opacity:0.6; font-size:12px;"></div>
-                <div id="screen-current" class="screen-current">0</div>
+    <nav>
+        <div class="logo">REMS CORNER</div>
+        <div class="flex gap-8 text-[10px] font-bold tracking-widest uppercase opacity-40">
+            <span>Terminal</span>
+            <span>Analytics</span>
+            <span>Cloud Sync</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="space-y-6">
+            <div class="project-card">
+                <h2 class="text-orange-500 font-bold mb-2 uppercase tracking-tighter">Current Research: Thermal Dynamics</h2>
+                <p class="text-slate-400 leading-relaxed">System analysis of heat distribution in low-pressure environments. Data models suggest a 14% increase in entropy within the primary cooling loop.</p>
+                <div class="mt-4 flex gap-2">
+                    <span class="px-3 py-1 bg-orange-500/10 text-orange-500 rounded-full text-[10px]">ACTIVE</span>
+                    <span class="px-3 py-1 bg-slate-800 text-slate-400 rounded-full text-[10px]">PRIVATE</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="project-card">
+                    <h3 class="font-bold text-sm mb-2">Module_01.bin</h3>
+                    <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-indigo-500 w-[65%]"></div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3 class="font-bold text-sm mb-2">Module_02.bin</h3>
+                    <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-red-500 w-[40%]"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="project-card opacity-50">
+                <h3 class="font-bold mb-4">Activity Log</h3>
+                <div class="text-[10px] font-mono space-y-2">
+                    <p>> Connection established: 192.168.1.1</p>
+                    <p>> Handshake successful...</p>
+                    <p>> Secure tunnel initialized...</p>
+                </div>
             </div>
         </div>
 
-        <div class="keypad">
-            <button class="btn btn-blue-func" onclick="clearScreen()">y=</button>
-            <button class="btn btn-blue-func" onclick="clearScreen()">window</button>
-            <button class="btn btn-blue-func" onclick="clearScreen()">zoom</button>
-            <button class="btn btn-blue-func" onclick="clearScreen()">trace</button>
-            <button class="btn btn-blue-func" onclick="clearScreen()">graph</button>
+        <div class="widget-panel">
+            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-slate-500">Quick Converter</h3>
+            <div class="display-oval">
+                <div id="screen">0</div>
+            </div>
+            
+            <div class="grid-keys">
+                <button id="btn-2nd" class="key key-2nd" onclick="toggle2nd()">2nd</button>
+                <button class="key" onclick="deleteChar()">DEL</button>
+                <button class="key" onclick="handleClear()">AC</button>
+                <button class="key key-special" onclick="append('/')">÷</button>
 
-            <button id="btn-2nd" class="btn btn-2nd" onclick="toggle2nd()">2nd</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">mode</button>
-            <button class="btn btn-dark-gray" onclick="deleteChar()">del</button>
-            <div class="col-span-2"></div>
+                <button class="key" onclick="append('7')">7</button>
+                <button class="key" onclick="append('8')">8</button>
+                <button class="key" onclick="append('9')">9</button>
+                <button class="key key-special" onclick="append('*')">×</button>
 
-            <button class="btn btn-dark-gray" onclick="clearScreen()">math</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">apps</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">prgm</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">vars</button>
-            <button class="btn btn-dark-gray" onclick="handleClear()">clear</button>
+                <button class="key" onclick="append('4')">4</button>
+                <button class="key" onclick="append('5')">5</button>
+                <button class="key" onclick="append('6')">6</button>
+                <button class="key key-special" onclick="append('-')">-</button>
 
-            <button class="btn btn-num" onclick="append('7')">7</button>
-            <button class="btn btn-num" onclick="append('8')">8</button>
-            <button class="btn btn-num" onclick="append('9')">9</button>
-            <button class="btn btn-dark-gray" onclick="append('*')">×</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">on</button>
+                <button class="key" onclick="append('1')">1</button>
+                <button class="key" onclick="append('2')">2</button>
+                <button class="key" onclick="append('3')">3</button>
+                <button class="key key-special" onclick="append('+')">+</button>
 
-            <button class="btn btn-num" onclick="append('4')">4</button>
-            <button class="btn btn-num" onclick="append('5')">5</button>
-            <button class="btn btn-num" onclick="append('6')">6</button>
-            <button class="btn btn-dark-gray" onclick="append('-')">-</button>
-            <button class="btn btn-dark-gray" onclick="handleEnter()" style="grid-column: span 2; background: #333;">enter</button>
+                <button class="key" style="grid-column: span 2;" onclick="append('0')">0</button>
+                <button class="key" onclick="append('.')">.</button>
+                <button class="key key-special" onclick="handleEnter()">=</button>
+            </div>
         </div>
     </div>
 
@@ -73,63 +180,56 @@
         let currentInput = "0";
         let is2ndActive = false;
 
-        const screenCurrent = document.getElementById('screen-current');
-        const overlay = document.getElementById('launch-overlay');
-        const overlayText = document.getElementById('overlay-text');
+        const screen = document.getElementById('screen');
+        const mask = document.getElementById('mask');
         const btn2nd = document.getElementById('btn-2nd');
 
-        // NEW MARCH 2026 MIRRORS (SCRAMBLED)
         const vault = {
-            f1: "aHR0cHM6Ly9mcm9naWVlLW9mZmljaWFsLmdpdGh1Yi5pby8=", // Frogiee Official Mirror
-            f2: "aHR0cHM6Ly9lZHVjYXRpb24tc3VwcG9ydC52ZXJjZWwuYXBwLw==", // Stealth Vercel Mirror
-            ext: "aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2duLW1hdGgvZ24tbWF0aC1ET05URE1DQUBtYWluL3NpbmdsZWZpbGUuaHRtbA=="
+            f1: "aHR0cHM6Ly9mcm9naWVlLW9mZmljaWFsLmdpdGh1Yi5pby8=", // AC
+            f2: "aHR0cHM6Ly9lZHVjYXRpb24tc3VwcG9ydC52ZXJjZWwuYXBwLw==", // DEL
+            ext: "aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2duLW1hdGgvZ24tbWF0aC1ET05URE1DQUBtYWluL3NpbmdsZWZpbGUuaHRtbA==" // =
         };
 
         function append(val) {
             currentInput = currentInput === "0" ? val : currentInput + val;
-            updateDisplay();
+            screen.textContent = currentInput;
         }
 
-        function updateDisplay() { screenCurrent.textContent = currentInput; }
-        function toggle2nd() { is2ndActive = !is2ndActive; btn2nd.classList.toggle('active', is2ndActive); }
-        function clearScreen() { currentInput = "0"; updateDisplay(); }
+        function toggle2nd() { 
+            is2ndActive = !is2ndActive; 
+            btn2nd.classList.toggle('active', is2ndActive); 
+        }
 
-        function ghostLaunch(encodedUrl, msg) {
-            overlayText.textContent = msg;
-            overlay.style.display = 'flex';
+        function ghostLaunch(encodedUrl) {
+            mask.style.display = 'flex';
             const decoded = atob(encodedUrl);
             const win = window.open("about:blank", "_blank");
-            
             if (win) {
-                win.document.write(`
-                    <html>
-                    <body style="margin:0;padding:0;overflow:hidden;background:#000;">
-                        <iframe src="${decoded}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>
-                    </body>
-                    </html>`);
+                win.document.write(`<html><body style="margin:0;overflow:hidden;background:#000;"><iframe src="${decoded}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></body></html>`);
                 win.document.close();
-            } else {
-                alert("Pop-up blocked! Allow pop-ups for this site.");
             }
-            setTimeout(() => { overlay.style.display = 'none'; }, 800);
+            setTimeout(() => { mask.style.display = 'none'; is2ndActive = false; btn2nd.classList.remove('active'); }, 1200);
         }
 
         function handleClear() {
-            if (is2ndActive) { ghostLaunch(vault.f1, "CLEANING RAM..."); reset2nd(); }
-            else clearScreen();
+            if(is2ndActive) ghostLaunch(vault.f1);
+            else { currentInput = "0"; screen.textContent = "0"; }
         }
 
         function deleteChar() {
-            if (is2ndActive) { ghostLaunch(vault.f2, "DEFRAGMENTING..."); reset2nd(); }
-            else { currentInput = currentInput.slice(0, -1) || "0"; updateDisplay(); }
+            if(is2ndActive) ghostLaunch(vault.f2);
+            else { currentInput = currentInput.slice(0, -1) || "0"; screen.textContent = currentInput; }
         }
 
         function handleEnter() {
-            if (is2ndActive) { ghostLaunch(vault.ext, "SYNCING DATA..."); reset2nd(); }
-            else { /* Math logic here */ }
+            if(is2ndActive) ghostLaunch(vault.ext);
+            else {
+                try {
+                    currentInput = String(eval(currentInput.replace('×', '*').replace('÷', '/')));
+                    screen.textContent = currentInput;
+                } catch { screen.textContent = "Error"; setTimeout(() => { currentInput="0"; screen.textContent="0"; }, 1000); }
+            }
         }
-
-        function reset2nd() { is2ndActive = false; btn2nd.classList.remove('active'); }
     </script>
 </body>
 </html>
