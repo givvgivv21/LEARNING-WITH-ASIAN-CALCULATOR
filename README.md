@@ -1,14 +1,14 @@
 # FUNCTIONS
-1. 2nd + Enter = GN-Math in a About Blank
-2. 2nd + Clear = Doge UB in a About Blank
+1. 2nd + enter to acsses games N shit
 3. MORE COMING SOON
 
 
 
-MADE BY OFFENSIVE ASIAN
-https://www.youtube.com/@Offensive-Asian
+MADE BY REMONE
 
-# MADE BY ALEXIA SURCOUF 
 
-thank you alexia 
+# google gemeni helped btw [sob]
+
+thank you gemeni
 - asian
+THIS IS BETTER THAN GN MATH ONG 
