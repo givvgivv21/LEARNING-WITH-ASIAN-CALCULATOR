@@ -2,176 +2,130 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rem's Melons :D | v84</title>
+    <title>Calculator | TI-84 Plus</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --rind: #1a3c1a; --flesh: #ff4d4d; --neon: #39ff14; }
-        body, html { 
-            margin: 0; padding: 0; height: 100vh; width: 100vw;
-            background: #050505; color: white; font-family: 'Courier New', monospace;
-            overflow: hidden; 
-        }
+        :root { --rind: #1a3c1a; --flesh: #ff4d4d; --neon: #39ff14; --seed: #0a0a0a; }
+        body, html { margin: 0; padding: 0; height: 100vh; background: #000; font-family: monospace; overflow: hidden; }
 
-        /* RAIN ENGINE */
-        #rain-container { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
-        .melon-drop { position: absolute; font-size: 24px; user-select: none; }
-
-        .ui-wrapper { 
-            position: relative; z-index: 10; display: flex; 
-            height: 100vh; width: 100vw; background: rgba(0,0,0,0.7);
-        }
-
-        .sidebar {
-            width: 450px; background: rgba(10, 30, 10, 0.95);
-            border-right: 3px solid var(--neon); padding: 40px;
-            display: flex; flex-direction: column;
-        }
-
-        .ascii-brand {
-            font-size: 7px; line-height: 7px; color: var(--neon);
-            white-space: pre; margin: 30px 0;
-        }
-
-        .melon-btn {
-            background: #000; border: 2px solid var(--flesh);
-            padding: 18px; margin-bottom: 12px; cursor: pointer;
-            font-weight: 900; display: flex; justify-content: space-between;
-        }
-        .melon-btn:hover { background: var(--flesh); color: #000; transform: scale(1.02); }
-        .melon-btn.ai { border-color: var(--neon); color: var(--neon); }
-
-        .main-content {
-            flex-grow: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; position: relative;
-        }
-
-        /* AI TERMINAL TAB */
-        #ai-overlay {
-            display: none; position: absolute; width: 80%; height: 60%;
-            background: #000; border: 2px solid var(--neon);
-            padding: 30px; box-shadow: 0 0 50px rgba(0,255,65,0.2);
-            flex-direction: column;
-        }
+        /* THE CAMO: CALCULATOR */
+        #camo-layer { position: fixed; inset: 0; z-index: 1000; background: var(--seed); display: flex; align-items: center; justify-content: center; transition: 0.5s; }
+        .calc-case { background: #1a1a1a; width: 380px; padding: 25px; border: 2px solid #333; border-radius: 8px; box-shadow: 0 0 50px rgba(0,0,0,1); position: relative; }
+        .lcd { background: #000; border: 2px solid var(--rind); height: 80px; margin-bottom: 20px; padding: 15px; color: var(--neon); font-size: 2rem; text-align: right; text-shadow: 0 0 10px var(--neon); }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .k { background: #222; border: 1px solid #444; padding: 15px; text-align: center; cursor: pointer; color: #777; font-weight: bold; }
+        .k:active { background: #333; }
+        .k-red { color: var(--flesh); border-color: var(--flesh); }
+        .k-green { color: var(--neon); border-color: var(--neon); }
+        
+        /* THE REVEAL: MELON UI */
+        #melon-layer { display: none; height: 100vh; width: 100vw; background: #000; z-index: 10; flex-direction: row; }
+        .sidebar { width: 420px; background: rgba(10, 30, 10, 0.95); border-right: 3px solid var(--neon); padding: 40px; display: flex; flex-direction: column; }
+        .melon-btn { background: #000; border: 2px solid var(--flesh); padding: 15px; margin-bottom: 10px; cursor: pointer; font-weight: 900; display: flex; justify-content: space-between; color: white; }
+        .melon-btn:hover { background: var(--flesh); color: #000; }
+        .main-stage { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        
+        /* RAIN */
+        #rain { position: fixed; inset: 0; pointer-events: none; }
+        .drop { position: absolute; font-size: 24px; }
     </style>
 </head>
 <body onkeydown="if(event.key==='Escape') panic()">
 
-    <div id="rain-container"></div>
+    <div id="rain"></div>
 
-    <div class="ui-wrapper">
+    <div id="camo-layer">
+        <div class="calc-case">
+            <div id="lcd" class="lcd">0.00</div>
+            <div class="grid">
+                <div class="k k-green" onclick="cmd('2nd')">2nd</div>
+                <div class="k k-red" onclick="panic()">OFF</div>
+                <div class="k" onclick="num('/')">/</div>
+                <div class="k" onclick="num('*')">X</div>
+                <div class="k" onclick="num('7')">7</div><div class="k" onclick="num('8')">8</div><div class="k" onclick="num('9')">9</div><div class="k" onclick="num('-')">-</div>
+                <div class="k" onclick="num('4')">4</div><div class="k" onclick="num('5')">5</div><div class="k" onclick="num('6')">6</div><div class="k" onclick="num('+')">+</div>
+                <div class="k" onclick="num('1')">1</div><div class="k" onclick="num('2')">2</div><div class="k" onclick="num('3')">3</div>
+                <div class="k k-green" onclick="cmd('EXE')">EXE</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="melon-layer">
         <div class="sidebar">
-            <h1 class="text-3xl font-black italic">REM'S MELONS :D</h1>
-            
-<div class="ascii-brand">
+            <h1 class="text-3xl font-black italic text-white mb-2">REM'S MELONS :D</h1>
+            <div class="text-[6px] leading-[6px] text-green-500 whitespace-pre mb-6">
 ++++++   +++++++  ++      ++   +++++++  
 ++   ++  ++       +++    +++  ++        
 ++   ++  +++++    ++ +  + ++  +++++++   
 ++++++   ++       ++  ++  ++        ++  
 ++  ++   ++       ++      ++        ++  
 ++   ++  +++++++  ++      ++   +++++++  
-
-+++++++   ++++++   +++++++   ++   ++  +++++++  ++++++  
-++       ++    ++  ++    ++  +++  ++  ++       ++   ++ 
-++       ++    ++  +++++++   ++ + ++  +++++    ++++++  
-++       ++    ++  ++  ++    ++  +++  ++       ++  ++  
-+++++++   ++++++   ++   ++   ++   ++  +++++++  ++   ++
-</div>
-
+            </div>
             <div class="nav-group">
-                <div class="melon-btn" onclick="melonInject('https://eaglercraft.q13x.com/')">
-                    <span>GHOST MINECRAFT</span><span>🍉</span>
-                </div>
-                <div class="melon-btn" onclick="melonInject('https://www.google.com/search?igu=1')">
-                    <span>STEALTH GOOGLE</span><span>🍉</span>
-                </div>
-                <div class="melon-btn ai" onclick="toggleAI()">
-                    <span>OPEN MELON_AI</span><span>[🤖]</span>
-                </div>
+                <div class="melon-btn" onclick="openMelonLauncher()"><span>MELON LAUNCHER</span><span>⛏️</span></div>
+                <div class="melon-btn" onclick="window.open('https://www.google.com/search?q=minecraft&igu=1&udm=14','_blank','popup=yes')"><span>STEALTH GOOGLE</span><span>🔍</span></div>
+                <div class="melon-btn" onclick="window.open('https://github.com','_blank')"><span>GITHUB HUB</span><span>🐙</span></div>
+                <div class="melon-btn" style="border-color:var(--neon); color:var(--neon)" onclick="toggleAI()"><span>MELON_AI</span><span>🤖</span></div>
             </div>
-
-            <div class="mt-auto melon-btn" style="border-color:white; color:white" onclick="panic()">
-                <span>PURGE SESSIONS</span><span>[ESC]</span>
-            </div>
+            <div class="mt-auto melon-btn" style="border-color:white; color:white" onclick="panic()"><span>PURGE ALL</span><span>[ESC]</span></div>
         </div>
-
-        <div class="main-content">
-            <div id="hero">
-                <div class="text-8xl mb-4 text-center">🍉</div>
-                <div class="text-5xl font-black text-red-500 italic">MELON_v84</div>
-            </div>
-
-            <div id="ai-overlay">
-                <div class="flex justify-between items-center mb-4 border-bottom border-green-500">
-                    <span class="text-green-500 font-bold">MELON_AI_CORE v1.0</span>
-                    <button onclick="toggleAI()" class="text-red-500">[CLOSE]</button>
-                </div>
-                <div id="ai-log" class="overflow-y-auto flex-grow text-green-400 text-sm">
-                    > Melon-Seed AI Online...<br>
-                    > Tracking Eaglercraft login status... [OK]<br>
-                    > Bypass Protocol: Data-Injection... [READY]<br>
-                    > How can I assist your melon session today?<br>
-                </div>
-                <input type="text" id="ai-input" class="bg-transparent border-t border-green-900 p-2 mt-4 outline-none text-green-500" placeholder="Ask Melon AI...">
-            </div>
+        <div class="main-stage">
+            <div class="text-9xl mb-4">🍉</div>
+            <h2 class="text-5xl font-black italic text-red-500">MELON_v86</h2>
+            <p class="text-green-500 tracking-[5px] font-bold animate-pulse mt-4">>> MORE UPDATES COMING SOON <<</p>
         </div>
     </div>
 
     <script>
-        // RAIN ENGINE
-        function createMelon() {
-            const container = document.getElementById('rain-container');
-            const melon = document.createElement('div');
-            melon.className = 'melon-drop'; melon.innerText = '🍉';
-            melon.style.left = Math.random() * 100 + 'vw';
-            melon.style.top = '-50px';
-            const duration = Math.random() * 3 + 2;
-            melon.style.transition = `top ${duration}s linear`;
-            container.appendChild(melon);
-            setTimeout(() => { melon.style.top = '110vh'; }, 10);
-            setTimeout(() => melon.remove(), duration * 1000);
+        let s="0"; let is2=false; let wins=[];
+
+        function num(v){ s=(s==="0"?v:s+v); document.getElementById('lcd').innerText=s; }
+        function cmd(k){
+            if(k==='2nd'){ is2=!is2; document.getElementById('lcd').style.color = is2 ? 'white' : 'var(--neon)'; }
+            if(is2 && k==='EXE'){ document.getElementById('camo-layer').style.display='none'; document.getElementById('melon-layer').style.display='flex'; }
+            if(!is2 && k==='EXE'){ try{s=eval(s)+"";}catch{s="ERR";} document.getElementById('lcd').innerText=s; }
         }
-        setInterval(createMelon, 300);
 
-        let activeWindows = [];
+        function createMelon() {
+            const c=document.getElementById('rain'); const m=document.createElement('div');
+            m.className='drop'; m.innerText='🍉'; m.style.left=Math.random()*100+'vw'; m.style.top='-50px';
+            const d=Math.random()*3+2; m.style.transition=`top ${d}s linear`;
+            c.appendChild(m); setTimeout(()=>m.style.top='110vh',10); setTimeout(()=>m.remove(),d*1000);
+        }
+        setInterval(createMelon, 400);
 
-        // v84 INJECTION ENGINE (Fixes "Refused to Connect")
-        function melonInject(url) {
-            const win = window.open('about:blank', '_blank', `width=1200,height=800,popup=yes`);
-            if (!win) return alert("Enable Popups!");
-
-            // Instead of an iframe, we inject a script that redirects the window
-            // This stops the site from thinking it's being "framed"
+        function openMelonLauncher() {
+            const win = window.open('about:blank', '_blank', 'width=1000,height=700,popup=yes');
             win.document.write(`
-                <body style="background:#000;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;">
-                    <div style="text-align:center;">
-                        <div style="font-size:50px;">🍉</div>
-                        <h2 style="color:#39ff14;">Injecting Melon-Link...</h2>
+                <style>
+                    body { background: #3c3f41; color: white; font-family: sans-serif; margin:0; display:flex; }
+                    .side { width: 220px; background: #2b2b2b; height: 100vh; padding: 20px; border-right: 2px solid #39ff14; }
+                    .main { flex-grow: 1; padding: 40px; background: #1e1e1e; position: relative; }
+                    .btn { padding: 12px; margin-bottom: 8px; cursor: pointer; border-radius: 4px; }
+                    .btn:hover { background: #4e5254; }
+                    .play { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: #39ff14; color: black; padding: 15px 80px; font-weight: 900; font-size: 24px; border: none; cursor: pointer; box-shadow: 0 0 20px #39ff14; }
+                    .content-pane { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; height: 300px; }
+                </style>
+                <body>
+                    <div class="side">
+                        <h2 style="color:#39ff14">🍉 MELON_MC</h2>
+                        <div class="btn" onclick="document.getElementById('view').innerHTML='<h1>Java Edition</h1><p>Ready to play.</p>'">Minecraft: Java</div>
+                        <div class="btn" onclick="document.getElementById('view').innerHTML='<h1>Skins</h1><div style=\'width:100px;height:150px;background:#555;margin:auto\'></div><p style=\'text-align:center\'>Default Melon-Skin Active</p>'">Skins</div>
+                        <div class="btn" onclick="document.getElementById('view').innerHTML='<h1>Melon News</h1><p>- v86: Triple-Blind Camo added.<br>- v86: Persistant Login fix.</p>'">News</div>
                     </div>
-                    <script>
-                        setTimeout(() => { window.location.href = "${url}"; }, 300);
-                    <\/script>
+                    <div class="main">
+                        <div id="view" class="content-pane">
+                            <h1>Melon Launcher v1.0</h1>
+                            <p>Select an option from the left to begin.</p>
+                        </div>
+                        <button class="play" onclick="window.location.href='https://eaglercraft.q13x.com/'">PLAY</button>
+                    </div>
                 </body>
             `);
-            activeWindows.push(win);
+            wins.push(win);
         }
 
-        function toggleAI() {
-            const ai = document.getElementById('ai-overlay');
-            const hero = document.getElementById('hero');
-            if (ai.style.display === 'flex') {
-                ai.style.display = 'none';
-                hero.style.opacity = '1';
-            } else {
-                ai.style.display = 'flex';
-                hero.style.opacity = '0.1';
-            }
-        }
-
-        function panic() {
-            activeWindows.forEach(w => { if(!w.closed) w.close(); });
-            activeWindows = [];
-            location.reload();
-        }
+        function panic() { wins.forEach(w=>{if(!w.closed)w.close();}); location.reload(); }
     </script>
 </body>
 </html>
