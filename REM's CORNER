@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TI-84 Plus 2nd Edition | v71 Black-Site</title>
+    <title>TI-84 Plus 2nd Edition | v72 Ghost-Link</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
@@ -31,7 +31,6 @@
         .sidebar { width: 320px; height: 100%; background: #000; border-right: 1px solid #222; display: flex; flex-direction: column; padding: 50px 0; }
         .nav-item { padding: 20px 40px; color: #444; font-size: 13px; font-weight: 900; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
         .nav-item:hover { color: #fff; background: #111; }
-        .nav-item.active-nav { color: var(--orange); background: #111; border-right: 4px solid var(--orange); }
     </style>
 </head>
 <body onkeydown="if(event.key==='~'){panic()}">
@@ -65,8 +64,8 @@
     <div id="dash">
         <div class="sidebar">
             <div class="px-10 mb-10"><h2 class="text-white text-2xl font-black italic">OMNI-OS</h2></div>
-            <div class="nav-item" onclick="cloak('https://eaglercraft.q13x.com/')"><span>TAKAI MC (CLOAKED)</span></div>
-            <div class="nav-item" onclick="cloak('https://www.google.com/search?igu=1')"><span>GOOGLE (CLOAKED)</span></div>
+            <div class="nav-item" onclick="ghostLaunch('https://eaglercraft.q13x.com/')"><span>MC: BLACK-SITE</span></div>
+            <div class="nav-item" onclick="ghostLaunch('https://www.google.com/search?igu=1')"><span>SEARCH: STEALTH</span></div>
             <div class="nav-item" onclick="spawnLocalAI()"><span>SOVEREIGN AI</span></div>
             <div class="mt-auto nav-item text-red-600" onclick="panic()"><span>TERMINATE</span></div>
         </div>
@@ -86,51 +85,41 @@
             document.getElementById('display').innerText = cur;
         }
 
-        // THE ABOUT:BLANK CLOAKING ENGINE
-        function cloak(url) {
+        // V72 GHOST-LINK INJECTION ENGINE
+        function ghostLaunch(url) {
             const win = window.open('about:blank', '_blank');
             if (win) {
                 const doc = win.document;
-                doc.title = "Classes"; // Fake title for taskbar
-                const iframe = doc.createElement('iframe');
-                const style = iframe.style;
-                
-                style.position = "fixed";
-                style.top = style.left = style.bottom = style.right = "0";
-                style.width = style.height = "100%";
-                style.border = "none";
-                
-                iframe.src = url;
-                doc.body.appendChild(iframe);
-                doc.body.style.margin = "0";
-                
+                // Create a masked environment
+                const html = `
+                    <html>
+                    <head>
+                        <title>My Drive - Google Drive</title>
+                        <link rel="icon" type="image/x-icon" href="https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png">
+                        <style>
+                            body, html { margin: 0; padding: 0; height: 100vh; overflow: hidden; background: #000; }
+                            iframe { width: 100%; height: 100%; border: none; }
+                        </style>
+                    </head>
+                    <body>
+                        <iframe src="${url}" referrerpolicy="no-referrer"></iframe>
+                    </body>
+                    </html>
+                `;
+                doc.open();
+                doc.write(html);
+                doc.close();
                 activeWins.push(win);
                 document.getElementById('dash').style.display = 'none';
-            } else {
-                alert("POPUP BLOCKED! Allow popups to enable Stealth Mode.");
             }
         }
 
         function spawnLocalAI() {
             const win = window.open('about:blank', '_blank');
             const doc = win.document;
-            doc.title = "System Update";
+            doc.title = "Class Notes";
             doc.body.style.background = "#000";
-            doc.body.innerHTML = `
-                <div style="color:#f0810f;font-family:monospace;padding:30px;">
-                    <h2>REM_AI v71 (AIR-GAPPED)</h2>
-                    <div id="l" style="height:70vh;overflow:auto;border:1px solid #222;padding:10px;margin-top:10px;">CORE ACTIVE.</div>
-                    <input id="i" style="width:100%;background:#111;color:#fff;border:1px solid #333;padding:15px;margin-top:20px;" placeholder="Input logic stream...">
-                </div>
-                <script>
-                    document.getElementById('i').onkeydown = (e) => {
-                        if(e.key === 'Enter') {
-                            document.getElementById('l').innerHTML += '<div>> ' + e.target.value + '</div>';
-                            setTimeout(()=> { document.getElementById('l').innerHTML += '<div style="color:#fff">REM: Analytical Logic Stable. Cloak Engaged.</div>'; }, 200);
-                            e.target.value = "";
-                        }
-                    }
-                <\/script>`;
+            doc.body.innerHTML = `<div style="color:#f0810f;font-family:monospace;padding:30px;"><h2>AI CORE</h2><div id="l">ONLINE.</div></div>`;
             activeWins.push(win);
         }
 
@@ -141,7 +130,6 @@
             document.getElementById('halo').classList.remove('halo-active');
             is2nd = false; cur = "0";
             document.getElementById('display').innerText = "0";
-            location.reload();
         }
     </script>
 </body>
