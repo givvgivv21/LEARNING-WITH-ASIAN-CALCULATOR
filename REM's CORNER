@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rem's Melons :D | v82</title>
+    <title>Rem's Melons :D | v83 PATCH</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --rind: #1a3c1a; --flesh: #ff4d4d; --neon: #39ff14; }
@@ -12,56 +12,36 @@
             overflow: hidden; 
         }
 
-        /* MELON RAIN LAYER */
+        /* MELON RAIN */
         #rain-container { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
         .melon-drop { position: absolute; font-size: 24px; user-select: none; }
 
-        /* MAIN UI LAYER */
         .ui-wrapper { 
             position: relative; z-index: 10; display: flex; 
-            height: 100vh; width: 100vw; 
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            height: 100vh; width: 100vw; background: rgba(0,0,0,0.7);
         }
 
         .sidebar {
-            width: 450px; background: rgba(10, 30, 10, 0.9);
+            width: 450px; background: rgba(10, 30, 10, 0.95);
             border-right: 3px solid var(--neon); padding: 40px;
             display: flex; flex-direction: column;
-            box-shadow: 20px 0 50px rgba(0,0,0,0.8);
         }
 
         .ascii-brand {
             font-size: 7px; line-height: 7px; color: var(--neon);
-            white-space: pre; margin: 30px 0; text-shadow: 0 0 10px var(--neon);
+            white-space: pre; margin: 30px 0;
         }
 
         .melon-btn {
             background: #000; border: 2px solid var(--flesh);
             padding: 20px; margin-bottom: 15px; cursor: pointer;
-            transition: 0.3s; font-weight: 900; display: flex;
-            justify-content: space-between; align-items: center;
+            font-weight: 900; display: flex; justify-content: space-between;
         }
-        .melon-btn:hover {
-            background: var(--flesh); color: #000;
-            transform: scale(1.05) translateX(10px);
-            box-shadow: 0 0 20px var(--flesh);
-        }
+        .melon-btn:hover { background: var(--flesh); color: #000; }
 
         .main-content {
             flex-grow: 1; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            border: 20px solid var(--rind); margin: 20px;
-        }
-
-        .hero-text {
-            font-size: 5rem; font-weight: 900; color: var(--flesh);
-            text-shadow: 5px 5px 0px var(--neon);
-            letter-spacing: -5px; transform: rotate(-2deg);
-        }
-
-        .terminal {
-            width: 80%; background: #000; border: 1px solid #333;
-            padding: 20px; margin-top: 40px; font-size: 12px; color: var(--neon);
         }
     </style>
 </head>
@@ -71,9 +51,9 @@
 
     <div class="ui-wrapper">
         <div class="sidebar">
-            <h1 class="text-4xl font-black italic text-white">REM'S MELONS :D</h1>
+            <h1 class="text-3xl font-black italic">REM'S MELONS :D</h1>
             
-            <div class="ascii-brand">
+<div class="ascii-brand">
 ++++++   +++++++  ++      ++   +++++++  
 ++   ++  ++       +++    +++  ++        
 ++   ++  +++++    ++ +  + ++  +++++++   
@@ -86,38 +66,33 @@
 ++       ++    ++  +++++++   ++ + ++  +++++    ++++++  
 ++       ++    ++  ++  ++    ++  +++  ++       ++  ++  
 +++++++   ++++++   ++   ++   ++   ++  +++++++  ++   ++
-            </div>
+</div>
 
             <div class="nav-group">
-                <div class="melon-btn" onclick="forceWindow('https://eaglercraft.q13x.com/', 'Bio-Lab Simulation')">
-                    <span>LAUNCH MINECRAFT</span><span>🍉</span>
+                <div class="melon-btn" onclick="melonNavigate('https://eaglercraft.q13x.com/', 'Eaglercraft')">
+                    <span>MINECRAFT (PROXY)</span><span>🍉</span>
                 </div>
-                <div class="melon-btn" onclick="forceWindow('https://takaiwebsite.neocities.org/brotato', 'Physics Engine')">
-                    <span>LAUNCH BROTATO</span><span>🍉</span>
-                </div>
-                <div class="melon-btn" onclick="forceWindow('https://www.google.com/search?igu=1', 'Research Hub')">
+                <div class="melon-btn" onclick="melonNavigate('https://www.google.com/search?igu=1', 'Research')">
                     <span>STEALTH GOOGLE</span><span>🍉</span>
+                </div>
+                <div class="melon-btn" onclick="melonNavigate('https://duckduckgo.com', 'Search')">
+                    <span>DUCKDUCKGO (NO-BLOCK)</span><span>🍉</span>
                 </div>
             </div>
 
             <div class="mt-auto melon-btn" style="border-color:white; color:white" onclick="panic()">
-                <span>TERMINATE SESSIONS</span><span>[ESC]</span>
+                <span>WIPE ALL</span><span>[ESC]</span>
             </div>
         </div>
 
         <div class="main-content">
-            <div class="hero-text">MELON_STORM</div>
-            <div class="terminal" id="term">
-                > Initializing Rem's Melons Kernel v82.0...<br>
-                > Window Isolation: ACTIVE<br>
-                > MC Account Persistence Bridge: ENABLED<br>
-                > Ready for deployment.
-            </div>
+            <div class="text-6xl font-black text-red-500 italic mb-4">MELON_v83</div>
+            <p class="text-green-400 font-bold">BYPASSING "REFUSED TO CONNECT" ERROR...</p>
         </div>
     </div>
 
     <script>
-        // RAIN ENGINE
+        // RAIN SCRIPT
         function createMelon() {
             const container = document.getElementById('rain-container');
             const melon = document.createElement('div');
@@ -126,62 +101,49 @@
             melon.style.left = Math.random() * 100 + 'vw';
             melon.style.top = '-50px';
             const duration = Math.random() * 3 + 2;
-            melon.style.transition = `top ${duration}s linear, transform ${duration}s linear`;
+            melon.style.transition = `top ${duration}s linear`;
             container.appendChild(melon);
-
-            setTimeout(() => {
-                melon.style.top = '110vh';
-                melon.style.transform = `rotate(${Math.random() * 360}deg)`;
-            }, 10);
-
+            setTimeout(() => { melon.style.top = '110vh'; }, 10);
             setTimeout(() => melon.remove(), duration * 1000);
         }
         setInterval(createMelon, 300);
 
         let activeWindows = [];
 
-        // TRUE WINDOW-ISOLATION ENGINE
-        function forceWindow(url, mask) {
-            const w = 1280;
-            const h = 720;
+        // v83 NAVIGATION ENGINE (ANTI-REFUSAL)
+        function melonNavigate(url, title) {
+            const w = 1200;
+            const h = 800;
             const left = (window.screen.width / 2) - (w / 2);
             const top = (window.screen.height / 2) - (h / 2);
 
-            // "popup=yes" is the key for a new WINDOW, not a tab
-            const win = window.open('about:blank', '_blank', 
-                `width=${w},height=${h},top=${top},left=${left},scrollbars=no,status=no,menubar=no,toolbar=no,popup=yes`);
+            // Open a true separate window
+            const win = window.open('about:blank', '_blank', `width=${w},height=${h},top=${top},left=${left},popup=yes`);
 
             if (!win) {
-                alert("🚨 POPUP BLOCKED! Enable popups to play.");
+                alert("Allow popups first!");
                 return;
             }
 
-            // BLOB INJECTION FOR STEALTH
-            const blob = new Blob([`
+            /* CRITICAL FIX: Instead of an iframe (which big sites block), 
+               we write a script to the window that forces it to navigate 
+               while staying in its own process. 
+            */
+            win.document.write(`
                 <html>
-                <head>
-                    <title>${mask}</title>
-                    <style>
-                        body,html,iframe{margin:0;padding:0;height:100%;width:100%;background:#000;overflow:hidden;border:none;}
-                    </style>
+                <head><title>${title}</title></head>
+                <body style="background:#000; display:flex; align-items:center; justify-content:center; height:100vh;">
+                    <h1 style="color:#39ff14; font-family:monospace;">🍉 Loading Melon-Link...</h1>
                     <script>
-                        // Bridge to keep MC data safe
-                        window.onbeforeunload = function() {
-                            return "Ensure your MC data is saved!";
-                        };
+                        setTimeout(() => {
+                            window.location.replace("${url}");
+                        }, 500);
                     <\/script>
-                </head>
-                <body>
-                    <iframe src="${url}" referrerpolicy="no-referrer"></iframe>
                 </body>
                 </html>
-            `], {type: 'text/html'});
+            `);
 
-            win.location.href = URL.createObjectURL(blob);
             activeWindows.push(win);
-            
-            const log = document.getElementById('term');
-            log.innerHTML += `<br>> Deployed Window: ${mask} (UUID: ${Math.floor(Math.random()*9999)})`;
         }
 
         function panic() {
