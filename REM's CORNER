@@ -1,109 +1,242 @@
-<div id="rem-os" class="fixed inset-0 bg-[#0f172a] z-[3000] hidden flex-col font-sans">
-    <div class="bg-[#1e293b] p-4 flex justify-between items-center border-b border-orange-500/30">
-        <div class="flex items-center gap-3">
-            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-            <span class="font-black tracking-tighter text-orange-500">REM OS v4.0</span>
-        </div>
-        <button onclick="closeOS()" class="text-xs text-slate-500 hover:text-white">CLOSE [ESC]</button>
-    </div>
-
-    <div class="flex flex-1 overflow-hidden">
-        <div class="w-64 bg-[#020617] p-6 space-y-2 border-r border-slate-800">
-            <button onclick="showTab('mc')" class="w-full text-left p-3 rounded-xl hover:bg-orange-500/10 text-slate-400 hover:text-orange-500 transition">🎮 Gaming (Tuff)</button>
-            <button onclick="showTab('ai')" class="w-full text-left p-3 rounded-xl hover:bg-indigo-500/10 text-slate-400 hover:text-indigo-400 transition">🤖 Rem-AI Console</button>
-            <button onclick="showTab('links')" class="w-full text-left p-3 rounded-xl hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-400 transition">🔗 The Link Vault</button>
-            <button onclick="showTab('proxy')" class="w-full text-left p-3 rounded-xl hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition">🌐 Frogiee Proxies</button>
-        </div>
-
-        <div class="flex-1 p-8 overflow-y-auto bg-[#0f172a] relative">
-            
-            <div id="tab-mc" class="os-tab hidden">
-                <div class="bg-[#1e293b] rounded-3xl p-8 border border-slate-700 shadow-2xl">
-                    <h2 class="text-3xl font-black mb-2">TUFF CLIENT</h2>
-                    <p class="text-slate-500 mb-6">1.12.2 Optimized Eaglercraft</p>
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="p-4 bg-black/20 rounded-xl border border-white/5">Optifine: <span class="text-green-500 font-bold">ACTIVE</span></div>
-                        <div class="p-4 bg-black/20 rounded-xl border border-white/5">Eagler Forge: <span class="text-green-500 font-bold">READY</span></div>
-                    </div>
-                    <button onclick="startMinecraft()" class="w-full py-4 bg-green-600 hover:bg-green-500 rounded-xl font-bold text-xl shadow-lg shadow-green-900/20 transition">PLAY VERSION 1.12.2</button>
-                </div>
-            </div>
-
-            <div id="tab-ai" class="os-tab hidden flex flex-col h-full">
-                <div class="flex-1 bg-black/40 rounded-3xl p-6 border border-indigo-500/20 mb-4 font-mono text-sm overflow-y-auto" id="ai-chat">
-                    <p class="text-indigo-400">// REM-AI TERMINAL INITIALIZED...</p>
-                    <p class="text-slate-500">Connected to Neural-Link-4...</p>
-                </div>
-                <div class="flex gap-2">
-                    <input type="text" id="ai-input" placeholder="Ask Rem-AI or Gemini..." class="flex-1 bg-[#1e293b] border border-slate-700 rounded-full px-6 py-3 focus:outline-none focus:border-indigo-500">
-                    <button onclick="sendAI()" class="bg-indigo-600 px-6 py-3 rounded-full font-bold">SEND</button>
-                </div>
-            </div>
-
-            <div id="tab-links" class="os-tab hidden">
-                <h2 class="text-2xl font-bold mb-6 text-emerald-400">The Link Vault</h2>
-                <div class="grid grid-cols-2 gap-4" id="vault-grid">
-                    <p class="text-slate-500 italic">Send me your links and I will update this grid!</p>
-                </div>
-            </div>
-
-            <div id="tab-proxy" class="os-tab hidden">
-                <h2 class="text-2xl font-bold mb-6 text-red-400">Frogiee Network Mirrors</h2>
-                <div class="space-y-4">
-                    <button onclick="ghostLaunch(vault.f1, 'BYPASSING...')" class="w-full p-6 bg-slate-800 rounded-2xl border border-red-500/20 text-left hover:bg-slate-700">Mirror 1 (Primary)</button>
-                    <button onclick="ghostLaunch(vault.f2, 'SYNCING...')" class="w-full p-6 bg-slate-800 rounded-2xl border border-red-500/20 text-left hover:bg-slate-700">Mirror 2 (Education Backup)</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<script>
-    // --- MASTER OS LOGIC ---
-    function showTab(tabId) {
-        document.querySelectorAll('.os-tab').forEach(t => t.classList.add('hidden'));
-        document.getElementById('tab-' + tabId).classList.remove('hidden');
-    }
-
-    function openOS() {
-        document.getElementById('rem-os').classList.remove('hidden');
-    }
-
-    function closeOS() {
-        document.getElementById('rem-os').classList.add('hidden');
-    }
-
-    // --- Master Calc Trigger ---
-    function handleEnter() {
-        if(is2ndActive) {
-            openOS();
-            reset2nd();
-        } else {
-            // Normal Math Calc Logic
-            try {
-                currentInput = eval(currentInput.replace('×', '*').replace('÷', '/'));
-                screen.textContent = currentInput;
-            } catch { screen.textContent = "Error"; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OMNI-OS | v76 Event Horizon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #0d0d0d; 
+            --panel: #1a1a1a;
+            --orange: #ff8c00; 
+            --red: #ff3e3e;
+            --lcd: #121512;
+            --glow-o: 0 0 15px #ff8c00;
+            --glow-r: 0 0 15px #ff3e3e;
         }
-    }
 
-    // --- Fake AI Logic ---
-    function sendAI() {
-        const input = document.getElementById('ai-input');
-        const chat = document.getElementById('ai-chat');
-        if(!input.value) return;
+        body, html { 
+            margin: 0; padding: 0; height: 100vh; 
+            background: radial-gradient(circle at center, #1a0a00 0%, #000 100%);
+            font-family: 'JetBrains Mono', monospace; 
+            overflow: hidden; perspective: 1200px;
+        }
 
-        chat.innerHTML += `<p class="text-white mt-2 font-bold">YOU: ${input.value}</p>`;
-        
-        // Simulating AI thinking
-        setTimeout(() => {
-            chat.innerHTML += `<p class="text-indigo-400 mt-2">REM-AI: Processing request using Gemini-X4... <br><span class="text-slate-300">Analysis complete. Proceeding with stealth protocols.</span></p>`;
-            chat.scrollTop = chat.scrollHeight;
-        }, 500);
-        
-        input.value = '';
-    }
+        /* 3D KINETIC AUREOLA */
+        .halo-anchor {
+            position: absolute; top: 12%; left: 50%;
+            transform: translateX(-50%); width: 220px; height: 80px;
+            z-index: 5; pointer-events: none;
+        }
+        .halo-ring {
+            width: 100%; height: 100%;
+            border: 6px solid var(--orange);
+            border-radius: 50%; opacity: 0;
+            filter: blur(2px) drop-shadow(0 0 25px var(--orange));
+            transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .halo-active {
+            opacity: 0.9;
+            animation: orbitalAxis 5s linear infinite;
+        }
+        @keyframes orbitalAxis {
+            0% { transform: rotateX(75deg) rotateY(15deg) rotateZ(0deg); }
+            100% { transform: rotateX(75deg) rotateY(15deg) rotateZ(360deg); }
+        }
 
-    // ... (Keep your existing toggle2nd and ghostLaunch functions) ...
-</script>
+        /* CYBER-CALC CHASSIS */
+        .chassis {
+            background: var(--panel);
+            border: 1px solid #333;
+            width: 420px; padding: 35px;
+            border-radius: 20px;
+            position: absolute; top: 55%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 50px 100px rgba(0,0,0,1), inset 0 0 20px rgba(255,140,0,0.05);
+        }
+        .screen-container {
+            background: var(--lcd);
+            border: 2px solid #333;
+            border-radius: 8px;
+            height: 100px; margin-bottom: 30px;
+            padding: 20px; display: flex;
+            flex-direction: column; justify-content: flex-end;
+            align-items: flex-end;
+            box-shadow: inset 0 0 15px #000;
+        }
+        .lcd-text {
+            color: var(--orange);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem; text-shadow: var(--glow-o);
+        }
+
+        /* BUTTON ENGINE */
+        .key-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .key {
+            background: #222; color: #777;
+            border: 1px solid #333;
+            padding: 18px 0; border-radius: 8px;
+            font-weight: 900; cursor: pointer;
+            transition: 0.2s; text-align: center;
+            user-select: none;
+        }
+        .key:hover { color: #fff; border-color: #555; background: #2a2a2a; }
+        .key-o { color: var(--orange) !important; border-color: var(--orange) !important; box-shadow: inset 0 0 10px rgba(255,140,0,0.2); }
+        .key-o:active { background: var(--orange); color: #000; box-shadow: var(--glow-o); }
+        .key-r { color: var(--red) !important; border-color: var(--red) !important; }
+        .key-r:active { background: var(--red); color: #000; box-shadow: var(--glow-r); }
+
+        /* DEEP-STATE SIDEBAR */
+        #hub {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.95); z-index: 10000;
+            backdrop-filter: blur(30px);
+        }
+        .sidebar {
+            width: 380px; height: 100%;
+            background: linear-gradient(to bottom, #0a0a0a, #000);
+            border-right: 1px solid #222;
+            display: flex; flex-direction: column; padding: 60px 0;
+        }
+        .brand { padding: 0 50px 50px; }
+        .nav-link {
+            padding: 22px 50px; color: #444;
+            font-size: 14px; font-weight: 900;
+            letter-spacing: 2px; cursor: pointer;
+            transition: 0.3s; border-left: 5px solid transparent;
+        }
+        .nav-link:hover { color: var(--orange); background: #0f0f0f; padding-left: 60px; }
+        .nav-link.danger:hover { color: var(--red); }
+        .active-glitch { border-left-color: var(--orange); color: #fff !important; background: #111; }
+    </style>
+</head>
+<body onkeydown="if(event.key==='~'){panic()}">
+
+    <div class="chassis">
+        <div class="halo-anchor"><div class="halo-ring" id="halo"></div></div>
+        <div class="screen-container">
+            <div id="display" class="lcd-text">0.00</div>
+        </div>
+        <div class="key-grid">
+            <div class="key key-o" onclick="press('2nd')">SYSTEM</div>
+            <div class="key key-r" onclick="panic()">PANIC</div>
+            <div class="key" onclick="press('/')">/</div>
+            <div class="key" onclick="press('*')">×</div>
+            <div class="key" onclick="press('7')">7</div>
+            <div class="key" onclick="press('8')">8</div>
+            <div class="key" onclick="press('9')">9</div>
+            <div class="key" onclick="press('-')">-</div>
+            <div class="key" onclick="press('4')">4</div>
+            <div class="key" onclick="press('5')">5</div>
+            <div class="key" onclick="press('6')">6</div>
+            <div class="key" onclick="press('+')">+</div>
+            <div class="key" onclick="press('1')">1</div>
+            <div class="key" onclick="press('2')">2</div>
+            <div class="key" onclick="press('3')">3</div>
+            <div class="key key-o" onclick="press('EXE')">EXECUTE</div>
+        </div>
+    </div>
+
+    <div id="hub">
+        <div class="sidebar">
+            <div class="brand">
+                <h1 style="color:white; font-size: 2rem; font-family: 'Orbitron';">EVENT_HORIZON</h1>
+                <p style="color:var(--orange); font-size: 10px; tracking: 5px;">SOVEREIGN v76.0</p>
+            </div>
+            <div class="nav-link" onclick="deepLaunch('https://eaglercraft.q13x.com/', 'My Drive - Google Drive')">GHOST_MINECRAFT</div>
+            <div class="nav-item-divider h-px bg-zinc-900 my-2 mx-10"></div>
+            <div class="nav-link" onclick="deepLaunch('https://takaiwebsite.neocities.org/brotato', 'Student Portal')">BROTATO_CORE</div>
+            <div class="nav-link" onclick="deepLaunch('https://www.google.com/search?igu=1', 'Canvas | Dashboard')">STEALTH_SEARCH</div>
+            <div class="nav-link" onclick="spawnAI()">REM_AI_LOCAL</div>
+            <div class="mt-auto nav-link danger" onclick="panic()">TERMINATE_ALL</div>
+        </div>
+    </div>
+
+    <script>
+        let cur = "0"; 
+        let is2nd = false;
+        let activeWins = [];
+
+        function press(k) {
+            if (k === '2nd') { 
+                is2nd = !is2nd; 
+                document.getElementById('halo').classList.toggle('halo-active', is2nd); 
+                return; 
+            }
+            if (is2nd && k === 'EXE') { 
+                document.getElementById('hub').style.display = 'flex'; 
+                return; 
+            }
+            if (k === 'EXE') {
+                try { cur = eval(cur.replace('×','*').replace('÷','/')) + ""; } catch { cur = "SYNTAX ERR"; }
+            } else {
+                cur = (cur === "0" ? k : cur + k);
+            }
+            document.getElementById('display').innerText = cur;
+        }
+
+        // v76 DEEP-STATE BLOB INJECTION
+        function deepLaunch(url, fakeTitle) {
+            const win = window.open('about:blank', '_blank');
+            if (!win) return alert("System Error: Popup Shield Active.");
+
+            const blobContent = `
+                <html>
+                <head>
+                    <title>${fakeTitle}</title>
+                    <link rel="icon" href="https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png">
+                    <style>
+                        body, html { margin:0; padding:0; height:100vh; background:#000; overflow:hidden; }
+                        iframe { width:100%; height:100%; border:none; background:#000; }
+                    </style>
+                </head>
+                <body>
+                    <iframe src="${url}" referrerpolicy="no-referrer" allow="fullscreen; autoplay" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob([blobContent], { type: 'text/html' });
+            const blobUrl = URL.createObjectURL(blob);
+            win.location.href = blobUrl;
+
+            activeWins.push(win);
+            document.getElementById('hub').style.display = 'none';
+        }
+
+        function spawnAI() {
+            const win = window.open('about:blank', '_blank');
+            win.document.write(\`
+                <body style="background:#050505;color:orange;font-family:monospace;padding:40px;">
+                    <h1 style="border-bottom: 2px solid orange;">REMAI_CORE</h1>
+                    <div id="log" style="height:300px; color:#555; overflow-y:auto; margin-top:20px;">SYSTEM READY.</div>
+                    <input id="in" style="width:100%; background:#000; border:1px solid #333; color:#fff; padding:15px; margin-top:30px; outline:none;" placeholder="Command...">
+                    <script>
+                        document.getElementById('in').onkeydown = (e) => {
+                            if(e.key==='Enter'){
+                                document.getElementById('log').innerHTML += '<div>> '+e.target.value+'</div>';
+                                setTimeout(()=>{document.getElementById('log').innerHTML += '<div style="color:white">REMAI: Processing. Blob encryption stable.</div>';}, 300);
+                                e.target.value = '';
+                            }
+                        }
+                    <\/script>
+                </body>
+            \`);
+            activeWins.push(win);
+        }
+
+        function panic() {
+            activeWins.forEach(w => { if(!w.closed) w.close(); });
+            activeWins = [];
+            document.getElementById('hub').style.display = 'none';
+            document.getElementById('halo').classList.remove('halo-active');
+            is2nd = false; cur = "0";
+            document.getElementById('display').innerText = "0.00";
+            location.reload();
+        }
+    </script>
+</body>
+</html>
