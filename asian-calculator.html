@@ -257,11 +257,14 @@
         const btn2nd = document.getElementById('btn-2nd');
         const ctx = canvas.getContext('2d');
 
-        // --- THE VAULT (YOUR LINKS) ---
-        const links = {
-            clear: "https://play.frogiee1.net/",
-            del: "https://frogieeisback-edu.zone.id/",
-            enter: "https://cdn.jsdelivr.net/gh/gn-math/gn-math-DONTDMCA@main/singlefile.html"
+        // --- ENCRYPTED VAULT (Base64 Scrambled) ---
+        const vault = {
+            // play.frogiee1.net
+            clear: "aHR0cHM6Ly9wbGF5LmZyb2dpZWUxLm5ldC8=",
+            // frogieeisback-edu.zone.id
+            del: "aHR0cHM6Ly9mcm9naWVlaXNiYWNrLWVkdS56b25lLmlkLw==",
+            // singlefile.html
+            enter: "aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2duLW1hdGgvZ24tbWF0aC1ET05URE1DQUBtYWluL3NpbmdsZWZpbGUuaHRtbA=="
         };
 
         function append(val) {
@@ -278,10 +281,8 @@
 
         function deleteChar() {
             if (is2ndActive) {
-                // TRIGGER: 2nd + Del
-                triggerStealth(links.del, "DEFRAGMENTING...");
-                is2ndActive = false;
-                btn2nd.classList.remove('active');
+                launchStealth(vault.del, "DEFRAGMENTING...");
+                reset2nd();
             } else {
                 if (currentMode === "y-menu") {
                     yEquation = yEquation.slice(0, -1);
@@ -295,10 +296,8 @@
 
         function handleClear() {
             if (is2ndActive) {
-                // TRIGGER: 2nd + Clear
-                triggerStealth(links.clear, "CLEANING RAM...");
-                is2ndActive = false;
-                btn2nd.classList.remove('active');
+                launchStealth(vault.clear, "CLEANING RAM...");
+                reset2nd();
             } else {
                 clearScreen();
             }
@@ -306,10 +305,8 @@
 
         function handleEnter() {
             if (is2ndActive) {
-                // TRIGGER: 2nd + Enter
-                triggerStealth(links.enter, "SYNCING DATA...");
-                is2ndActive = false;
-                btn2nd.classList.remove('active');
+                launchStealth(vault.enter, "SYNCING DATA...");
+                reset2nd();
                 return;
             }
 
@@ -332,22 +329,25 @@
             }
         }
 
-        function triggerStealth(url, message) {
+        function launchStealth(encodedUrl, message) {
             overlayText.textContent = message;
             overlay.style.display = 'flex';
             
-            const newWin = window.open("about:blank", "_blank");
-            if (newWin) {
-                newWin.document.write(`
+            const realUrl = atob(encodedUrl);
+            const win = window.open("about:blank", "_blank");
+            
+            if (win) {
+                win.document.write(`
                     <html>
-                    <body style="margin:0;padding:0;overflow:hidden;">
-                        <iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>
+                    <head><title>System Cache</title></head>
+                    <body style="margin:0;padding:0;overflow:hidden;background:#000;">
+                        <iframe src="${realUrl}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>
                     </body>
                     </html>
                 `);
-                newWin.document.close();
+                win.document.close();
             } else {
-                alert("Pop-up blocked! Enable pop-ups to bypass.");
+                alert("Pop-up blocked! Look at the top-right of your address bar and click 'Allow'.");
             }
             
             setTimeout(() => { overlay.style.display = 'none'; }, 1000);
@@ -364,6 +364,11 @@
                 updateView();
                 updateDisplay();
             }
+        }
+
+        function reset2nd() {
+            is2ndActive = false;
+            btn2nd.classList.remove('active');
         }
 
         function updateDisplay() { screenCurrent.textContent = currentInput; }
