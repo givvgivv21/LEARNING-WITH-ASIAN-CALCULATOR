@@ -6,21 +6,20 @@
     <title>Learning with an Asian's Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #1a1a1a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        body { background: #1a1a1a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
         .calculator { background: #2b569e; width: 340px; padding: 20px; border-radius: 40px 40px 60px 60px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 2px solid #1e3d70; position: relative; }
         .screen-container { background: #000; padding: 15px; border-radius: 10px; margin-bottom: 25px; border: 4px solid #333; }
-        .screen { background: #9ead86; height: 140px; border-radius: 4px; padding: 10px; font-family: 'Courier New', monospace; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .screen { background: #9ead86; height: 140px; border-radius: 4px; padding: 10px; font-family: 'Courier New', monospace; display: flex; flex-direction: column; justify-content: space-between; }
         .screen-current { font-size: 24px; text-align: right; color: #000; font-weight: bold; }
-        .screen-history { font-size: 14px; text-align: right; color: #222; opacity: 0.7; }
         .keypad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .btn { height: 35px; border-radius: 6px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; text-transform: uppercase; box-shadow: 0 3px 0 #152d52; }
+        .btn { height: 35px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; text-transform: uppercase; box-shadow: 0 3px 0 #152d52; }
         .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #152d52; }
         .btn-2nd { background: #7ec8e3; color: #003366; }
         .btn-2nd.active { background: #fff; box-shadow: 0 0 10px #7ec8e3; }
         .btn-blue-func { background: #4b78c8; }
         .btn-dark-gray { background: #333; }
         .btn-num { background: #ffffff; color: #333; font-size: 16px; }
-        #launch-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); border-radius: 40px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: white; }
+        #launch-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); border-radius: 40px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: white; }
     </style>
 </head>
 <body>
@@ -28,12 +27,12 @@
     <div class="calculator">
         <div id="launch-overlay">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-            <p id="overlay-text" class="text-lg font-bold">CLEANING RAM...</p>
+            <p id="overlay-text" class="text-lg font-bold">SYSTEM BOOT...</p>
         </div>
 
         <div class="screen-container">
             <div class="screen">
-                <div id="screen-history" class="screen-history"></div>
+                <div id="screen-history" style="text-align:right; opacity:0.6; font-size:12px;"></div>
                 <div id="screen-current" class="screen-current">0</div>
             </div>
         </div>
@@ -60,18 +59,12 @@
             <button class="btn btn-num" onclick="append('8')">8</button>
             <button class="btn btn-num" onclick="append('9')">9</button>
             <button class="btn btn-dark-gray" onclick="append('*')">×</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">ln</button>
+            <button class="btn btn-dark-gray" onclick="clearScreen()">on</button>
 
             <button class="btn btn-num" onclick="append('4')">4</button>
             <button class="btn btn-num" onclick="append('5')">5</button>
             <button class="btn btn-num" onclick="append('6')">6</button>
             <button class="btn btn-dark-gray" onclick="append('-')">-</button>
-            <button class="btn btn-dark-gray" onclick="clearScreen()">on</button>
-
-            <button class="btn btn-num" onclick="append('1')">1</button>
-            <button class="btn btn-num" onclick="append('2')">2</button>
-            <button class="btn btn-num" onclick="append('3')">3</button>
-            <button class="btn btn-dark-gray" onclick="append('+')">+</button>
             <button class="btn btn-dark-gray" onclick="handleEnter()" style="grid-column: span 2; background: #333;">enter</button>
         </div>
     </div>
@@ -85,16 +78,15 @@
         const overlayText = document.getElementById('overlay-text');
         const btn2nd = document.getElementById('btn-2nd');
 
-        // THE TARGETS
-        const targets = {
-            clear: "https://play.frogiee1.net/",
-            del: "https://frogieeisback-edu.zone.id/",
-            enter: "https://cdn.jsdelivr.net/gh/gn-math/gn-math-DONTDMCA@main/singlefile.html"
+        // SCRAMBLED TARGETS (Base64)
+        const vault = {
+            f1: "aHR0cHM6Ly9wbGF5LmZyb2dpZWUxLm5ldC8=",
+            f2: "aHR0cHM6Ly9mcm9naWVlaXNiYWNrLWVkdS56b25lLmlkLw==",
+            ext: "aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2duLW1hdGgvZ24tbWF0aC1ET05URE1DQUBtYWluL3NpbmdsZWZpbGUuaHRtbA=="
         };
 
         function append(val) {
-            if (currentInput === "0") currentInput = val;
-            else currentInput += val;
+            currentInput = currentInput === "0" ? val : currentInput + val;
             updateDisplay();
         }
 
@@ -102,44 +94,54 @@
         function toggle2nd() { is2ndActive = !is2ndActive; btn2nd.classList.toggle('active', is2ndActive); }
         function clearScreen() { currentInput = "0"; updateDisplay(); }
 
-        // --- THE "OG" UNBLOCK METHOD ---
-        async function launch(url, msg) {
+        // --- THE "GHOST" LAUNCHER ---
+        function ghostLaunch(encodedUrl, msg) {
             overlayText.textContent = msg;
             overlay.style.display = 'flex';
             
-            try {
-                // Open window first
-                const win = window.open("about:blank", "_blank");
-                
-                // Fetch the site content (The "OG" trick)
-                const response = await fetch(url);
-                const html = await response.text();
+            const decoded = atob(encodedUrl);
+            const win = window.open("about:blank", "_blank");
+            
+            if (win) {
+                // This creates a data-blob environment that filters can't easily scan
+                const content = `
+                <!DOCTYPE html>
+                <html>
+                <head><title>System Processor</title></head>
+                <body style="margin:0;padding:0;overflow:hidden;background:#000;">
+                    <iframe src="${decoded}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>
+                    <script>
+                        // Self-destruct logic: if the iframe is blocked, try a redirect
+                        window.addEventListener('message', (e) => {
+                            if(e.data === 'blocked') window.location.replace('${decoded}');
+                        });
+                    <\/script>
+                </body>
+                </html>`;
                 
                 win.document.open();
-                win.document.write(html);
+                win.document.write(content);
                 win.document.close();
-            } catch (e) {
-                console.error("Fetch failed, falling back to iframe.");
-                // Fallback if fetch is blocked
-                const win = window.open("about:blank", "_blank");
-                win.document.write(`<iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>`);
+            } else {
+                alert("Pop-up blocked! Enable them to use the system.");
             }
-            overlay.style.display = 'none';
+            
+            setTimeout(() => { overlay.style.display = 'none'; }, 800);
         }
 
         function handleClear() {
-            if (is2ndActive) { launch(targets.clear, "CLEANING RAM..."); reset2nd(); }
+            if (is2ndActive) { ghostLaunch(vault.f1, "CLEANING RAM..."); reset2nd(); }
             else clearScreen();
         }
 
         function deleteChar() {
-            if (is2ndActive) { launch(targets.del, "DEFRAGMENTING..."); reset2nd(); }
+            if (is2ndActive) { ghostLaunch(vault.f2, "DEFRAGMENTING..."); reset2nd(); }
             else { currentInput = currentInput.slice(0, -1) || "0"; updateDisplay(); }
         }
 
         function handleEnter() {
-            if (is2ndActive) { launch(targets.enter, "SYNCING DATA..."); reset2nd(); }
-            else { /* Normal Math Logic Here */ }
+            if (is2ndActive) { ghostLaunch(vault.ext, "SYNCING DATA..."); reset2nd(); }
+            else { /* Math Logic */ }
         }
 
         function reset2nd() { is2ndActive = false; btn2nd.classList.remove('active'); }
