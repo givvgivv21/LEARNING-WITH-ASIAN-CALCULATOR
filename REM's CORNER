@@ -2,101 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rem's Melons :D</title>
+    <title>Rem's Melons :D | v82</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --rind: #1a3c1a; 
-            --flesh: #ff4d4d; 
-            --seed: #111111;
-            --neon-g: #39ff14;
-        }
+        :root { --rind: #1a3c1a; --flesh: #ff4d4d; --neon: #39ff14; }
         body, html { 
-            margin: 0; padding: 0; height: 100vh; 
-            background: var(--seed);
-            font-family: 'Fira Code', monospace; 
+            margin: 0; padding: 0; height: 100vh; width: 100vw;
+            background: #050505; color: white; font-family: 'Courier New', monospace;
             overflow: hidden; 
-            display: flex;
         }
 
-        /* LEFT SIDEBAR - THE RIND */
+        /* MELON RAIN LAYER */
+        #rain-container { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+        .melon-drop { position: absolute; font-size: 24px; user-select: none; }
+
+        /* MAIN UI LAYER */
+        .ui-wrapper { 
+            position: relative; z-index: 10; display: flex; 
+            height: 100vh; width: 100vw; 
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+        }
+
         .sidebar {
-            width: 450px; height: 100%;
-            background: linear-gradient(to bottom, var(--rind), #0a1a0a);
-            border-right: 4px solid var(--neon-g);
+            width: 450px; background: rgba(10, 30, 10, 0.9);
+            border-right: 3px solid var(--neon); padding: 40px;
             display: flex; flex-direction: column;
-            padding: 40px;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
-            z-index: 10;
-        }
-
-        /* MAIN TERMINAL - THE FLESH */
-        .main-stage {
-            flex-grow: 1;
-            background: radial-gradient(circle at center, #2d0a0a 0%, #111 100%);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            position: relative;
-        }
-
-        .watermelon-hero {
-            font-size: 120px;
-            filter: drop-shadow(0 0 20px var(--flesh));
-            margin-bottom: 20px;
-            animation: bounce 3s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+            box-shadow: 20px 0 50px rgba(0,0,0,0.8);
         }
 
         .ascii-brand {
-            font-size: 7px; line-height: 7px;
-            color: var(--neon-g); white-space: pre;
-            margin-bottom: 30px;
-            text-shadow: 0 0 5px var(--neon-g);
+            font-size: 7px; line-height: 7px; color: var(--neon);
+            white-space: pre; margin: 30px 0; text-shadow: 0 0 10px var(--neon);
         }
 
-        /* BUTTONS */
-        .nav-item {
-            padding: 18px 25px;
-            margin-bottom: 12px;
-            background: rgba(0,0,0,0.3);
-            border: 2px solid var(--flesh);
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex; justify-content: space-between;
+        .melon-btn {
+            background: #000; border: 2px solid var(--flesh);
+            padding: 20px; margin-bottom: 15px; cursor: pointer;
+            transition: 0.3s; font-weight: 900; display: flex;
+            justify-content: space-between; align-items: center;
         }
-        .nav-item:hover {
-            background: var(--flesh);
-            color: var(--seed);
-            transform: translateX(10px);
-            box-shadow: -5px 0 0 var(--neon-g);
+        .melon-btn:hover {
+            background: var(--flesh); color: #000;
+            transform: scale(1.05) translateX(10px);
+            box-shadow: 0 0 20px var(--flesh);
         }
 
-        .status-bar {
-            position: absolute; bottom: 20px; left: 20px;
-            color: var(--neon-g); font-size: 10px;
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            border: 20px solid var(--rind); margin: 20px;
         }
 
-        h2 { color: var(--flesh); font-family: 'Syncopate'; font-size: 1.5rem; margin-bottom: 10px; }
+        .hero-text {
+            font-size: 5rem; font-weight: 900; color: var(--flesh);
+            text-shadow: 5px 5px 0px var(--neon);
+            letter-spacing: -5px; transform: rotate(-2deg);
+        }
+
+        .terminal {
+            width: 80%; background: #000; border: 1px solid #333;
+            padding: 20px; margin-top: 40px; font-size: 12px; color: var(--neon);
+        }
     </style>
 </head>
-<body onkeydown="if(event.key==='Escape'){panic()}">
+<body onkeydown="if(event.key==='Escape') panic()">
 
-    <div class="sidebar">
-        <div class="mb-8">
-            <h2>Rem's Melons :D</h2>
-            <p class="text-[10px] text-green-400 tracking-[3px]">MELON-CORE v81.0 // ACTIVE</p>
-        </div>
+    <div id="rain-container"></div>
 
-        <div class="ascii-brand">
+    <div class="ui-wrapper">
+        <div class="sidebar">
+            <h1 class="text-4xl font-black italic text-white">REM'S MELONS :D</h1>
+            
+            <div class="ascii-brand">
 ++++++   +++++++  ++      ++   +++++++  
 ++   ++  ++       +++    +++  ++        
 ++   ++  +++++    ++ +  + ++  +++++++   
@@ -109,64 +86,90 @@
 ++       ++    ++  +++++++   ++ + ++  +++++    ++++++  
 ++       ++    ++  ++  ++    ++  +++  ++       ++  ++  
 +++++++   ++++++   ++   ++   ++   ++  +++++++  ++   ++
-</div>
+            </div>
 
-        <div class="nav-item" onclick="melonLaunch('https://eaglercraft.q13x.com/', 'Bio-Assignment')">
-            <span>UNLOCKED: MINECRAFT</span><span>[>]</span>
-        </div>
-        <div class="nav-item" onclick="melonLaunch('https://takaiwebsite.neocities.org/brotato', 'Data Analysis')">
-            <span>UNLOCKED: BROTATO</span><span>[>]</span>
-        </div>
-        <div class="nav-item" onclick="melonLaunch('https://www.google.com/search?igu=1', 'Google Classroom')">
-            <span>UNLOCKED: GOOGLE</span><span>[>]</span>
-        </div>
-        <div class="nav-item" onclick="spawnAI()">
-            <span>ACCESS: MELON_AI</span><span>[+]</span>
+            <div class="nav-group">
+                <div class="melon-btn" onclick="forceWindow('https://eaglercraft.q13x.com/', 'Bio-Lab Simulation')">
+                    <span>LAUNCH MINECRAFT</span><span>🍉</span>
+                </div>
+                <div class="melon-btn" onclick="forceWindow('https://takaiwebsite.neocities.org/brotato', 'Physics Engine')">
+                    <span>LAUNCH BROTATO</span><span>🍉</span>
+                </div>
+                <div class="melon-btn" onclick="forceWindow('https://www.google.com/search?igu=1', 'Research Hub')">
+                    <span>STEALTH GOOGLE</span><span>🍉</span>
+                </div>
+            </div>
+
+            <div class="mt-auto melon-btn" style="border-color:white; color:white" onclick="panic()">
+                <span>TERMINATE SESSIONS</span><span>[ESC]</span>
+            </div>
         </div>
 
-        <div class="mt-auto nav-item" style="border-color: #fff; color: #fff;" onclick="panic()">
-            <span>EMERGENCY WIPE</span><span>[ESC]</span>
-        </div>
-    </div>
-
-    <div class="main-stage">
-        <div class="watermelon-hero">🍉</div>
-        <div class="text-white text-4xl font-black mb-2 italic">REM'S MELONS</div>
-        <div class="text-red-500 font-bold tracking-widest">ENCRYPTED WINDOW DEPLOYMENT READY</div>
-        
-        <div class="status-bar">
-            [SYS] WINDOW_POPUP_ENABLED: TRUE <br>
-            [SYS] BLOB_INJECTION: ACTIVE <br>
-            [SYS] MASK_MODE: EDUCATIONAL
+        <div class="main-content">
+            <div class="hero-text">MELON_STORM</div>
+            <div class="terminal" id="term">
+                > Initializing Rem's Melons Kernel v82.0...<br>
+                > Window Isolation: ACTIVE<br>
+                > MC Account Persistence Bridge: ENABLED<br>
+                > Ready for deployment.
+            </div>
         </div>
     </div>
 
     <script>
-        let openWindows = [];
+        // RAIN ENGINE
+        function createMelon() {
+            const container = document.getElementById('rain-container');
+            const melon = document.createElement('div');
+            melon.className = 'melon-drop';
+            melon.innerText = '🍉';
+            melon.style.left = Math.random() * 100 + 'vw';
+            melon.style.top = '-50px';
+            const duration = Math.random() * 3 + 2;
+            melon.style.transition = `top ${duration}s linear, transform ${duration}s linear`;
+            container.appendChild(melon);
 
-        function melonLaunch(url, maskTitle) {
-            // Calculate screen center for the new window
-            const w = 1200;
-            const h = 800;
-            const left = (screen.width/2)-(w/2);
-            const top = (screen.height/2)-(h/2);
+            setTimeout(() => {
+                melon.style.top = '110vh';
+                melon.style.transform = `rotate(${Math.random() * 360}deg)`;
+            }, 10);
 
-            // Open in a completely new window, not a tab
-            const newWin = window.open('about:blank', '_blank', 
-                `width=${w},height=${h},top=${top},left=${left},menubar=no,status=no,toolbar=no`);
+            setTimeout(() => melon.remove(), duration * 1000);
+        }
+        setInterval(createMelon, 300);
 
-            if(!newWin) {
-                alert("🚨 POPUP BLOCKED! You must allow popups for Rem's Melons to work! 🍉");
+        let activeWindows = [];
+
+        // TRUE WINDOW-ISOLATION ENGINE
+        function forceWindow(url, mask) {
+            const w = 1280;
+            const h = 720;
+            const left = (window.screen.width / 2) - (w / 2);
+            const top = (window.screen.height / 2) - (h / 2);
+
+            // "popup=yes" is the key for a new WINDOW, not a tab
+            const win = window.open('about:blank', '_blank', 
+                `width=${w},height=${h},top=${top},left=${left},scrollbars=no,status=no,menubar=no,toolbar=no,popup=yes`);
+
+            if (!win) {
+                alert("🚨 POPUP BLOCKED! Enable popups to play.");
                 return;
             }
 
+            // BLOB INJECTION FOR STEALTH
             const blob = new Blob([`
                 <html>
                 <head>
-                    <title>${maskTitle}</title>
+                    <title>${mask}</title>
                     <style>
-                        body,html,iframe{margin:0;padding:0;height:100%;width:100%;background:#000;border:none;overflow:hidden;}
+                        body,html,iframe{margin:0;padding:0;height:100%;width:100%;background:#000;overflow:hidden;border:none;}
                     </style>
+                    <script>
+                        // Bridge to keep MC data safe
+                        window.onbeforeunload = function() {
+                            return "Ensure your MC data is saved!";
+                        };
+                    <\/script>
                 </head>
                 <body>
                     <iframe src="${url}" referrerpolicy="no-referrer"></iframe>
@@ -174,26 +177,16 @@
                 </html>
             `], {type: 'text/html'});
 
-            newWin.location.href = URL.createObjectURL(blob);
-            openWindows.push(newWin);
-        }
-
-        function spawnAI() {
-            const aiWin = window.open('', '', 'width=500,height=600');
-            aiWin.document.write(`
-                <body style="background:#111;color:#39ff14;font-family:monospace;padding:30px;border:10px solid #1a3c1a;">
-                    <h1 style="color:#ff4d4d">MELON_AI v81</h1>
-                    <p>Seed-Logic stable. Minecraft Launcher tunnel established.</p>
-                </body>
-            `);
-            openWindows.push(aiWin);
+            win.location.href = URL.createObjectURL(blob);
+            activeWindows.push(win);
+            
+            const log = document.getElementById('term');
+            log.innerHTML += `<br>> Deployed Window: ${mask} (UUID: ${Math.floor(Math.random()*9999)})`;
         }
 
         function panic() {
-            openWindows.forEach(w => {
-                if(!w.closed) w.close();
-            });
-            openWindows = [];
+            activeWindows.forEach(w => { if(!w.closed) w.close(); });
+            activeWindows = [];
             location.reload();
         }
     </script>
