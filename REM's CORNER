@@ -3,53 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rem's Corner | Potato Core v12</title>
+    <title>Rem's Corner | Final Source</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/dist/skinview3d.bundle.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --red: #dc2626; --orange: #f97316; }
+        :root { --red: #dc2626; --orange: #f97316; --mc-gray: #313335; --mc-dark: #1e1e1e; }
         body { background: radial-gradient(circle at top left, #450a0a 0%, #09090b 100%); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; height: 100vh; overflow: hidden; margin: 0; }
         
-        /* Stealth UI */
-        .widget { background: rgba(20, 20, 25, 0.9); padding: 2rem; border-radius: 50px; border: 1px solid rgba(220, 38, 38, 0.3); }
-        .screen { background: #000; border-radius: 25px; padding: 1.2rem; margin-bottom: 1.2rem; text-align: right; font-family: 'JetBrains Mono'; color: var(--orange); font-size: 2rem; border: 1px solid var(--red); }
-        .key { height: 50px; border-radius: 25px; background: rgba(255, 255, 255, 0.03); font-weight: 800; cursor: pointer; transition: 0.2s; color: #fecaca; }
-        .key:hover { background: var(--red); color: white; transform: translateY(-2px); }
-        .key-active { background: var(--orange); box-shadow: 0 0 20px var(--orange); }
+        /* MC Launcher Authentic Styling */
+        .mc-container { background: var(--mc-gray); width: 100%; height: 580px; border-radius: 5px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #111; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        .mc-top-nav { background: #2b2b2b; height: 40px; display: flex; align-items: center; padding: 0 15px; gap: 20px; border-bottom: 1px solid #1a1a1a; }
+        .mc-tab { font-size: 12px; color: #aaa; cursor: pointer; font-weight: 600; padding: 11px 0; border-bottom: 2px solid transparent; }
+        .mc-tab:hover { color: #fff; }
+        .mc-tab.active { color: #fff; border-bottom-color: #3c8527; }
+        
+        .mc-body { flex: 1; display: flex; }
+        .mc-sidebar { width: 200px; background: var(--mc-dark); padding: 15px 5px; display: flex; flex-direction: column; gap: 5px; }
+        .mc-side-item { padding: 8px 15px; border-radius: 4px; font-size: 13px; color: #bbb; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .mc-side-item:hover { background: #3c3f41; color: #fff; }
+        .mc-side-item.active { background: #4e4e4e; color: #fff; font-weight: bold; }
+        
+        .mc-main { flex: 1; background: url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg') center/cover; position: relative; }
+        .mc-bottom-bar { position: absolute; bottom: 0; width: 100%; height: 85px; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; border-top: 1px solid #444; }
+        .mc-play-btn { background: #3c8527; color: white; padding: 10px 50px; font-size: 22px; font-weight: 900; border-radius: 2px; border-bottom: 4px solid #2a5d1b; cursor: pointer; transition: 0.1s; }
+        .mc-play-btn:active { transform: translateY(2px); border-bottom: 0; }
 
-        /* MULTI-LAUNCHER UI */
-        .os-window { display: flex; height: 550px; background: #1a1b1e; border-radius: 12px; overflow: hidden; border: 1px solid #333; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        .os-sidebar { width: 220px; background: #000; padding: 20px 10px; display: flex; flex-direction: column; gap: 8px; border-right: 1px solid #222; }
-        .os-nav-item { padding: 12px 15px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #888; cursor: pointer; transition: 0.2s; }
-        .os-nav-item:hover { background: rgba(220, 38, 38, 0.1); color: #fff; }
-        .os-nav-item.active { background: var(--red); color: #fff; }
-        
-        .os-main { flex: 1; position: relative; background: #111; }
-        .os-footer { position: absolute; bottom: 0; width: 100%; height: 90px; background: rgba(0,0,0,0.85); display: flex; align-items: center; padding: 0 30px; justify-content: space-between; border-top: 1px solid #333; }
-        
-        .play-btn { background: #3c8527; padding: 12px 60px; color: white; font-weight: 900; font-size: 24px; border-radius: 4px; border-bottom: 4px solid #2a5d1b; cursor: pointer; transition: 0.1s; }
-        .play-btn:active { transform: translateY(2px); border-bottom-width: 0; }
-        .play-btn.brotato-theme { background: #f97316; border-bottom-color: #c2410c; }
+        /* General UI */
+        .widget { background: rgba(20, 20, 25, 0.95); padding: 2rem; border-radius: 50px; border: 1px solid rgba(220, 38, 38, 0.3); }
+        .screen { background: #000; border-radius: 25px; padding: 1rem; text-align: right; font-family: 'JetBrains Mono'; color: var(--orange); font-size: 2rem; border: 1px solid var(--red); margin-bottom: 1rem; }
+        .key { height: 48px; border-radius: 24px; background: rgba(255,255,255,0.03); font-weight: 800; cursor: pointer; color: #fecaca; font-size: 13px; }
+        .key:hover { background: var(--red); color: white; }
+        .key-active { background: var(--orange); box-shadow: 0 0 15px var(--orange); color: white; }
 
         #rem-os { position: fixed; inset: 0; background: #0a0a0c; z-index: 5000; display: none; flex-direction: column; border-top: 4px solid var(--red); }
-        #skin-container { width: 100%; height: 350px; background: rgba(0,0,0,0.5); border-radius: 12px; }
     </style>
 </head>
 <body>
 
     <nav class="p-6 px-12 flex justify-between items-center border-b border-red-900/30">
         <div class="font-black text-2xl tracking-tighter text-white">REMS<span class="text-orange-500">CORNER</span></div>
-        <div class="flex gap-4">
-            <button onclick="downloadSelf()" class="bg-red-600 text-white px-6 py-2 rounded-full font-bold text-[10px] uppercase">Export v12</button>
-        </div>
+        <button onclick="downloadSelf()" class="bg-red-600 text-white px-6 py-2 rounded-full font-bold text-[10px] uppercase">Export Build v13</button>
     </nav>
 
     <div class="grid grid-cols-[1fr_380px] gap-8 p-12 h-[calc(100vh-100px)]">
         <div class="bg-red-950/10 border border-red-500/20 p-10 rounded-[50px] backdrop-blur-md">
-            <h1 class="text-5xl font-black mb-4 italic text-white uppercase tracking-tighter">Potato <span class="text-orange-500">Core</span></h1>
-            <p class="text-red-100/60 leading-relaxed text-lg mb-8">Brotato Web Engine v1.0 Integrated. Multi-game focus injection enabled. Enter code to unlock the Arena.</p>
+            <h1 class="text-5xl font-black mb-4 italic text-white uppercase tracking-tighter">Final <span class="text-orange-500">Source</span></h1>
+            <p class="text-red-100/60 leading-relaxed text-lg">AI logic re-routed. Minecraft Launcher UI authentic reconstruction complete. Brotato Web-Core v2.0 injected.</p>
         </div>
 
         <div class="widget">
@@ -81,47 +82,70 @@
     <div id="rem-os">
         <div class="flex flex-1">
             <div class="w-64 bg-black p-8 border-r border-red-900/30 flex flex-col gap-2">
-                <div class="text-[10px] font-black text-red-600 mb-6 tracking-widest uppercase">Select Environment</div>
                 <button onclick="showTab('mc')" class="text-left p-4 rounded-xl hover:bg-red-900/20 font-bold transition">🎮 Minecraft</button>
                 <button onclick="showTab('bt')" class="text-left p-4 rounded-xl hover:bg-orange-900/20 font-bold transition text-orange-500">🥔 Brotato</button>
-                <button onclick="showTab('prox')" class="text-left p-4 rounded-xl hover:bg-red-900/20 font-bold transition">📄 Proxy Vault</button>
+                <button onclick="showTab('prox')" class="text-left p-4 rounded-xl hover:bg-red-900/20 font-bold transition">📄 Proxy Doc</button>
+                <button onclick="showTab('ai')" class="text-left p-4 rounded-xl hover:bg-red-900/20 font-bold transition">🤖 Rem AI</button>
                 <button onclick="closeOS()" class="mt-auto text-red-500 font-black text-[10px] text-center p-4 hover:text-white transition">[TERMINATE]</button>
             </div>
 
             <div class="flex-1 p-10 bg-[#09090b] overflow-y-auto">
                 
                 <div id="tab-mc" class="os-tab">
-                    <div class="os-window">
-                        <div class="os-sidebar">
-                            <div class="os-nav-item active">Launcher</div>
-                            <div class="os-nav-item" onclick="toggleSkins()">Skins</div>
+                    <div class="mc-container">
+                        <div class="mc-top-nav">
+                            <div class="mc-tab active">Java Edition</div>
+                            <div class="mc-tab">Minecraft for Windows</div>
+                            <div class="mc-tab">Dungeons</div>
+                            <div class="mc-tab">Legends</div>
                         </div>
-                        <div class="os-main" style="background: url('https://minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MC-Home-Hero-Desktop.jpg') center/cover;">
-                            <div id="skin-overlay" class="hidden absolute inset-0 bg-[#2b2b2b] p-8 flex flex-col items-center">
-                                <div id="skin-container"></div>
-                                <button onclick="document.getElementById('skin-upload').click()" class="mt-4 px-6 py-2 bg-white text-black font-bold text-xs rounded">UPLOAD PNG</button>
-                                <input type="file" id="skin-upload" class="hidden" onchange="loadSkin(this)">
+                        <div class="mc-body">
+                            <div class="mc-sidebar">
+                                <div class="mc-side-item active">Play</div>
+                                <div class="mc-side-item" onclick="toggleMCOverlay('mc-mods')">Installations</div>
+                                <div class="mc-side-item" onclick="toggleMCOverlay('mc-skins')">Skins</div>
+                                <div class="mc-side-item">Patch Notes</div>
                             </div>
-                            <div class="os-footer">
-                                <div><div class="text-white font-bold text-sm uppercase">Java Edition</div><div class="text-gray-400 text-[10px]">Ver: Forge 1.12.2</div></div>
-                                <button class="play-btn" onclick="launchGame('https://takaiwebsite.neocities.org/minecraft')">PLAY</button>
+                            <div class="mc-main">
+                                <div id="mc-mods" class="hidden absolute inset-0 bg-[#2b2b2b] p-8">
+                                    <h2 class="text-white font-bold text-xl mb-4">Latest Installations</h2>
+                                    <div class="p-4 bg-black/40 border border-white/10 rounded">Forge-Takai-1.12.2 (Active)</div>
+                                </div>
+                                <div id="mc-skins" class="hidden absolute inset-0 bg-[#2b2b2b] p-8 flex flex-col items-center">
+                                    <div id="skin-container"></div>
+                                    <button onclick="document.getElementById('skin-upload').click()" class="mt-4 px-8 py-2 bg-white text-black font-bold text-xs">IMPORT SKIN</button>
+                                    <input type="file" id="skin-upload" class="hidden" onchange="loadSkin(this)">
+                                </div>
+                                <div class="mc-bottom-bar">
+                                    <div class="flex items-center gap-4 bg-black/40 p-2 pr-6 rounded border border-white/10">
+                                        <div class="w-10 h-10 bg-green-900 rounded"></div>
+                                        <div class="text-xs font-bold text-white">Forge-Takai-1.12.2</div>
+                                    </div>
+                                    <button class="mc-play-btn" onclick="launchGame('https://takaiwebsite.neocities.org/minecraft')">PLAY</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="tab-bt" class="os-tab hidden">
-                    <div class="os-window" style="border-color: var(--orange);">
-                        <div class="os-sidebar" style="border-right-color: #431407;">
-                            <div class="os-nav-item active" style="color: var(--orange);">Brotato Arena</div>
-                            <div class="os-nav-item">Character Planner</div>
-                        </div>
-                        <div class="os-main" style="background: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1942280/ss_49339e1451f1624c80330058e5793083f2a11b66.1920x1080.jpg?t=1706692807') center/cover;">
-                            <div class="os-footer" style="border-top-color: #431407;">
-                                <div><div class="text-orange-500 font-bold text-sm uppercase">Potato Core v1.0</div><div class="text-gray-400 text-[10px]">Arena: Web High-Performance</div></div>
-                                <button class="play-btn brotato-theme" onclick="launchGame('https://6499806e57922d0d0879624d--unrivaled-sable-516a7c.netlify.app/')">START WAVE</button>
+                    <div class="mc-container" style="border-color: var(--orange);">
+                        <div class="mc-main" style="background: url('https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1942280/ss_49339e1451f1624c80330058e5793083f2a11b66.1920x1080.jpg?t=1706692807') center/cover;">
+                            <div class="mc-bottom-bar">
+                                <div class="text-orange-500 font-bold uppercase">Brotato Arena v1.0</div>
+                                <button class="mc-play-btn" style="background: var(--orange); border-bottom-color: #c2410c;" onclick="launchGame('https://blobby-boi.github.io/brotato/')">START WAVE</button>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div id="tab-ai" class="os-tab hidden">
+                    <div id="ai-chat" class="h-[400px] bg-black/80 rounded-3xl border border-red-500/20 p-8 overflow-y-auto mb-4 font-mono text-xs text-red-100">
+                        <p class="text-orange-500 opacity-50">// REM-AI v13: KERNEL READY.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <input type="text" id="ai-input" class="flex-1 bg-white/5 border border-white/10 rounded-full px-8 py-4 outline-none focus:border-red-600" placeholder="Type command...">
+                        <button onclick="sendAI()" class="bg-red-600 px-10 rounded-full font-black uppercase text-[10px]">Execute</button>
                     </div>
                 </div>
 
@@ -139,18 +163,31 @@
 
         function launchGame(url) {
             const win = window.open("about:blank", "_blank");
-            win.document.write(`
-                <html><head><title>System.Execute</title><style>body,html{margin:0;padding:0;height:100%;background:#000;overflow:hidden;}iframe{width:100vw;height:100vh;border:none;}</style></head>
-                <body><iframe id="game-frame" src="${url}" allow="autoplay; fullscreen; gamepad; pointer-lock" sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts"></iframe>
-                <script>window.onload = () => { const f = document.getElementById('game-frame'); f.focus(); document.body.onclick = () => f.focus(); };<\/script>
-                </body></html>
-            `);
+            win.document.write(`<html><body style="margin:0;background:#000;overflow:hidden;"><iframe id="f" src="${url}" style="width:100vw;height:100vh;border:none;" allow="autoplay; fullscreen; gamepad; pointer-lock" sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts"></iframe><script>window.onload=()=>{const f=document.getElementById('f');f.focus();document.onclick=()=>f.focus();};<\/script></body></html>`);
         }
 
-        function toggleSkins() { document.getElementById('skin-overlay').classList.toggle('hidden'); }
-        function loadSkin(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = (e) => skinViewer.loadSkin(e.target.result); r.readAsDataURL(input.files[0]); } }
-        function downloadSelf() { const b = new Blob([document.documentElement.outerHTML], {type: "text/html"}); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "Rems_Corner_v12_PotatoCore.html"; a.click(); }
+        function sendAI() {
+            const inp = document.getElementById('ai-input');
+            const chat = document.getElementById('ai-chat');
+            if(!inp.value) return;
+            chat.innerHTML += `<div class="mb-2 text-white font-bold">USER > ${inp.value}</div>`;
+            setTimeout(() => {
+                chat.innerHTML += `<div class="mb-4 text-orange-400">REM > Forge protocols verified. Launcher GUI sync'd. Input bridge for Brotato established. 74 Cloudflare nodes active.</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }, 500);
+            inp.value = '';
+        }
 
+        function toggleMCOverlay(id) { 
+            const el = document.getElementById(id); 
+            const isHidden = el.classList.contains('hidden');
+            document.getElementById('mc-mods').classList.add('hidden');
+            document.getElementById('mc-skins').classList.add('hidden');
+            if(isHidden) el.classList.remove('hidden');
+        }
+
+        function loadSkin(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = (e) => skinViewer.loadSkin(e.target.result); r.readAsDataURL(input.files[0]); } }
+        function downloadSelf() { const b = new Blob([document.documentElement.outerHTML], {type: "text/html"}); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "Rems_Corner_v13.html"; a.click(); }
         function toggle2nd() { is2nd = !is2nd; document.getElementById('btn-2nd').classList.toggle('key-active', is2nd); }
         function append(v) { input = input === "0" ? v : input + v; document.getElementById('calc-val').innerText = input; }
         function deleteChar() { input = input.slice(0, -1) || "0"; document.getElementById('calc-val').innerText = input; }
